@@ -3,12 +3,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Gestaurante.Models.Entities
 {
-    [Table("Users")]
-    public class User
+    [Table("Empleados")]
+    public class Empleado
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]  // Auto-increment
-        public int Id { get; }
+        public int Id { get; private set; }
 
         [Required]
         [EmailAddress]  // Validación de email
@@ -37,14 +37,16 @@ namespace Gestaurante.Models.Entities
         [MaxLength(9)]
         public string DNI { get; set; } = string.Empty;
 
-
+        [Required]
+        [MaxLength(12)]
+        public string NUSS { get; set; } = string.Empty;
 
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
 
         // Constructor opcional
-        public User()
+        public Empleado()
         {
             CreatedAt = DateTime.UtcNow;
         }
