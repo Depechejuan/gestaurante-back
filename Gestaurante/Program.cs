@@ -1,4 +1,7 @@
+using Gestaurante.Models.Services;
+
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddScoped<RegisterService>();
 
 // Add services to the container.
 

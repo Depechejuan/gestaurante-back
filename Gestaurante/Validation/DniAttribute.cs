@@ -3,7 +3,7 @@ using System.Text.RegularExpressions;
 
 namespace Gestaurante.Validation
 {
-    public class DNI : ValidationAttribute
+    public class DniAttribute : ValidationAttribute
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
