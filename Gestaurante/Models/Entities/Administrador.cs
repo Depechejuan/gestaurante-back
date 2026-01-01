@@ -1,6 +1,4 @@
-﻿using Gestaurante.Models.DTO;
-
-namespace Gestaurante.Models.Entities
+﻿namespace Gestaurante.Models.Entities
 {
     public class Administrador : Empleado
     {
