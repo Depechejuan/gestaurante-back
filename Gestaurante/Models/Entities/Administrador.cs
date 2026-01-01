@@ -3,10 +3,9 @@
     public class Administrador : Empleado
     {
         public Administrador() { }
-        public Administrador(Guid id, string email, string password, string firstName,
-            string firstLastName, string secondLastName, string dni, string nuss, DateTime createdAt)
+        public Administrador(string email, string password, string firstName,
+            string firstLastName, string secondLastName, string dni, string nuss)
         {
-            this.Id = id;
             this.Email = email;
             this.Password = password;
             this.FirstName = firstName;
@@ -14,7 +13,9 @@
             this.SecondLastName = secondLastName;
             this.DNI = dni;
             this.NUSS = nuss;
-            this.CreatedAt = createdAt;
+            
+            this.Id = new Guid();
+            this.CreatedAt = DateTime.Now;
         }
         public void CambiarZonaCamarero()
         {
