@@ -6,27 +6,31 @@ namespace Gestaurante.Validation
     {
         protected override ValidationResult? IsValid(object? value, ValidationContext validationContext)
         {
-            if (value is not string nuss)
-                return new ValidationResult("El nuss no es válido");
+            if (value is not string nuss || string.IsNullOrWhiteSpace(nuss))
+                return new ValidationResult("El NUSS no es válido");
 
-            if (nuss.Length <= 12 || nuss.Length > 13)
-                return new ValidationResult("El nuss no es válido");
+            if (nuss.Length != 13)
+                return new ValidationResult("El NUSS debe tener 13 caracteres (formato: 01-01234567-0)");
 
-            if (nuss[2] != '-' && '-' != nuss[11])
-                return new ValidationResult("El nuss no es válido");
+            if (nuss[2] != '-' || nuss[11] != '-')
+                return new ValidationResult("El NUSS debe tener guiones en las posiciones 3 y 12 (formato: 01-01234567-0)");
 
-            string numberPart1 = nuss.Substring(0, 1);
-            if (!int.TryParse(numberPart1, out int number1))
-                return new ValidationResult("El nuss debe ser numérico");
+            // Extraer las partes (quitando los guiones)
+            string[] partes = nuss.Split('-');
 
-            string numberPart2 = nuss.Substring(3, 10);
-            if (!int.TryParse(numberPart1, out int number2))
-                return new ValidationResult("El nuss debe ser numérico");
+            if (partes.Length != 3)
+                return new ValidationResult("Formato de NUSS incorrecto (formato: 01-01234567-0)");
 
-            string numberPart3 = nuss.Substring(12, 12);
-            if (!int.TryParse(numberPart1, out int number3))
-                return new ValidationResult("El nuss debe ser numérico");
+            string provincia = partes[0];
+            string numero = partes[1];
+            string control = partes[2];
 
+            if (provincia.Length != 2 || numero.Length != 8 || control.Length != 1)
+                return new ValidationResult("Formato de NUSS incorrecto (XX-XXXXXXXX-X)");
+
+
+            if (!int.TryParse(provincia, out _) || !long.TryParse(numero, out _) || !int.TryParse(control, out _))
+                return new ValidationResult("El NUSS debe contener solo números excepto los guiones");
 
             return ValidationResult.Success;
         }
