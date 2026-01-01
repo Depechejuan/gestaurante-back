@@ -6,9 +6,9 @@ namespace Gestaurante.Models.DTO
 {
     public enum TipoEmpleado
     {
+        Administrador,
         Camarero,
-        Cocinero,
-        Administrador
+        Cocinero
     }
 
     public class RegistroDTO

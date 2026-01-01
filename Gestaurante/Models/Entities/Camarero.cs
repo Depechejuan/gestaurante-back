@@ -4,17 +4,20 @@ namespace Gestaurante.Models.Entities
 {
     public class Camarero : Empleado
     {
-        public Camarero(RegistroDTO dto)
+        public Camarero() { }
+
+        public Camarero(Guid id, string email, string password, string firstName,
+            string firstLastName, string secondLastName, string dni, string nuss, DateTime createdAt)
         {
-            this.Id = dto.Id;
-            this.Email = dto.Email;
-            this.Password = dto.Password;
-            this.FirstName = dto.FirstName;
-            this.FirstLastName = dto.FirstLastName;
-            this.SecondLastName = dto.SecondLastName;
-            this.DNI = dto.DNI;
-            this.NUSS = dto.NUSS;
-            this.CreatedAt = dto.CreatedAt;
+            this.Id = id;
+            this.Email = email;
+            this.Password = password;
+            this.FirstName = firstName;
+            this.FirstLastName = firstLastName;
+            this.SecondLastName = secondLastName;
+            this.DNI = dni;
+            this.NUSS = nuss;
+            this.CreatedAt = createdAt;
         }
         public int NumeroMesas { get; private set; }
 
