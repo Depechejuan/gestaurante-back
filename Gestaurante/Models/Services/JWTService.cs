@@ -24,9 +24,9 @@ namespace Gestaurante.Models.Services
 
         public string GenerarToken(EmpleadoLoginDTO empleado)
         {
-            var claveSecreta = _configuration["Jwt:Key"];
-            var emisor = _configuration["Jwt:Issuer"];
-            var audiencia = _configuration["Jwt:Audience"];
+            var claveSecreta = _configuration["JWT_KEY"];
+            var emisor = _configuration["JWT_ISSUER"];
+            var audiencia = _configuration["JWT_AUDIENCE"];
 
             if (string.IsNullOrEmpty(claveSecreta))
                 throw new ArgumentNullException("Jwt:Key no configurado");
@@ -53,8 +53,8 @@ namespace Gestaurante.Models.Services
 
         public DateTime GetExpiracion()
         {
-            var horas = _configuration.GetValue<int>("Jwt:ExpireHours", 24);
-            return DateTime.UtcNow.AddHours(horas);
+            var dias = _configuration.GetValue<int>("JWT_EXPIRE_DAYS", 30);
+            return DateTime.UtcNow.AddDays(dias);
         }
     }
 }
