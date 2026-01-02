@@ -18,6 +18,7 @@ namespace Gestaurante.Controllers
             _registerService = registerService;
         }
 
+
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegistroDTO dto)
         {
@@ -28,7 +29,8 @@ namespace Gestaurante.Controllers
                 {
                     empleado.Id
                 });
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return StatusCode(500, new
                 {
@@ -36,5 +38,6 @@ namespace Gestaurante.Controllers
                     detalle = ex.Message
                 });
             }
+        }
     }
 }

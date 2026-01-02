@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 namespace Gestaurante.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
-    public class AuthController : ControllerBase
+    [Route("[controller]")]
+    public class UserController : ControllerBase
     {
         private readonly LoginService _loginService;
         private readonly IJwtService _jwtService;
 
-        public AuthController(LoginService loginService, IJwtService jwtService)
+        public UserController(LoginService loginService, IJwtService jwtService)
         {
             _loginService = loginService;
             _jwtService = jwtService;
@@ -24,6 +24,7 @@ namespace Gestaurante.Controllers
         {
             try
             {
+                Console.WriteLine("Entramos en el Login");
                 var empleado = await Task.Run(() => _loginService.Login(dto));
 
                 if (empleado == null)
@@ -33,17 +34,14 @@ namespace Gestaurante.Controllers
                         codigo = "INVALID_CREDENTIALS"
                     });
 
-
+                Console.WriteLine("Empleado válido");
+                Console.WriteLine("Generando token...");
                 var token = _jwtService.GenerarToken(empleado);
                 var expiracion = _jwtService.GetExpiracion();
+                Console.WriteLine("Token Generado");
 
                 // Crear respuesta
-                var response = new TokenDTO
-                {
-                    Id = empleado.Id,
-                    Token = token,
-                    ExpiraEn = expiracion
-                };
+                var response = new TokenDTO(token, expiracion, empleado.Id);
 
                 return Ok(response);
             }
@@ -57,5 +55,4 @@ namespace Gestaurante.Controllers
             }
         }
     }
-}
 }
