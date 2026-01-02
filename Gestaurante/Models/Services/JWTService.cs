@@ -1,4 +1,5 @@
-﻿using Gestaurante.Models.Entities;
+﻿using Gestaurante.Models.DTO;
+using Gestaurante.Models.Entities;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -6,39 +7,54 @@ using System.Text;
 
 namespace Gestaurante.Models.Services
 {
-    public class JwtService
+    public interface IJwtService
     {
-        private readonly IConfiguration _config;
+        string GenerarToken(EmpleadoLoginDTO empleado);
+        DateTime GetExpiracion();
+    }
 
-        public JwtService(IConfiguration config)
+    public class JwtService : IJwtService
+    {
+        private readonly IConfiguration _configuration;
+
+        public JwtService(IConfiguration configuration)
         {
-            _config = config;
+            _configuration = configuration;
         }
 
-        public string GenerateToken(Empleado empleado)
+        public string GenerarToken(EmpleadoLoginDTO empleado)
         {
+            var claveSecreta = _configuration["Jwt:Key"];
+            var emisor = _configuration["Jwt:Issuer"];
+            var audiencia = _configuration["Jwt:Audience"];
+
+            if (string.IsNullOrEmpty(claveSecreta))
+                throw new ArgumentNullException("Jwt:Key no configurado");
+
+            var clave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(claveSecreta));
+            var credenciales = new SigningCredentials(clave, SecurityAlgorithms.HmacSha256);
+
             var claims = new[]
             {
             new Claim(JwtRegisteredClaimNames.Sub, empleado.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, empleado.Email),
-            new Claim(ClaimTypes.Role, empleado.Tipo.ToString())
+            new Claim(JwtRegisteredClaimNames.Email, empleado.Email)
         };
 
-            var key = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(_config["Jwt:Key"]!)
-            );
-
-            var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-
             var token = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
+                issuer: emisor,
+                audience: audiencia,
                 claims: claims,
-                expires: DateTime.UtcNow.AddHours(2),
-                signingCredentials: creds
+                expires: GetExpiracion(),
+                signingCredentials: credenciales
             );
 
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        public DateTime GetExpiracion()
+        {
+            var horas = _configuration.GetValue<int>("Jwt:ExpireHours", 24);
+            return DateTime.UtcNow.AddHours(horas);
         }
     }
 }

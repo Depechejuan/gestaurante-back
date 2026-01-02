@@ -21,8 +21,12 @@ namespace Gestaurante.Models.Services
         {
             // Esta línea llama a Bcrypt para hashear el password, y es el parámetro que se envía al constructor.
             // Así podemos almacenar la contraseña hasheada y si hay una vulnerabilidad, no se podrá obtener la contraseña real.
-            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-            
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(
+                dto.Password,
+                BCrypt.Net.BCrypt.GenerateSalt(12)
+            );
+            // se añade una "sal" para más complejidad de hasheo y que sea más difícil de romper.
+
             // Esto es un switch dependiendo del tipo, así empleado se crea dependiendo del caso
             Empleado empleado = dto.Tipo switch
             {

@@ -52,6 +52,7 @@ namespace Gestaurante.Models.Data
 
                 entity.HasIndex(e => e.DNI)
                     .IsUnique();
+
             });
         }
     }
