@@ -7,36 +7,55 @@ using Microsoft.AspNetCore.Mvc;
 namespace Gestaurante.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
-    public class UserController : ControllerBase
+    [Route("api/[controller]")]
+    public class AuthController : ControllerBase
     {
+        private readonly LoginService _loginService;
+        private readonly IJwtService _jwtService;
 
-
-        [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginDTO dto)
+        public AuthController(LoginService loginService, IJwtService jwtService)
         {
-            var empleado = _authService.Login(dto);
-
-            if (empleado == null)
-                return Unauthorized("Credenciales inválidas");
-
-            var hasher = new PasswordHasher<Empleado>();
-            var result = hasher.VerifyHashedPassword(
-                empleado,
-                empleado.PasswordHash,
-                dto.Password
-            );
-
-            if (result == PasswordVerificationResult.Failed)
-                return Unauthorized("Credenciales inválidas");
-
-            var token = _jwtService.GenerateToken(empleado);
-
-            return Ok(new
-            {
-                token
-            });
+            _loginService = loginService;
+            _jwtService = jwtService;
         }
 
+        [HttpPost("login")]
+        public async Task<IActionResult> Login([FromBody] LoginDTO dto)
+        {
+            try
+            {
+                var empleado = await Task.Run(() => _loginService.Login(dto));
+
+                if (empleado == null)
+                    return Unauthorized(new
+                    {
+                        mensaje = "Credenciales inválidas",
+                        codigo = "INVALID_CREDENTIALS"
+                    });
+
+
+                var token = _jwtService.GenerarToken(empleado);
+                var expiracion = _jwtService.GetExpiracion();
+
+                // Crear respuesta
+                var response = new TokenDTO
+                {
+                    Id = empleado.Id,
+                    Token = token,
+                    ExpiraEn = expiracion
+                };
+
+                return Ok(response);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    mensaje = "Error interno del servidor",
+                    detalle = ex.Message
+                });
+            }
+        }
     }
+}
 }
