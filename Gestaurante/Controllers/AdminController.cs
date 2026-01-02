@@ -18,15 +18,26 @@ namespace Gestaurante.Controllers
             _registerService = registerService;
         }
 
+
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegistroDTO dto)
         {
-            var empleado = _registerService.CrearEmpleado(dto);
-
-            return Ok(new
+            try
             {
-                empleado.Id
-            });
+                var empleado = _registerService.CrearEmpleado(dto);
+                return Ok(new
+                {
+                    empleado.Id
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new
+                {
+                    mensaje = "Error interno del servidor",
+                    detalle = ex.Message
+                });
+            }
         }
     }
 }
