@@ -2,7 +2,9 @@
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
+using BCrypt.Net;
 
 namespace Gestaurante.Models.Services
 {
@@ -17,13 +19,20 @@ namespace Gestaurante.Models.Services
 
         public Empleado CrearEmpleado(RegistroDTO dto)
         {
-            // Esto es un switch dependiendo del tipo, así empleado se crea dependiendo del caso
+            // Esta línea llama a Bcrypt para hashear el password, y es el parámetro que se envía al constructor.
+            // Así podemos almacenar la contraseña hasheada y si hay una vulnerabilidad, no se podrá obtener la contraseña real.
+            string hashedPassword = BCrypt.Net.BCrypt.HashPassword(
+                dto.Password,
+                BCrypt.Net.BCrypt.GenerateSalt(12)
+            );
+            // se añade una "sal" para más complejidad de hasheo y que sea más difícil de romper.
 
+            // Esto es un switch dependiendo del tipo, así empleado se crea dependiendo del caso
             Empleado empleado = dto.Tipo switch
             {
                 TipoEmpleado.Administrador => new Administrador(
                     dto.Email,
-                    dto.Password,
+                    hashedPassword,
                     dto.FirstName,
                     dto.FirstLastName,
                     dto.SecondLastName,
@@ -33,7 +42,7 @@ namespace Gestaurante.Models.Services
                 ),
                 TipoEmpleado.Camarero => new Camarero(
                     dto.Email,
-                    dto.Password,
+                    hashedPassword,
                     dto.FirstName,
                     dto.FirstLastName,
                     dto.SecondLastName,
@@ -42,7 +51,7 @@ namespace Gestaurante.Models.Services
                 ),
                 TipoEmpleado.Cocinero => new Cocinero(
                     dto.Email,
-                    dto.Password,
+                    hashedPassword,
                     dto.FirstName,
                     dto.FirstLastName,
                     dto.SecondLastName,
