@@ -51,9 +51,13 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     )
 );
 
+
+// IMPORTANTE!!
+// Aquí se añaden los "scoped", todos los servicios que se vayan a usar en la App
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<RegisterService>();
+builder.Services.AddScoped<StaffService>();
 
 builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseMySql(
