@@ -4,6 +4,7 @@ using Gestaurante.Models.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
 using Gestaurante.Models.Services;
+using Gestaurante.Utils;
 
 namespace Gestaurante.Controllers
 {
@@ -25,18 +26,11 @@ namespace Gestaurante.Controllers
             try
             {
                 var empleado = _registerService.CrearEmpleado(dto);
-                return Ok(new
-                {
-                    empleado.Id
-                });
+                return ResponseHelper.SendResponse( new { id = empleado.Id });
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    mensaje = "Error interno del servidor",
-                    detalle = ex.Message
-                });
+                return ResponseHelper.SendError(ex, 500);
             }
         }
     }
