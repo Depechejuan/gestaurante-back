@@ -1,6 +1,7 @@
 ﻿using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
 using Gestaurante.Models.Services;
+using Gestaurante.Utils;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -24,7 +25,6 @@ namespace Gestaurante.Controllers
         {
             try
             {
-                Console.WriteLine("Entramos en el Login");
                 var empleado = await Task.Run(() => _loginService.Login(dto));
 
                 if (empleado == null)
@@ -34,24 +34,16 @@ namespace Gestaurante.Controllers
                         codigo = "INVALID_CREDENTIALS"
                     });
 
-                Console.WriteLine("Empleado válido");
-                Console.WriteLine("Generando token...");
                 var token = _jwtService.GenerarToken(empleado);
                 var expiracion = _jwtService.GetExpiracion();
-                Console.WriteLine("Token Generado");
 
-                // Crear respuesta
                 var response = new TokenDTO(token, expiracion, empleado.Id);
 
-                return Ok(response);
+                return ResponseHelper.SendResponse(response);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, new
-                {
-                    mensaje = "Error interno del servidor",
-                    detalle = ex.Message
-                });
+                return ResponseHelper.SendError(ex, 500);
             }
         }
     }
