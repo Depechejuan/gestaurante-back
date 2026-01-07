@@ -1,15 +1,17 @@
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
 using Gestaurante.Models.Services;
-using Microsoft.AspNetCore.Mvc;
-using System.ComponentModel.DataAnnotations;
 using Gestaurante.Models.Services;
 using Gestaurante.Utils;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace Gestaurante.Controllers
 {
     [ApiController]
     [Route("[controller]")]
+    [Authorize]
     public class AdminController : ControllerBase
     {
         private readonly RegisterService _registerService;
@@ -20,6 +22,7 @@ namespace Gestaurante.Controllers
             _registerService = registerService;
             _staffService = staffService;
         }
+
 
         [HttpPost("register")]
         public IActionResult Register([FromBody] RegistroDTO dto)
