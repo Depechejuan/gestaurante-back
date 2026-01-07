@@ -1,4 +1,4 @@
-﻿using Gestaurante.Models.DTO;
+﻿    using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
 using Gestaurante.Models.Services;
 using Gestaurante.Utils;
@@ -39,7 +39,7 @@ namespace Gestaurante.Controllers
 
                 var response = new TokenDTO(token, expiracion, empleado.Id);
 
-                return ResponseHelper.SendResponse(response);
+                return ResponseHelper.SendResponse(response, 201);
             }
             catch (Exception ex)
             {
