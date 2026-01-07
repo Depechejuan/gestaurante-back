@@ -36,12 +36,38 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                 "http://localhost:3000",
-                "http://localhost:5173"
+                "http://localhost:5173",
+                "https://localhost:5173"
             )
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .WithMethods("PUT", "PATCH", "POST", "GET", "DELETE");
     });
 });
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+
+            ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
+            ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(
+                    Environment.GetEnvironmentVariable("JWT_KEY")
+                    ?? throw new Exception("JWT_KEY no definida")
+                )
+            ),
+
+            ClockSkew = TimeSpan.Zero // elimina tolerancia de 5 min por defecto
+        };
+    });
 
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -86,9 +112,8 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseCors("LocalPolicy");
-
 app.UseHttpsRedirection();
+app.UseCors("LocalPolicy");
 
 app.UseAuthentication();
 app.UseAuthorization();
