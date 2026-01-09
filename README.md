@@ -9,9 +9,10 @@ Back-end de la Aplicación de Gestaurante
 dotnet add package DotNetEnv
 
 # Comandos importantes en el Bash/PM para la Base de Datos
-dotnet add package Microsoft.EntityFrameworkCore --version 8.0.0
-dotnet add package Microsoft.EntityFrameworkCore.Design --version 8.0.0
-dotnet add package Pomelo.EntityFrameworkCore.MySql --version 8.0.0
+Microsoft.EntityFrameworkCore          9.0.1
+Microsoft.EntityFrameworkCore.Design   9.0.1
+Npgsql.EntityFrameworkCore.PostgreSQL  9.0.4
+
 
 dotnet restore
 dotnet clean
