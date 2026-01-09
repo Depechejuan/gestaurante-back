@@ -3,7 +3,6 @@ using Gestaurante.Models.Entities;
 using System.Collections.Generic;
 using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore;
-using Gestaurante.Models.Entities;
 
 
 namespace Gestaurante.Models.Data
@@ -53,9 +52,13 @@ namespace Gestaurante.Models.Data
                 entity.HasIndex(e => e.DNI)
                     .IsUnique();
             });
-            modelBuilder.Entity<Platos>(entity => { 
-                entity.
-            }
+            modelBuilder.Entity<Platos>(entity =>
+            {
+                entity.HasKey(p => p.IdPlato)
+                      .HasName("PK_Platos");
+                entity.Property(p => p.IdPlato)
+                      .IsRequired();
+            });
         }
     }
 }
