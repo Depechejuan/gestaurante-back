@@ -22,14 +22,9 @@ namespace Gestaurante.Models.Entities
         public decimal Precio { get; set; }
         public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; protected set; }
-        protected Platos() { }
         public Platos(Guid idPlato, string nombre, string descripcion, string imagen, bool disponibilidad, List<Guid> listadoIngredientes
             , decimal precio)
         {
-            if (precio < 0)
-            {
-                throw new ArgumentException("El precio no puede ser negativo", nameof(precio));
-            }
             IdPlato = idPlato;
             Nombre = nombre;
             Descripcion = descripcion;
