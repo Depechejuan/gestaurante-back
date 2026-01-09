@@ -52,8 +52,10 @@ namespace Gestaurante.Models.Data
 
                 entity.HasIndex(e => e.DNI)
                     .IsUnique();
-
             });
+            modelBuilder.Entity<Platos>(entity => { 
+                entity.
+            }
         }
     }
 }
