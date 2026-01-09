@@ -26,8 +26,9 @@ string dbUser = Environment.GetEnvironmentVariable("DB_USER")
 string dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD")
     ?? throw new Exception("DB_PASSWORD no definido");
 
+
 string connectionString =
-    $"Server={dbHost};Port={dbPort};Database={dbName};User={dbUser};Password={dbPassword};";
+    $"Server={dbHost};Port={dbPort};Database={dbName};User Id={dbUser};Password={dbPassword};SSL Mode=Require;Trust Server Certificate=true;";
 
 
 var builder = WebApplication.CreateBuilder(args);
