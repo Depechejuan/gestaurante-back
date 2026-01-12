@@ -79,7 +79,7 @@ namespace Gestaurante.Models.Data
                     .HasComment("Nombre del plato");
 
                 entity.HasIndex(p => p.Nombre)
-                    .IsUnique(); // Solo si queremos nombres únicos por cada palto
+                    .IsUnique(); // Solo si queremos nombres únicos por cada plato
 
                 entity.Property(p => p.Descripcion)
                     .IsRequired()
@@ -177,6 +177,39 @@ namespace Gestaurante.Models.Data
                     .HasMaxLength(100)
                     .HasDefaultValue("Interior") // Valor por defecto
                     .HasComment("Ubicación física de la mesa en el restaurante");
+            });
+
+            //modelBuilder de Factura   
+
+            modelBuilder.Entity<Factura>(entity =>
+            {
+                entity.HasKey(f => f.NumeroFactura)
+                    .HasName("PK_Facturas");
+
+                entity.Property(f => f.NumeroFactura)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(f => f.FechaFactura)
+                    .IsRequired()
+                    .HasDefaultValueSql("GETUTCDATE()")
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(f => f.PrecioTotal)
+                    .IsRequired()
+                    .HasColumnType("decimal(10,2)")
+                    .HasDefaultValue(0);
+
+                entity.Property(f => f.Descuento)
+                    .IsRequired()
+                    .HasColumnType("decimal(5,2)")
+                    .HasDefaultValue(0);
+
+                entity.Property(f => f.Estado)
+                    .IsRequired()
+                    .HasDefaultValue(true) // Por defecto activa
+                    .HasComment("Estado de la factura: true=Pendiente, false=Anulada");
+
             });
         }
     }
