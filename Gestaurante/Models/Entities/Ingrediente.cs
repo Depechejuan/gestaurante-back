@@ -7,6 +7,9 @@ namespace Gestaurante.Models.Entities
         [Required]
         [MaxLength(100)]
         public Guid IdIngrediente { get; protected set; }
+        [Required]
+        [MaxLength(100)]
+        public string Nombre { get; set; } = string.Empty; 
 
         [Required]
         public bool Alergenico { get; set; } = false;
@@ -17,9 +20,10 @@ namespace Gestaurante.Models.Entities
         public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; protected set; }
         protected Ingrediente() { }
-        public Ingrediente(Guid idIngrediente, bool alergenico, bool disponibilidad, string imagen)
+        public Ingrediente(Guid idIngrediente, string nombre,  bool alergenico, bool disponibilidad, string imagen)
         {
             IdIngrediente = idIngrediente;
+            Nombre = nombre;
             Alergenico = alergenico;
             Disponible = disponibilidad;
             Imagen = imagen;
