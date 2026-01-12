@@ -2,7 +2,7 @@
 
 namespace Gestaurante.Models.Entities
 {
-    public class Platos
+    public class Plato
     {
         [Required]
         [MaxLength(100)]
@@ -16,15 +16,14 @@ namespace Gestaurante.Models.Entities
         public string Imagen { get; set; } = string.Empty;
         [Required]
         public bool Disponible { get; set; } = false;
-        public List<Guid> IdIngredientes { get; set; }
+        public virtual ICollection<Ingrediente> Ingredientes { get; set; } = new List<Ingrediente>();
         [Required]
         [Range(0, double.MaxValue, ErrorMessage = "El precio no puede ser negativo")]
         public decimal Precio { get; set; }
         public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; protected set; }
-        public Platos() { }
-        public Platos(Guid idPlato, string nombre, string descripcion, string imagen, bool disponibilidad, List<Guid> listadoIngredientes
-            , decimal precio)
+        public Plato() { }
+        public Plato(Guid idPlato, string nombre, string descripcion, string imagen, bool disponibilidad, List<Guid> listadoIngredientes, decimal precio)
         {
             IdPlato = idPlato;
             Nombre = nombre;
