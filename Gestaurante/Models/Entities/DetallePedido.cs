@@ -8,9 +8,9 @@ namespace Gestaurante.Models.Entities
         [MaxLength(100)]
         public Guid IdDetallePedido { get; protected set; }
         [Required]
-        public Guid IdPlato { get; }
+        public Guid IdPlato { get; set; }
         [Required]
-        public Guid IdPedido { get; }
+        public Guid IdPedido { get; set; }
         [Required]
         public int Cantidad { get; set; } = 1;
         [Required]

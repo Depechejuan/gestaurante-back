@@ -11,6 +11,12 @@ namespace Gestaurante.Models.Data
 {
     public class AppDbContext : DbContext
     {
+        public enum EstadoFactura
+        {
+            PENDIENTE,
+            PAGADO,
+            CANCELADO
+        }
         public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
         {
         }
@@ -152,6 +158,23 @@ namespace Gestaurante.Models.Data
                     .ValueGeneratedOnAddOrUpdate();
             });
 
+            //modelBuilder Tabla Intermedia PlatoIngrediente
+            modelBuilder.Entity<PlatoIngrediente>(entity =>
+            {
+                entity.HasKey(pi => new { pi.IdPlato, pi.IdIngrediente })
+                    .HasName("PK_PlatoIngrediente");
+
+                entity.HasOne(pi => pi.Plato)
+                    .WithMany(pi => pi.PlatoIngrediente)
+                    .HasForeignKey(pi => pi.IdPlato)
+                    .OnDelete(DeleteBehavior.Cascade);
+
+                entity.HasOne(pi => pi.Ingrediente)
+                    .WithMany(pi => pi.PlatoIngrediente)
+                    .HasForeignKey(pi => pi.IdIngrediente)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
             //modelBuilder de Mesa
 
             modelBuilder.Entity<Mesa>(entity =>
@@ -207,8 +230,7 @@ namespace Gestaurante.Models.Data
 
                 entity.Property(f => f.Estado)
                     .IsRequired()
-                    .HasDefaultValue(true) // Por defecto activa
-                    .HasComment("Estado de la factura: true=Pendiente, false=Anulada");
+                    .HasDefaultValue(EstadoFactura(0)); // Por defecto pendiente;
 
             });
         }

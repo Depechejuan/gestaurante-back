@@ -4,9 +4,9 @@ namespace Gestaurante.Models.Entities
 {
     public enum EstadoFactura
     {
-        Pendiente,
-        Pagada,
-        Cancelada
+        PENDIENTE,
+        PAGADO,
+        CANCELADO
     }
     public class Factura
     {
@@ -17,7 +17,7 @@ namespace Gestaurante.Models.Entities
         [Required]
         public double PrecioTotal { get; set; }
         public double Descuento { get; set; }
-        public EstadoFactura Estado { get; set; }
+        public EstadoFactura Estado { get; set; } = EstadoFactura.PENDIENTE;
         public DateTime FechaFactura { get; set; }
         public Factura() { }
         public Factura(Guid numeroFactura, Guid idPlato, double precioTotal, double descuento, EstadoFactura estado) 
