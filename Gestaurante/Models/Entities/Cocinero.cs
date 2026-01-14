@@ -17,7 +17,7 @@ namespace Gestaurante.Models.Entities
             this.NUSS = nuss;
 
             this.Id = new Guid();
-            this.CreatedAt = DateTime.Now;
+            this.CreatedAt = DateTime.UtcNow;
         }
 
         public void CompletarPlato()
