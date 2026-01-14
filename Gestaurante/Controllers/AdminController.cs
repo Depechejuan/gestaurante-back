@@ -34,7 +34,11 @@ namespace Gestaurante.Controllers
             }
             catch (Exception ex)
             {
-                return ResponseHelper.SendError(ex, 500);
+                return ResponseHelper.SendError(new
+                {
+                    message = ex.Message,
+                    detail = ex.InnerException?.Message
+                }, 500);
             }
         }
 
@@ -52,7 +56,11 @@ namespace Gestaurante.Controllers
             }
             catch (Exception ex)
             {
-                return ResponseHelper.SendError(ex, 500);
+                return ResponseHelper.SendError(new
+                {
+                    message = ex.Message,
+                    detail = ex.InnerException?.Message
+                }, 500);
             }
         }
     }
