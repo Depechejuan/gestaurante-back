@@ -11,12 +11,6 @@ namespace Gestaurante.Models.Data
 {
     public class AppDbContext : DbContext
     {
-        public enum EstadoFactura
-        {
-            PENDIENTE,
-            PAGADO,
-            CANCELADO
-        }
         public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
         {
         }
@@ -165,12 +159,12 @@ namespace Gestaurante.Models.Data
                     .HasName("PK_PlatoIngrediente");
 
                 entity.HasOne(pi => pi.Plato)
-                    .WithMany(pi => pi.PlatoIngrediente)
+                    .WithMany(pi => pi.PlatoIngredientes)
                     .HasForeignKey(pi => pi.IdPlato)
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(pi => pi.Ingrediente)
-                    .WithMany(pi => pi.PlatoIngrediente)
+                    .WithMany(pi => pi.PlatoIngredientes)
                     .HasForeignKey(pi => pi.IdIngrediente)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -230,9 +224,52 @@ namespace Gestaurante.Models.Data
 
                 entity.Property(f => f.Estado)
                     .IsRequired()
-                    .HasDefaultValue(EstadoFactura(0)); // Por defecto pendiente;
-
+                    .HasDefaultValue(EstadoFactura.PENDIENTE); // Por defecto pendiente;
             });
+
+            //modelBuilder de Pedido
+
+            modelBuilder.Entity<Pedido>(entity =>
+            {
+                entity.HasKey(p => p.IdPedido)
+                    .HasName("PK_Pedidos");
+                entity.Property(p => p.IdPedido)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+                entity.Property(p => p.FechaPedido)
+                    .IsRequired()
+                    .HasDefaultValueSql("GETUTCDATE()")
+                    .ValueGeneratedOnAdd();
+                entity.Property(p => p.FechaModificacion)
+                    .IsRequired(false)
+                    .ValueGeneratedOnAddOrUpdate();
+                entity.Property(p => p.Estado)
+                    .IsRequired()
+                    .HasDefaultValue(EstadoPedido.PENDIENTE);
+            });
+
+            //modelBuilder de DetallePedido
+            modelBuilder.Entity<DetallePedido>(entity => 
+            {
+                entity.HasKey(dp => dp.IdDetallePedido)
+                    .HasName("PK_DetallePedido");
+                entity.Property(dp => dp.IdDetallePedido)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+                entity.Property(dp => dp.Cantidad)
+                    .IsRequired()
+                    .HasDefaultValue(1);
+                entity.Property(dp => dp.PrecioUnitario)
+                    .IsRequired()
+                    .HasColumnType("decimal(10,2)");
+                entity.HasOne<Plato>()
+                    .WithMany()
+                    .HasForeignKey(dp => dp.IdPlato)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+
         }
+
     }
 }
