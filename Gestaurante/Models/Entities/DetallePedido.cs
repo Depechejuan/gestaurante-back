@@ -25,5 +25,7 @@ namespace Gestaurante.Models.Entities
             Cantidad = cantidad;
             PrecioUnitario = precioUnitario;
         }
+
+
     }
 }

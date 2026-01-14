@@ -16,7 +16,7 @@ namespace Gestaurante.Models.Entities
         [Required]
         public bool Disponible { get; set; } = false;
         public string Imagen { get; set; } = string.Empty;
-
+        public virtual ICollection<PlatoIngrediente> PlatoIngredientes { get; set; } = new List<PlatoIngrediente>();
         public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; protected set; }
         protected Ingrediente() { }

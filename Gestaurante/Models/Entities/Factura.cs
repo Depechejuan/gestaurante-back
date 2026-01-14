@@ -18,7 +18,7 @@ namespace Gestaurante.Models.Entities
         public double PrecioTotal { get; set; }
         public double Descuento { get; set; }
         public EstadoFactura Estado { get; set; } = EstadoFactura.PENDIENTE;
-        public DateTime FechaFactura { get; set; }
+        public DateTime FechaFactura { get; set; } = DateTime.UtcNow;
         public Factura() { }
         public Factura(Guid numeroFactura, Guid idPlato, double precioTotal, double descuento, EstadoFactura estado) 
         {
