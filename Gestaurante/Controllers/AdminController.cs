@@ -34,7 +34,11 @@ namespace Gestaurante.Controllers
             }
             catch (Exception ex)
             {
-                return ResponseHelper.SendError(ex, 500);
+                return ResponseHelper.SendError(new
+                {
+                    message = ex.Message,
+                    detail = ex.InnerException?.Message
+                }, 500);
             }
         }
 
@@ -45,14 +49,34 @@ namespace Gestaurante.Controllers
             {
                 var empleado = _staffService.GetBasicStaff(user.Id);
                 if (empleado == null)
-                {
                     throw new Exception("Empleado no encontrado");
-                }
                 return ResponseHelper.SendResponse(empleado);
             }
             catch (Exception ex)
             {
-                return ResponseHelper.SendError(ex, 500);
+                return ResponseHelper.SendError(new
+                {
+                    message = ex.Message,
+                    detail = ex.InnerException?.Message
+                }, 500);
+            }
+        }
+
+        [HttpPost("getusers")]
+        public IActionResult GetUsers()
+        {
+            try
+            {
+                var empleados = _staffService.GetAllUsers();
+                return ResponseHelper.SendResponse(empleados);
+            }
+            catch (Exception ex)
+            {
+                return ResponseHelper.SendError(new
+                {
+                    message = ex.Message,
+                    detail = ex.InnerException?.Message
+                }, 500);
             }
         }
     }

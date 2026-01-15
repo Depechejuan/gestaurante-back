@@ -38,7 +38,7 @@ namespace Gestaurante.Models.DTO
         public string NUSS { get;  set; } = string.Empty;
         [Required]
         public TipoEmpleado Tipo { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
         public Guid Id { get; set; } = Guid.NewGuid();
 
         public RegistroDTO(string email, string password, string firstname, string firstlastname, string secondlastname, string dni, string nuss, TipoEmpleado tipo)

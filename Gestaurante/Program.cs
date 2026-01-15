@@ -1,11 +1,14 @@
 ﻿using Gestaurante.Models.Data;
 using Gestaurante.Models.Services;
-using Microsoft.EntityFrameworkCore;
-using Pomelo.EntityFrameworkCore.MySql.Infrastructure;
 using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+//using Gestaurante.Models.Seed;
+
 
 // Cargar variables del .env
 Env.Load();
@@ -24,8 +27,9 @@ string dbUser = Environment.GetEnvironmentVariable("DB_USER")
 string dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD")
     ?? throw new Exception("DB_PASSWORD no definido");
 
+
 string connectionString =
-    $"Server={dbHost};Port={dbPort};Database={dbName};User={dbUser};Password={dbPassword};";
+    $"Server={dbHost};Port={dbPort};Database={dbName};User Id={dbUser};Password={dbPassword};SSL Mode=Require;Trust Server Certificate=true;";
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -71,11 +75,7 @@ builder.Services
 
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(
-        connectionString,
-        ServerVersion.AutoDetect(connectionString)
-    )
-);
+    options.UseNpgsql(connectionString));
 
 
 // IMPORTANTE!!
@@ -85,12 +85,14 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<RegisterService>();
 builder.Services.AddScoped<StaffService>();
 
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
-    )
-);
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//    options.UseMySql(
+//        builder.Configuration.GetConnectionString("DefaultConnection"),
+//        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
+//    )
+//);
+
+
 
 
 // Add services to the container.
@@ -104,6 +106,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
+    //DbInitializer.Seed(db);
 }
 
 // Configure the HTTP request pipeline.
