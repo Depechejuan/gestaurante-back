@@ -109,6 +109,13 @@ namespace Gestaurante.Models.Data
                 entity.Property(p => p.UpdatedAt)
                     .ValueGeneratedOnAddOrUpdate()
                     .IsRequired(false);
+
+                // Relación con Categoria
+                entity.HasOne(p => p.Categoria)
+                    .WithMany()
+                    .HasForeignKey(p => p.IdCategoria)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .HasConstraintName("FK_Platos_Categorias");
             });
 
             //modelBuilder de Ingredientes
@@ -224,7 +231,13 @@ namespace Gestaurante.Models.Data
 
                 entity.Property(f => f.Estado)
                     .IsRequired()
-                    .HasDefaultValue(EstadoFactura.PENDIENTE); // Por defecto pendiente;
+                    .HasDefaultValue(EstadoFactura.PENDIENTE);
+
+                // Relación con Pedido (si aplica)
+                entity.HasOne<Pedido>()
+                    .WithMany()
+                    .HasForeignKey("IdPedido") // Asegúrate de que exista esta propiedad en Factura
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             //modelBuilder de Pedido
@@ -268,8 +281,40 @@ namespace Gestaurante.Models.Data
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
+            //modelBuilder de Categoria
+            modelBuilder.Entity<Categoria>(entity =>
+            {
+                entity.HasKey(c => c.IdCategoria)
+                    .HasName("PK_Categorias");
 
+                entity.Property(c => c.IdCategoria)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(c => c.Descripcion)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasComment("Descripción de la categoría");
+
+                entity.HasMany(c => c.Platos)
+                    .WithOne(p => p.Categoria)
+                    .HasForeignKey(p => p.IdCategoria)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
         }
 
     }
 }
+/*
+ * entidades 
+ *  empleado
+ *  categoria
+ *  pedido X
+ *  detallePedido X
+ *  factura X
+ *  mesa X
+ *  plato X
+ *  ingrediente X
+ *  platoIngrediente (tabla intermedia) X
+ *  
+ */
