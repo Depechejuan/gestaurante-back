@@ -1,7 +1,6 @@
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
 using Gestaurante.Models.Services;
-using Gestaurante.Models.Services;
 using Gestaurante.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
