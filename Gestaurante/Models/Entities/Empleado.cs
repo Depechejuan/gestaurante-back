@@ -7,6 +7,7 @@ namespace Gestaurante.Models.Entities
 {
     public abstract class Empleado
     {
+        [Required]
         public Guid Id { get; protected set; }
 
         [Required]

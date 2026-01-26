@@ -1,5 +1,7 @@
-﻿    using Gestaurante.Models.DTO;
+﻿using Gestaurante.Models.Data;
+using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
+//using Gestaurante.Models.Seed;
 using Gestaurante.Models.Services;
 using Gestaurante.Utils;
 using Microsoft.AspNetCore.Identity;
@@ -19,6 +21,13 @@ namespace Gestaurante.Controllers
             _loginService = loginService;
             _jwtService = jwtService;
         }
+
+        //[HttpPost("seed")]
+        //public IActionResult SeedDatabase([FromServices] AppDbContext context)
+        //{
+        //    DbInitializer.Seed(context);
+        //    return Ok("Datos iniciales insertados");
+        //}
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO dto)
