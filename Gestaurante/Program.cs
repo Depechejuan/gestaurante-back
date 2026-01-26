@@ -85,14 +85,14 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<RegisterService>();
 builder.Services.AddScoped<StaffService>();
 
-//builder.Services.AddDbContext<AppDbContext>(options =>
-//    options.UseMySql(
-//        builder.Configuration.GetConnectionString("DefaultConnection"),
-//        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
-//    )
-//);
 
-
+//valorar cambiar a SQLServer
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
+    )
+);
 
 
 // Add services to the container.
