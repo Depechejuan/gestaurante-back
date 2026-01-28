@@ -86,13 +86,7 @@ builder.Services.AddScoped<RegisterService>();
 builder.Services.AddScoped<StaffService>();
 
 
-//valorar cambiar a SQLServer
-builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        ServerVersion.AutoDetect(builder.Configuration.GetConnectionString("DefaultConnection"))
-    )
-);
+
 
 
 // Add services to the container.
