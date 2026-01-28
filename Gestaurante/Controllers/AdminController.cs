@@ -1,7 +1,6 @@
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
 using Gestaurante.Models.Services;
-using Gestaurante.Models.Services;
 using Gestaurante.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -69,6 +68,28 @@ namespace Gestaurante.Controllers
             {
                 var empleados = _staffService.GetAllUsers();
                 return ResponseHelper.SendResponse(empleados);
+            }
+            catch (Exception ex)
+            {
+                return ResponseHelper.SendError(new
+                {
+                    message = ex.Message,
+                    detail = ex.InnerException?.Message
+                }, 500);
+            }
+        }
+
+        [HttpGet("user/{id}")]
+        public IActionResult GetUniqueUser(Guid id)
+        {
+            try
+            {
+                var obj = new
+                {
+                    id
+                };
+                var empleado = _staffService.GetFullUser(id);
+                return ResponseHelper.SendResponse(empleado);
             }
             catch (Exception ex)
             {
