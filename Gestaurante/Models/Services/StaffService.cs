@@ -65,7 +65,21 @@ namespace Gestaurante.Models.Services
             return new EmpleadoBasicDTO(
                     empleado.Id,
                     tipo
-                ); ;
+                );
+        }
+
+        public EmpleadoFullDTO GetFullUser(Guid id)
+        {
+            var empleado = _db.Empleados.FirstOrDefault(e => e.Id == id);
+            TipoEmpleado tipo;
+            if (empleado is Administrador)
+                tipo = TipoEmpleado.Administrador;
+            else if (empleado is Camarero)
+                tipo = TipoEmpleado.Camarero;
+            else
+                tipo = TipoEmpleado.Cocinero;
+
+            return new EmpleadoFullDTO(empleado.Id, empleado.FirstName, empleado.FirstLastName, empleado.SecondLastName, empleado.Email, empleado.DNI, empleado.NUSS, tipo);
         }
     }
 }
