@@ -160,7 +160,7 @@ namespace Gestaurante.Migrations
                     b.Property<DateTime>("FechaFactura")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
 
                     b.Property<Guid?>("IdPedido")
                         .HasColumnType("uuid");
@@ -194,7 +194,7 @@ namespace Gestaurante.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
 
                     b.Property<bool>("Disponible")
                         .ValueGeneratedOnAdd()
@@ -275,7 +275,7 @@ namespace Gestaurante.Migrations
                     b.Property<DateTime>("FechaPedido")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
 
                     b.HasKey("IdPedido")
                         .HasName("PK_Pedidos");
@@ -293,7 +293,7 @@ namespace Gestaurante.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()
