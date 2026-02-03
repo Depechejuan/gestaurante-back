@@ -8,6 +8,7 @@ namespace Gestaurante.Models.Entities
     public abstract class Empleado
     {
         [Required]
+        [Key]
         public Guid Id { get; protected set; }
 
         [Required]
@@ -38,7 +39,7 @@ namespace Gestaurante.Models.Entities
         [Nuss]
         public string NUSS { get; protected set; } = string.Empty;
 
-        public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; protected set; }
         public Empleado() { }
 
