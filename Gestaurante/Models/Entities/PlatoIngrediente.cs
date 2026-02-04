@@ -1,4 +1,8 @@
-﻿namespace Gestaurante.Models.Entities
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace Gestaurante.Models.Entities
+
 {
     public class PlatoIngrediente
     {
@@ -10,7 +14,7 @@
         [ForeignKey("Ingrediente")]
         public Guid IdIngrediente { get; set; }
 
-            // Propiedades de navegación
+        // Propiedades de navegación
         public virtual Plato Plato { get; set; } = null!;
         public virtual Ingrediente Ingrediente { get; set; } = null!;
 

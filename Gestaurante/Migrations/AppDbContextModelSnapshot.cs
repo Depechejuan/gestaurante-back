@@ -4,6 +4,7 @@ using Gestaurante.Models.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
 #nullable disable
 
@@ -16,58 +17,68 @@ namespace Gestaurante.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.0")
-                .HasAnnotation("Relational:MaxIdentifierLength", 64);
+                .HasAnnotation("ProductVersion", "9.0.1")
+                .HasAnnotation("Relational:MaxIdentifierLength", 63);
+
+            NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
             modelBuilder.Entity("Gestaurante.Models.Entities.Empleado", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("char(36)");
+                        .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DNI")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)");
 
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("FirstLastName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(150)
-                        .HasColumnType("varchar(150)");
+                        .HasColumnType("character varying(150)");
 
                     b.Property<string>("NUSS")
                         .IsRequired()
-                        .HasColumnType("longtext");
+                        .HasColumnType("text");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasMaxLength(255)
-                        .HasColumnType("varchar(255)");
+                        .HasColumnType("character varying(255)");
 
                     b.Property<string>("SecondLastName")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("varchar(100)");
+                        .HasColumnType("character varying(100)");
 
                     b.Property<int>("Tipo")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
                     b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("datetime(6)");
+                        .HasColumnType("timestamp with time zone");
 
-                    b.HasKey("Id");
+                    b.HasKey("Id")
+                        .HasName("PK_Empleados");
+
+                    b.HasIndex("DNI")
+                        .IsUnique();
+
+                    b.HasIndex("Email")
+                        .IsUnique();
 
                     b.ToTable("Empleados");
 
@@ -80,7 +91,7 @@ namespace Gestaurante.Migrations
                 {
                     b.HasBaseType("Gestaurante.Models.Entities.Empleado");
 
-                    b.HasDiscriminator().HasValue(2);
+                    b.HasDiscriminator().HasValue(0);
                 });
 
             modelBuilder.Entity("Gestaurante.Models.Entities.Camarero", b =>
@@ -88,16 +99,16 @@ namespace Gestaurante.Migrations
                     b.HasBaseType("Gestaurante.Models.Entities.Empleado");
 
                     b.Property<int>("NumeroMesas")
-                        .HasColumnType("int");
+                        .HasColumnType("integer");
 
-                    b.HasDiscriminator().HasValue(0);
+                    b.HasDiscriminator().HasValue(1);
                 });
 
             modelBuilder.Entity("Gestaurante.Models.Entities.Cocinero", b =>
                 {
                     b.HasBaseType("Gestaurante.Models.Entities.Empleado");
 
-                    b.HasDiscriminator().HasValue(1);
+                    b.HasDiscriminator().HasValue(2);
                 });
 #pragma warning restore 612, 618
         }

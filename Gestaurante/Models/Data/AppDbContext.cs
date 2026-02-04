@@ -1,7 +1,5 @@
 ﻿using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
-using System.Collections.Generic;
-using System.Reflection.Emit;
 using Microsoft.EntityFrameworkCore;
 
 //TODO   ChatGPT me ha recomendado la inclusión de indices en cada clase para optimizar las consultas a la BD; valorar como hacerlo y añadirlo cuando acabe con los modelBuilder
@@ -109,6 +107,13 @@ namespace Gestaurante.Models.Data
                 entity.Property(p => p.UpdatedAt)
                     .ValueGeneratedOnAddOrUpdate()
                     .IsRequired(false);
+
+                // Relación con Categoria
+                entity.HasOne(p => p.Categoria)
+                    .WithMany()
+                    .HasForeignKey(p => p.IdCategoria)
+                    .OnDelete(DeleteBehavior.Restrict)
+                    .HasConstraintName("FK_Platos_Categorias");
             });
 
             //modelBuilder de Ingredientes
@@ -159,12 +164,12 @@ namespace Gestaurante.Models.Data
                     .HasName("PK_PlatoIngrediente");
 
                 entity.HasOne(pi => pi.Plato)
-                    .WithMany(pi => pi.PlatoIngrediente)
+                    .WithMany(pi => pi.PlatoIngredientes)
                     .HasForeignKey(pi => pi.IdPlato)
                     .OnDelete(DeleteBehavior.Cascade);
 
                 entity.HasOne(pi => pi.Ingrediente)
-                    .WithMany(pi => pi.PlatoIngrediente)
+                    .WithMany(pi => pi.PlatoIngredientes)
                     .HasForeignKey(pi => pi.IdIngrediente)
                     .OnDelete(DeleteBehavior.Cascade);
             });
@@ -224,9 +229,89 @@ namespace Gestaurante.Models.Data
 
                 entity.Property(f => f.Estado)
                     .IsRequired()
-                    .HasDefaultValue(EstadoFactura.); // Por defecto pendiente;
 
+                // Relación con Pedido (si aplica)
+                entity.HasOne<Pedido>()
+                    .WithMany()
+                    .HasForeignKey("IdPedido") // Asegúrate de que exista esta propiedad en Factura
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            //modelBuilder de Pedido
+
+            modelBuilder.Entity<Pedido>(entity =>
+            {
+                entity.HasKey(p => p.IdPedido)
+                    .HasName("PK_Pedidos");
+                entity.Property(p => p.IdPedido)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+                entity.Property(p => p.FechaPedido)
+                    .IsRequired()
+                    .HasDefaultValueSql("GETUTCDATE()")
+                    .ValueGeneratedOnAdd();
+                entity.Property(p => p.FechaModificacion)
+                    .IsRequired(false)
+                    .ValueGeneratedOnAddOrUpdate();
+                entity.Property(p => p.Estado)
+                    .IsRequired()
+                    .HasDefaultValue(EstadoPedido.PENDIENTE);
+            });
+
+            //modelBuilder de DetallePedido
+            modelBuilder.Entity<DetallePedido>(entity => 
+            {
+                entity.HasKey(dp => dp.IdDetallePedido)
+                    .HasName("PK_DetallePedido");
+                entity.Property(dp => dp.IdDetallePedido)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+                entity.Property(dp => dp.Cantidad)
+                    .IsRequired()
+                    .HasDefaultValue(1);
+                entity.Property(dp => dp.PrecioUnitario)
+                    .IsRequired()
+                    .HasColumnType("decimal(10,2)");
+                entity.HasOne<Plato>()
+                    .WithMany()
+                    .HasForeignKey(dp => dp.IdPlato)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
+            //modelBuilder de Categoria
+            modelBuilder.Entity<Categoria>(entity =>
+            {
+                entity.HasKey(c => c.IdCategoria)
+                    .HasName("PK_Categorias");
+
+                entity.Property(c => c.IdCategoria)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(c => c.Descripcion)
+                    .IsRequired()
+                    .HasMaxLength(255)
+                    .HasComment("Descripción de la categoría");
+
+                entity.HasMany(c => c.Platos)
+                    .WithOne(p => p.Categoria)
+                    .HasForeignKey(p => p.IdCategoria)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
         }
+
     }
 }
+/*
+ * entidades 
+ *  empleado
+ *  categoria
+ *  pedido X
+ *  detallePedido X
+ *  factura X
+ *  mesa X
+ *  plato X
+ *  ingrediente X
+ *  platoIngrediente (tabla intermedia) X
+ *  
+ */
