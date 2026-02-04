@@ -10,7 +10,6 @@ namespace Gestaurante.Models.Entities
         [Required]
         [MaxLength(100)]
         public string Nombre { get; set; } = string.Empty; 
-
         [Required]
         public bool Alergenico { get; set; } = false;
         [Required]

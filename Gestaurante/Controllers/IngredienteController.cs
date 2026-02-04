@@ -59,6 +59,7 @@ namespace Gestaurante.Controllers
                 }, 500);
             }
         }
+        //[Authorize]
         [HttpPost("createArray")]
         public async Task<IActionResult> CreateIngrediente([FromBody, Required] IngredienteDTO[] dto)
         {
@@ -81,6 +82,7 @@ namespace Gestaurante.Controllers
             }
         }
 
+        //[Authorize]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteIngrediente([FromRoute, Required] Guid id)
         {
@@ -99,6 +101,7 @@ namespace Gestaurante.Controllers
             }
         }
 
+        //[Authorize]
         [HttpPut("{id}")]
         public async Task<IActionResult> ModifyIngrediente([FromRoute, Required] Guid id, [FromBody, Required] IngredienteDTO nuevoIngrediente)
         {
@@ -106,7 +109,6 @@ namespace Gestaurante.Controllers
             {
                 await Task.Run (() => _service.UpdateIngrediente(nuevoIngrediente.IdIngrediente, nuevoIngrediente));
                 return ResponseHelper.SendResponse(new { message = "Ingrediente actualizado correctamente." }, 200);
-
             }
             catch (Exception ex)
             {
