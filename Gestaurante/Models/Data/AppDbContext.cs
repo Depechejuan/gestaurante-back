@@ -11,12 +11,6 @@ namespace Gestaurante.Models.Data
 {
     public class AppDbContext : DbContext
     {
-        public enum EstadoFactura
-        {
-            PENDIENTE,
-            PAGADO,
-            CANCELADO
-        }
         public AppDbContext(DbContextOptions<AppDbContext> options): base(options)
         {
         }
@@ -230,7 +224,7 @@ namespace Gestaurante.Models.Data
 
                 entity.Property(f => f.Estado)
                     .IsRequired()
-                    .HasDefaultValue(EstadoFactura(0)); // Por defecto pendiente;
+                    .HasDefaultValue(EstadoFactura.); // Por defecto pendiente;
 
             });
         }

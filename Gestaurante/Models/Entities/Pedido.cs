@@ -29,7 +29,7 @@ namespace Gestaurante.Models.Entities
 
         public Pedido() { }
 
-        public Pedido(Guid idPedido, DateTime fechaPedido, string estado) 
+        public Pedido(Guid idPedido, DateTime fechaPedido, EstadoPedido estado) 
         {
             IdPedido = idPedido;
             FechaPedido = fechaPedido;
@@ -39,13 +39,8 @@ namespace Gestaurante.Models.Entities
         //metodo para agregar platos al pedido
         public void AgregarPlato(Plato plato, int cantidad)
         {
-            var detalle = new DetallePedido
-            {
-                Plato = plato,
-                Pedido = this,
-                Cantidad = cantidad,
-                PrecioUnitario = plato.Precio
-            };
+            var detalle = new DetallePedido(Guid.NewGuid(),plato.IdPlato,this.IdPedido,cantidad,(double)plato.Precio);
+
             DetallesPedido.Add(detalle);
         }
     }

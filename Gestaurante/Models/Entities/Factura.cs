@@ -15,12 +15,12 @@ namespace Gestaurante.Models.Entities
         public Guid NumeroFactura { get; protected set; }
 
         [Required]
-        public double PrecioTotal { get; set; }
-        public double Descuento { get; set; }
+        public decimal PrecioTotal { get; set; }
+        public decimal Descuento { get; set; }
         public EstadoFactura Estado { get; set; } = EstadoFactura.PENDIENTE;
         public DateTime FechaFactura { get; set; }
         public Factura() { }
-        public Factura(Guid numeroFactura, Guid idPlato, double precioTotal, double descuento, EstadoFactura estado) 
+        public Factura(Guid numeroFactura, decimal precioTotal, decimal descuento, EstadoFactura estado) 
         {
             NumeroFactura = numeroFactura;
             PrecioTotal = precioTotal;
