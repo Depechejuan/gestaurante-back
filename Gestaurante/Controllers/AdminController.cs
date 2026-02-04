@@ -100,5 +100,26 @@ namespace Gestaurante.Controllers
                 }, 500);
             }
         }
+
+        [HttpPut("user/{id}")]
+        public async Task<IActionResult> GetUniqueUser([FromRoute] Guid id, [FromBody] EmpleadoFullDTO dto)
+        {
+            try
+            {
+                var newEmpleado = await _registerService.EditarEmpleado(dto);
+                var empleado = ToDTO.EmpleadoToEmpleadoFullDTO(newEmpleado, dto.Tipo);
+                return ResponseHelper.SendResponse(empleado);
+            } catch (Exception ex)
+            {
+                return ResponseHelper.SendError(new
+                {
+                    message = ex.Message,
+                    detail = ex.InnerException?.Message
+                }, 500);
+            }
+
+
+        }
+
     }
 }

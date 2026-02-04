@@ -66,5 +66,44 @@ namespace Gestaurante.Models.Services
 
             return empleado;
         }
+
+
+        public async Task<Empleado?> EditarEmpleado(EmpleadoFullDTO dto)
+        {
+
+            var oldEmpleado = await _db.Empleados.FindAsync(dto.Id);
+            if (oldEmpleado == null)
+                return null;
+
+            if (oldEmpleado.FirstName != dto.Nombre && dto.Nombre != null)
+                oldEmpleado.FirstName = dto.Nombre;
+            if (oldEmpleado.FirstLastName != dto.Apellido1 && dto.Apellido1 != null)
+                oldEmpleado.FirstLastName = dto.Apellido1;
+            if (oldEmpleado.SecondLastName != dto.Apellido2 && dto.Apellido2 != null)
+                oldEmpleado.SecondLastName = dto.Apellido2;
+            if (oldEmpleado.NUSS != dto.NUSS && dto.NUSS != null)
+                oldEmpleado.NUSS = dto.NUSS;
+            if (oldEmpleado.DNI != dto.DNI && dto.DNI != null)
+                oldEmpleado.DNI = dto.DNI;
+            oldEmpleado.UpdatedAt = DateTime.UtcNow;
+
+
+            string password = BCrypt.Net.BCrypt.HashPassword(
+                    dto.Password,
+                    BCrypt.Net.BCrypt.GenerateSalt(12)
+                );
+
+            if (oldEmpleado.Password != password && dto.Password != null)
+            {
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(
+                    dto.Password,
+                    BCrypt.Net.BCrypt.GenerateSalt(12)
+                );
+                oldEmpleado.Password = hashedPassword;
+            }
+
+            await _db.SaveChangesAsync();
+            return oldEmpleado;
+        }
     }
 }
