@@ -24,28 +24,5 @@ namespace Gestaurante.Controllers
                 return ResponseHelper.SendResponse(platos);
         
         }
-        //private readonly Plato _platoService;
-        //public PlatoController(Plato platoService)
-        //{
-        //    _platoService = platoService;
-        //}
-        //[HttpGet("getall")]
-        //public IActionResult GetAllPlatos()
-        //{
-        //    try
-        //    {
-        //        var platos = _platoService.GetAllPlatos();
-        //        return ResponseHelper.SendResponse(platos);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ResponseHelper.SendError(new
-        //        {
-        //            message = ex.Message,
-        //            detail = ex.InnerException?.Message
-        //        }, 500);
-        //    }
-        //}
     }
-    
 }
