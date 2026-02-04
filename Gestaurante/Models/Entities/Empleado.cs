@@ -17,30 +17,30 @@ namespace Gestaurante.Models.Entities
         [Required]
         [MinLength(8)]
         [MaxLength(255)]
-        public string Password { get; protected set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(150)]
-        public string FirstName { get; protected set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(100)]
-        public string FirstLastName { get; protected set; } = string.Empty;
+        public string FirstLastName { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(100)]    
-        public string SecondLastName { get; protected set; } = string.Empty;
+        public string SecondLastName { get; set; } = string.Empty;
 
         [Required]
         [MinLength(9)]
         [Dni]
-        public string DNI { get; protected set; } = string.Empty;
+        public string DNI { get; set; } = string.Empty;
         [MinLength(13)]
         [Nuss]
-        public string NUSS { get; protected set; } = string.Empty;
+        public string NUSS { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? UpdatedAt { get; protected set; }
+        public DateTime? UpdatedAt { get; set; }
         public Empleado() { }
 
         protected Empleado(Guid id, string password, string firstName, string firstLastName, string secondLastName, string dni, string nuss)
