@@ -17,7 +17,7 @@ namespace Gestaurante.Models.Services
             _db = db;
         }
 
-        public Empleado CrearEmpleado(RegistroDTO dto)
+        public async Task<Empleado> CrearEmpleado(RegistroDTO dto)
         {
             // Esta línea llama a Bcrypt para hashear el password, y es el parámetro que se envía al constructor.
             // Así podemos almacenar la contraseña hasheada y si hay una vulnerabilidad, no se podrá obtener la contraseña real.
@@ -61,7 +61,7 @@ namespace Gestaurante.Models.Services
                 _ => throw new ValidationException("Tipo de empleado no válido")
             };
 
-            _db.Empleados.Add(empleado);
+            await _db.Empleados.AddAsync(empleado);
             _db.SaveChanges();
 
             return empleado;
@@ -81,10 +81,6 @@ namespace Gestaurante.Models.Services
                 oldEmpleado.FirstLastName = dto.Apellido1;
             if (oldEmpleado.SecondLastName != dto.Apellido2 && dto.Apellido2 != null)
                 oldEmpleado.SecondLastName = dto.Apellido2;
-            if (oldEmpleado.NUSS != dto.NUSS && dto.NUSS != null)
-                oldEmpleado.NUSS = dto.NUSS;
-            if (oldEmpleado.DNI != dto.DNI && dto.DNI != null)
-                oldEmpleado.DNI = dto.DNI;
             oldEmpleado.UpdatedAt = DateTime.UtcNow;
 
 
