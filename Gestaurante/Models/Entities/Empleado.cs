@@ -34,10 +34,10 @@ namespace Gestaurante.Models.Entities
         [Required]
         [MinLength(9)]
         [Dni]
-        public string DNI { get; set; } = string.Empty;
+        public string DNI { get; protected set; } = string.Empty;
         [MinLength(13)]
         [Nuss]
-        public string NUSS { get; set; } = string.Empty;
+        public string NUSS { get; protected set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
