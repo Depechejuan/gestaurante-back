@@ -17,7 +17,7 @@ namespace Gestaurante.Models.Services
             _db = db;
         }
 
-        public Empleado CrearEmpleado(RegistroDTO dto)
+        public async Task<Empleado> CrearEmpleado(RegistroDTO dto)
         {
             // Esta línea llama a Bcrypt para hashear el password, y es el parámetro que se envía al constructor.
             // Así podemos almacenar la contraseña hasheada y si hay una vulnerabilidad, no se podrá obtener la contraseña real.
@@ -61,10 +61,45 @@ namespace Gestaurante.Models.Services
                 _ => throw new ValidationException("Tipo de empleado no válido")
             };
 
-            _db.Empleados.Add(empleado);
+            await _db.Empleados.AddAsync(empleado);
             _db.SaveChanges();
 
             return empleado;
+        }
+
+
+        public async Task<Empleado?> EditarEmpleado(EmpleadoFullDTO dto)
+        {
+
+            var oldEmpleado = await _db.Empleados.FindAsync(dto.Id);
+            if (oldEmpleado == null)
+                return null;
+
+            if (oldEmpleado.FirstName != dto.Nombre && dto.Nombre != null)
+                oldEmpleado.FirstName = dto.Nombre;
+            if (oldEmpleado.FirstLastName != dto.Apellido1 && dto.Apellido1 != null)
+                oldEmpleado.FirstLastName = dto.Apellido1;
+            if (oldEmpleado.SecondLastName != dto.Apellido2 && dto.Apellido2 != null)
+                oldEmpleado.SecondLastName = dto.Apellido2;
+            oldEmpleado.UpdatedAt = DateTime.UtcNow;
+
+
+            string password = BCrypt.Net.BCrypt.HashPassword(
+                    dto.Password,
+                    BCrypt.Net.BCrypt.GenerateSalt(12)
+                );
+
+            if (oldEmpleado.Password != password && dto.Password != null)
+            {
+                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(
+                    dto.Password,
+                    BCrypt.Net.BCrypt.GenerateSalt(12)
+                );
+                oldEmpleado.Password = hashedPassword;
+            }
+
+            await _db.SaveChangesAsync();
+            return oldEmpleado;
         }
     }
 }
