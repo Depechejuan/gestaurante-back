@@ -5,24 +5,60 @@ using Gestaurante.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.ComponentModel.DataAnnotations;
+
 namespace Gestaurante.Controllers
 {
 
-        [ApiController]
-        [Route("[controller]")]
-        public class PlatoController : ControllerBase
+    [ApiController]
+    [Route("[controller]")]
+    public class PlatoController : ControllerBase
+    {
+        private readonly PlatoService _service;
+        public PlatoController(PlatoService servicio)
         {
-        [HttpGet("getall")]
-        public IActionResult GetAllPlatos()
+            _service = servicio;
+        }
+
+        [HttpGet("getAll")]
+        public async Task<IActionResult> GetAll()
         {
-            var platos = new List<Plato>
+            try
+            {
+                var platos = await Task.Run(() => _service.GetAll());
+                List<PlatoDTO> resultado = new List<PlatoDTO>();
+                for (int i = 0; i < platos.Count; i++)
                 {
-                    new Plato {  Nombre = "Spaghetti Carbonara", Descripcion = "Pasta con salsa de huevo, queso y panceta.", Precio = 12.99M },
-                    new Plato {  Nombre = "Margherita Pizza", Descripcion = "Pizza clásica con tomate, mozzarella y albahaca.", Precio = 10.99M },
-                    new Plato {  Nombre = "Caesar Salad", Descripcion = "Ensalada con lechuga romana, crutones y aderezo César.", Precio = 8.99M }
-                };
-                return ResponseHelper.SendResponse(platos);
-        
+                    resultado.Add(new PlatoDTO(platos[i].Nombre, platos[i].Descripcion, platos[i].Imagen, platos[i].Disponible, platos[i].Precio, platos[i].Categoria, platos[i].PlatoIngredientes));
+                }
+                return ResponseHelper.SendResponse(resultado, 200);
+            }
+            catch (Exception ex)
+            {
+                return ResponseHelper.SendError(new
+                {
+                    message = ex.Message,
+                    detail = ex.InnerException?.Message
+                }, 500);
+            }
+        }
+        [HttpPost("create")]
+        public async Task<IActionResult> CreatePlato([FromBody, Required] PlatoDTO dto)
+        {
+            try
+            {
+                await Task.Run(() => _service.CreatePlato(dto));
+                return ResponseHelper.SendResponse(dto, 201);
+            }
+            catch (Exception ex)
+            {
+                return ResponseHelper.SendError(new
+                {
+                    message = ex.Message,
+                    detail = ex.InnerException?.Message
+                }, 500);
+            }
         }
     }
 }
+
+

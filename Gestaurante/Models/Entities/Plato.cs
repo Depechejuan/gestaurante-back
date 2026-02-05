@@ -17,7 +17,6 @@ namespace Gestaurante.Models.Entities
         public string Imagen { get; set; } = string.Empty;
         [Required]
         public bool Disponible { get; set; } = false;
-        public virtual ICollection<PlatoIngrediente> PlatoIngredientes { get; set; } = new List<PlatoIngrediente>();
         [Required]
         [Range(0, double.MaxValue, ErrorMessage = "El precio no puede ser negativo")]
         public decimal Precio { get; set; }
@@ -26,9 +25,8 @@ namespace Gestaurante.Models.Entities
         public DateTime? UpdatedAt { get; protected set; }
 
         [Required]
-        public Guid IdCategoria { get; set; } // Clave foránea
-
-        public virtual Categoria Categoria { get; set; } = null!; // Propiedad de navegación
+        public virtual Categoria Categoria { get; set; } = null!;
+        public virtual ICollection<PlatoIngrediente> PlatoIngredientes { get; set; } = new List<PlatoIngrediente>();
 
         public virtual ICollection<Plato> Platos { get; set; } = new List<Plato>();
 
@@ -41,7 +39,6 @@ namespace Gestaurante.Models.Entities
             Imagen = imagen;
             Disponible = disponibilidad;
             Precio = precio;
-
             CreatedAt = DateTime.UtcNow;
         }
     }

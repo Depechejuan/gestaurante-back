@@ -1,6 +1,7 @@
 ﻿using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
 {
@@ -12,12 +13,11 @@ namespace Gestaurante.Models.Services
         {
             _db = db;
         }
-        public List<Ingrediente> GetAll()
+        public async Task<List<Ingrediente>> GetAll()
         {
-            return _db.Ingredientes.ToList();
-            
+            return await _db.Ingredientes.ToListAsync();
         }
-        public Ingrediente CreateIngrediente(IngredienteDTO dto)
+        public async Task CreateIngrediente(IngredienteDTO dto)
         {
             var ingrediente = new Ingrediente(
                 Guid.NewGuid(),
@@ -26,11 +26,10 @@ namespace Gestaurante.Models.Services
                 dto.Disponible,
                 dto.Imagen
             );
-            _db.Ingredientes.Add(ingrediente);
-            _db.SaveChanges();
-            return ingrediente;
+            await _db.Ingredientes.AddAsync(ingrediente);
+            await _db.SaveChangesAsync();
         }
-        public void CreateIngrediente(IngredienteDTO[] dto)
+        public async Task CreateIngrediente(IngredienteDTO[] dto)
         {
             for (int i = 0; i < dto.Length; i++)
             {
@@ -41,23 +40,23 @@ namespace Gestaurante.Models.Services
                     dto[i].Disponible,
                     dto[i].Imagen
                 );
-                _db.Ingredientes.Add(ingrediente);
+                await _db.Ingredientes.AddAsync(ingrediente);
             }
-            _db.SaveChanges();
+             await _db.SaveChangesAsync();
         }
-        public void DeleteIngrediente(Guid idIngrediente)
+        public async Task DeleteIngrediente(Guid idIngrediente)
         {
-            var ingrediente = _db.Ingredientes.Find(idIngrediente);
+            var ingrediente = await _db.Ingredientes.FindAsync(idIngrediente);
             if (ingrediente == null)
             {
                 throw new Exception("Ingrediente no encontrado");
             }
             _db.Ingredientes.Remove(ingrediente);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
-        public void UpdateIngrediente(Guid idIngrediente, IngredienteDTO dto)
+        public async Task UpdateIngrediente(Guid idIngrediente, IngredienteDTO dto)
         {
-            var ingrediente =  _db.Ingredientes.Find(idIngrediente);
+             var ingrediente = await _db.Ingredientes.FindAsync(idIngrediente);
             if (ingrediente == null)
             {
                 throw new Exception("Ingrediente no encontrado");
@@ -67,7 +66,7 @@ namespace Gestaurante.Models.Services
             ingrediente.Disponible = dto.Disponible;
             ingrediente.Imagen = dto.Imagen;
             ingrediente.UpdatedAt = DateTime.UtcNow;
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
         }
     }
 }

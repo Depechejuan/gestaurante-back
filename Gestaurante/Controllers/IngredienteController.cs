@@ -47,8 +47,8 @@ namespace Gestaurante.Controllers
         {
             try
             {
-                var ingrediente = await Task.Run(() => _service.CreateIngrediente(dto));
-                return ResponseHelper.SendResponse(ingrediente, 201);
+                await Task.Run(() => _service.CreateIngrediente(dto));
+                return ResponseHelper.SendResponse(dto, 201);
             }
             catch (Exception ex)
             {
@@ -68,7 +68,7 @@ namespace Gestaurante.Controllers
             {
                 for (int i = 0; i < dto.Length; i++)
                 {
-                var ingrediente = await Task.Run(() => _service.CreateIngrediente(dto[i]));
+                await Task.Run(() => _service.CreateIngrediente(dto[i]));
                 }
                 return ResponseHelper.SendResponse("Ingredientes creados correctamente", 201);
             }

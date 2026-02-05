@@ -111,7 +111,7 @@ namespace Gestaurante.Models.Data
                 // Relación con Categoria
                 entity.HasOne(p => p.Categoria)
                     .WithMany()
-                    .HasForeignKey(p => p.IdCategoria)
+                    .HasForeignKey(p => p.Categoria)
                     .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("FK_Platos_Categorias");
             });
@@ -296,7 +296,7 @@ namespace Gestaurante.Models.Data
 
                 entity.HasMany(c => c.Platos)
                     .WithOne(p => p.Categoria)
-                    .HasForeignKey(p => p.IdCategoria)
+                    .HasForeignKey(p => p.Categoria)
                     .OnDelete(DeleteBehavior.Restrict);
             });
         }
