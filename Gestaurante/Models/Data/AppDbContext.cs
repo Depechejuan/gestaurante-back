@@ -77,7 +77,7 @@ namespace Gestaurante.Models.Data
                     .HasComment("Nombre del plato");
 
                 entity.HasIndex(p => p.Nombre)
-                    .IsUnique(); // Solo si queremos nombres únicos por cada plato
+                    .IsUnique();
 
                 entity.Property(p => p.Descripcion)
                     .IsRequired()
@@ -110,8 +110,8 @@ namespace Gestaurante.Models.Data
 
                 // Relación con Categoria
                 entity.HasOne(p => p.Categoria)
-                    .WithMany()
-                    .HasForeignKey(p => p.Categoria)
+                    .WithMany(c => c.Platos)
+                    .HasForeignKey(p => p.IdCategoria)
                     .OnDelete(DeleteBehavior.Restrict)
                     .HasConstraintName("FK_Platos_Categorias");
             });
@@ -295,8 +295,8 @@ namespace Gestaurante.Models.Data
                     .HasComment("Descripción de la categoría");
 
                 entity.HasMany(c => c.Platos)
-                    .WithOne(p => p.Categoria)
-                    .HasForeignKey(p => p.Categoria)
+                    .WithOne(p => p.Categoria) // Propiedad de navegación en Plato
+                    .HasForeignKey(p => p.IdCategoria) // Clave foránea en Plato
                     .OnDelete(DeleteBehavior.Restrict);
             });
         }

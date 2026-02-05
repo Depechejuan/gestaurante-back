@@ -7,30 +7,36 @@ namespace Gestaurante.Models.Entities
         [Required]
         [MaxLength(100)]
         [Key]
-        public Guid IdPlato { get; private set; }
+        public Guid IdPlato { get; set; }
 
         [Required]
         public string Nombre { get; set; } = string.Empty;
+
         [Required]
         public string Descripcion { get; set; } = string.Empty;
 
         public string Imagen { get; set; } = string.Empty;
+
         [Required]
         public bool Disponible { get; set; } = false;
+
         [Required]
         [Range(0, double.MaxValue, ErrorMessage = "El precio no puede ser negativo")]
         public decimal Precio { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? UpdatedAt { get; protected set; }
+
+        public DateTime? UpdatedAt { get; set; }
 
         [Required]
-        public virtual Categoria Categoria { get; set; } = null!;
+        public Guid IdCategoria { get; set; } // Clave foránea
+
+        public virtual Categoria Categoria { get; set; } // Propiedad de navegación
+
         public virtual ICollection<PlatoIngrediente> PlatoIngredientes { get; set; } = new List<PlatoIngrediente>();
 
-        public virtual ICollection<Plato> Platos { get; set; } = new List<Plato>();
-
         public Plato() { }
+
         public Plato(Guid idPlato, string nombre, string descripcion, string imagen, bool disponibilidad, decimal precio)
         {
             IdPlato = idPlato;
