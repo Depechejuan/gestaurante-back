@@ -79,6 +79,7 @@ namespace Gestaurante.Models.Services
                 tipo = TipoEmpleado.Camarero;
             else
                 tipo = TipoEmpleado.Cocinero;
+            Console.WriteLine(empleado);
 
             return new EmpleadoFullDTO(empleado.Id, empleado.FirstName, empleado.FirstLastName, empleado.SecondLastName, empleado.Email, empleado.DNI, empleado.NUSS, tipo);
         }

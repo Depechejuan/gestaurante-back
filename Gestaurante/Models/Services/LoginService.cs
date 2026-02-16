@@ -17,6 +17,8 @@ namespace Gestaurante.Models.Services
 
         public async Task<EmpleadoLoginDTO?> Login(LoginDTO dto)
         {
+            Console.WriteLine(dto.Email);
+            Console.WriteLine(dto.Password);
             var empleado = await _db.Empleados.FirstOrDefaultAsync(e => e.Email.ToLower() == dto.Email.ToLower());
 
             if (empleado == null)

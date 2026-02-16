@@ -68,10 +68,10 @@ namespace Gestaurante.Models.Services
         }
 
 
-        public async Task<Empleado?> EditarEmpleado(EmpleadoFullDTO dto)
+        public async Task<Empleado?> EditarEmpleado(Guid id, EmpleadoFullDTO dto)
         {
 
-            var oldEmpleado = await _db.Empleados.FindAsync(dto.Id);
+            var oldEmpleado = await _db.Empleados.FindAsync(id);
             if (oldEmpleado == null)
                 return null;
 
@@ -81,21 +81,15 @@ namespace Gestaurante.Models.Services
                 oldEmpleado.FirstLastName = dto.Apellido1;
             if (oldEmpleado.SecondLastName != dto.Apellido2 && dto.Apellido2 != null)
                 oldEmpleado.SecondLastName = dto.Apellido2;
+
             oldEmpleado.UpdatedAt = DateTime.UtcNow;
 
-
-            string password = BCrypt.Net.BCrypt.HashPassword(
-                    dto.Password,
-                    BCrypt.Net.BCrypt.GenerateSalt(12)
-                );
-
-            if (oldEmpleado.Password != password && dto.Password != null)
+            if (!string.IsNullOrWhiteSpace(dto.Password))
             {
-                string hashedPassword = BCrypt.Net.BCrypt.HashPassword(
+                oldEmpleado.Password = BCrypt.Net.BCrypt.HashPassword(
                     dto.Password,
                     BCrypt.Net.BCrypt.GenerateSalt(12)
                 );
-                oldEmpleado.Password = hashedPassword;
             }
 
             await _db.SaveChangesAsync();
