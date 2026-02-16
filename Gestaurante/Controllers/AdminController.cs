@@ -80,15 +80,11 @@ namespace Gestaurante.Controllers
         }
 
         [HttpGet("user/{id}")]
-        public IActionResult GetUniqueUser(Guid id)
+        public async Task<IActionResult> GetFullUser(Guid id)
         {
             try
             {
-                var obj = new
-                {
-                    id
-                };
-                var empleado = _staffService.GetFullUser(id);
+                var empleado = await _staffService.GetFullUser(id);
                 return ResponseHelper.SendResponse(empleado);
             }
             catch (Exception ex)
@@ -106,8 +102,11 @@ namespace Gestaurante.Controllers
         {
             try
             {
-                var newEmpleado = await _registerService.EditarEmpleado(dto);
+                var newEmpleado = await _registerService.EditarEmpleado(id, dto);
+                if (newEmpleado == null)
+                    throw new Exception("Empleado no encontrado");
                 var empleado = ToDTO.EmpleadoToEmpleadoFullDTO(newEmpleado, dto.Tipo);
+
                 return ResponseHelper.SendResponse(empleado);
             } catch (Exception ex)
             {
@@ -117,8 +116,6 @@ namespace Gestaurante.Controllers
                     detail = ex.InnerException?.Message
                 }, 500);
             }
-
-
         }
 
     }
