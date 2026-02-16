@@ -62,7 +62,7 @@ namespace Gestaurante.Controllers
                 var token = _jwtService.GenerarToken(empleado);
                 var expiracion = _jwtService.GetExpiracion();
 
-                var response = new TokenDTO(token, expiracion, empleado.Id);
+                var response = new TokenDTO(token, expiracion, empleado.Id, empleado.Tipo);
 
                 return ResponseHelper.SendResponse(response, 201);
             }
