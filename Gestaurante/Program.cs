@@ -85,6 +85,8 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<RegisterService>();
 builder.Services.AddScoped<StaffService>();
 builder.Services.AddScoped<IngredienteService>();
+builder.Services.AddScoped<CategoriaService>();
+builder.Services.AddScoped<PlatoService>();
 
 
 

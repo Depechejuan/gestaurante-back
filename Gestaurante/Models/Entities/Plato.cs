@@ -35,9 +35,7 @@ namespace Gestaurante.Models.Entities
 
         public virtual ICollection<PlatoIngrediente> PlatoIngredientes { get; set; } = new List<PlatoIngrediente>();
 
-        public Plato() { }
-
-        public Plato(Guid idPlato, string nombre, string descripcion, string imagen, bool disponibilidad, decimal precio)
+        public Plato(Guid idPlato, string nombre, string descripcion, string imagen, Categoria categoria, bool disponibilidad, decimal precio)
         {
             IdPlato = idPlato;
             Nombre = nombre;
@@ -45,6 +43,7 @@ namespace Gestaurante.Models.Entities
             Imagen = imagen;
             Disponible = disponibilidad;
             Precio = precio;
+            Categoria = categoria;
             CreatedAt = DateTime.UtcNow;
         }
     }

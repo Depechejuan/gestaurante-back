@@ -25,8 +25,10 @@ namespace Gestaurante.Models.Services
                     dto.Nombre,
                     dto.Descripcion,
                     dto.Imagen,
+                    dto.Categoria,
                     dto.Disponible,
                     dto.Precio
+                    
                 );
                 await _db.Platos.AddAsync(plato);
                 await _db.SaveChangesAsync();

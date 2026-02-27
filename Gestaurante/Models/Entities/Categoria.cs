@@ -17,5 +17,10 @@ namespace Gestaurante.Models.Entities
             IdCategoria = idCategoria;
             Descripcion = descripcion;
         }
+        public Categoria(string descripcion)
+        {
+            IdCategoria = Guid.NewGuid();
+            Descripcion = descripcion;
+        }
     }
 }

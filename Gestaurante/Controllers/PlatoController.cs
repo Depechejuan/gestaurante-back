@@ -28,7 +28,7 @@ namespace Gestaurante.Controllers
                 List<PlatoDTO> resultado = new List<PlatoDTO>();
                 for (int i = 0; i < platos.Count; i++)
                 {
-                    resultado.Add(new PlatoDTO(platos[i].Nombre, platos[i].Descripcion, platos[i].Imagen, platos[i].Disponible, platos[i].Precio, platos[i].Categoria, platos[i].PlatoIngredientes));
+                    resultado.Add(new PlatoDTO(platos[i].Nombre, platos[i].Descripcion, platos[i].Imagen, platos[i].Disponible, platos[i].Precio, platos[i].Categoria , platos[i].PlatoIngredientes));
                 }
                 return ResponseHelper.SendResponse(resultado, 200);
             }

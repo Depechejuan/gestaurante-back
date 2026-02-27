@@ -18,7 +18,7 @@ namespace Gestaurante.Models.DTO
 
 
         [JsonConstructor]
-        public PlatoDTO(string Nombre, string Descripcion, string Imagen, bool Disponible, decimal Precio, Categoria Categoria, ICollection<PlatoIngrediente> ingredientes)
+        public PlatoDTO(string Nombre, string Descripcion, string Imagen, bool Disponible, decimal Precio, string Categoria, ICollection<PlatoIngrediente> ingredientes)
         {
             this.IdPlato = new Guid();
             this.Nombre = Nombre;
@@ -26,7 +26,8 @@ namespace Gestaurante.Models.DTO
             this.Imagen = Imagen;
             this.Disponible = Disponible;
             this.Precio = Precio;
-            this.Categoria = Categoria;
+            Categoria newCat = new Categoria(Categoria);
+            this.Categoria = newCat;
             this.Ingredientes = ingredientes;
         }
         public PlatoDTO(Guid PlatoId, string Nombre, string Descripcion, string Imagen, bool Disponible, decimal Precio, Categoria Categoria, ICollection<PlatoIngrediente> ingredientes) 
