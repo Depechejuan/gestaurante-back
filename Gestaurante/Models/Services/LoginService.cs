@@ -1,6 +1,7 @@
 ﻿using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 using System.Reflection.Metadata.Ecma335;
 
 namespace Gestaurante.Models.Services
@@ -14,11 +15,11 @@ namespace Gestaurante.Models.Services
             _db = db;
         }
 
-        public EmpleadoLoginDTO? Login(LoginDTO dto)
+        public async Task<EmpleadoLoginDTO?> Login(LoginDTO dto)
         {
-            var empleado = _db.Empleados.FirstOrDefault(e => e.Email.ToLower() == dto.Email.ToLower());
+            var empleado = await _db.Empleados.FirstOrDefaultAsync(e => e.Email.ToLower() == dto.Email.ToLower());
 
-            if (empleado == null)
+            if (empleado == null || !empleado.Activo)
                 return null;
 
             TipoEmpleado tipo;
@@ -41,8 +42,13 @@ namespace Gestaurante.Models.Services
 
         public bool ValidarCredenciales(string passwordHashed, string password)
         {
+            if (string.IsNullOrEmpty(passwordHashed) || string.IsNullOrEmpty(password))
+                return false;
+
             // Verificar la contraseña
-            return BCrypt.Net.BCrypt.Verify(password, passwordHashed);
+            if (BCrypt.Net.BCrypt.Verify(password, passwordHashed))
+                return true;
+            return false;
         }
     }
 }

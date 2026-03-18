@@ -10,7 +10,7 @@ namespace Gestaurante.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
     public class AdminController : ControllerBase
     {
         private readonly RegisterService _registerService;
@@ -24,11 +24,11 @@ namespace Gestaurante.Controllers
 
 
         [HttpPost("register")]
-        public IActionResult Register([FromBody] RegistroDTO dto)
+        public async Task<IActionResult> Register([FromBody] RegistroDTO dto)
         {
             try
             {
-                var empleado = _registerService.CrearEmpleado(dto);
+                var empleado = await _registerService.CrearEmpleado(dto);
                 return ResponseHelper.SendResponse(new { id = empleado.Id });
             }
             catch (Exception ex)
@@ -42,11 +42,11 @@ namespace Gestaurante.Controllers
         }
 
         [HttpPost("getbasicuser")]
-        public IActionResult GetBasicUser([FromBody] IdRequestDTO user)
+        public async Task<IActionResult> GetBasicUser([FromBody] IdRequestDTO user)
         {
             try
             {
-                var empleado = _staffService.GetBasicStaff(user.Id);
+                var empleado = await _staffService.GetBasicStaff(user.Id);
                 if (empleado == null)
                     throw new Exception("Empleado no encontrado");
                 return ResponseHelper.SendResponse(empleado);
@@ -62,11 +62,11 @@ namespace Gestaurante.Controllers
         }
 
         [HttpPost("getusers")]
-        public IActionResult GetUsers()
+        public async Task<IActionResult> GetUsers()
         {
             try
             {
-                var empleados = _staffService.GetAllUsers();
+                var empleados = await _staffService.GetAllUsers();
                 return ResponseHelper.SendResponse(empleados);
             }
             catch (Exception ex)
@@ -80,15 +80,11 @@ namespace Gestaurante.Controllers
         }
 
         [HttpGet("user/{id}")]
-        public IActionResult GetUniqueUser(Guid id)
+        public async Task<IActionResult> GetFullUser(Guid id)
         {
             try
             {
-                var obj = new
-                {
-                    id
-                };
-                var empleado = _staffService.GetFullUser(id);
+                var empleado = await _staffService.GetFullUser(id);
                 return ResponseHelper.SendResponse(empleado);
             }
             catch (Exception ex)
@@ -100,5 +96,27 @@ namespace Gestaurante.Controllers
                 }, 500);
             }
         }
+
+        [HttpPut("user/{id}")]
+        public async Task<IActionResult> GetUniqueUser([FromRoute] Guid id, [FromBody] EmpleadoFullDTO dto)
+        {
+            try
+            {
+                var newEmpleado = await _registerService.EditarEmpleado(id, dto);
+                if (newEmpleado == null)
+                    throw new Exception("Empleado no encontrado");
+                var empleado = ToDTO.EmpleadoToEmpleadoFullDTO(newEmpleado, dto.Tipo);
+
+                return ResponseHelper.SendResponse(empleado);
+            } catch (Exception ex)
+            {
+                return ResponseHelper.SendError(new
+                {
+                    message = ex.Message,
+                    detail = ex.InnerException?.Message
+                }, 500);
+            }
+        }
+
     }
 }

@@ -6,7 +6,8 @@ namespace Gestaurante.Models.Entities
     {
         [Required]
         [MaxLength(100)]
-        public Guid IdPlato { get; protected set; }
+        [Key]
+        public Guid IdPlato { get; private set; }
 
         [Required]
         public string Nombre { get; set; } = string.Empty;
@@ -20,7 +21,8 @@ namespace Gestaurante.Models.Entities
         [Required]
         [Range(0, double.MaxValue, ErrorMessage = "El precio no puede ser negativo")]
         public decimal Precio { get; set; }
-        public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; protected set; }
 
         [Required]
