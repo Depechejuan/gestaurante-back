@@ -111,6 +111,7 @@ builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<RegisterService>();
 builder.Services.AddScoped<StaffService>();
+builder.Services.AddScoped<PedidoService>();
 builder.Services.AddScoped<MesaService>();
 builder.Services.AddScoped<FacturaService>();
 builder.Services.AddHttpClient<IEmployeeImageService, CloudinaryEmployeeImageService>();
