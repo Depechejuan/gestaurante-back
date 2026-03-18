@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestaurante.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20260128151309_ModelsCompletados")]
-    partial class ModelsCompletados
+    [Migration("20260203214557_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -163,7 +163,7 @@ namespace Gestaurante.Migrations
                     b.Property<DateTime>("FechaFactura")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
 
                     b.Property<Guid?>("IdPedido")
                         .HasColumnType("uuid");
@@ -197,7 +197,7 @@ namespace Gestaurante.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
 
                     b.Property<bool>("Disponible")
                         .ValueGeneratedOnAdd()
@@ -278,7 +278,7 @@ namespace Gestaurante.Migrations
                     b.Property<DateTime>("FechaPedido")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
 
                     b.HasKey("IdPedido")
                         .HasName("PK_Pedidos");
@@ -296,7 +296,7 @@ namespace Gestaurante.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
 
                     b.Property<string>("Descripcion")
                         .IsRequired()

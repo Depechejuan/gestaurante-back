@@ -42,6 +42,10 @@ namespace Gestaurante.Models.Data
                     .IsRequired()
                     .HasMaxLength(100);
 
+                entity.Property(e => e.Activo)
+                    .IsRequired()
+                    .HasDefaultValue(true);
+
                 entity.HasIndex(e => e.Email)
                     .IsUnique();
 
@@ -101,7 +105,7 @@ namespace Gestaurante.Models.Data
 
                 entity.Property(p => p.CreatedAt)
                     .IsRequired()
-                    .HasDefaultValueSql("GETUTCDATE()")
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'")
                     .ValueGeneratedOnAdd();
 
                 entity.Property(p => p.UpdatedAt)
@@ -149,7 +153,7 @@ namespace Gestaurante.Models.Data
 
                 entity.Property(i => i.CreatedAt)
                     .IsRequired()
-                    .HasDefaultValueSql("GETUTCDATE()")
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'")
                     .ValueGeneratedOnAdd();
 
                 entity.Property(i => i.UpdatedAt)
@@ -214,7 +218,7 @@ namespace Gestaurante.Models.Data
 
                 entity.Property(f => f.FechaFactura)
                     .IsRequired()
-                    .HasDefaultValueSql("GETUTCDATE()")
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'")
                     .ValueGeneratedOnAdd();
 
                 entity.Property(f => f.PrecioTotal)
@@ -249,7 +253,7 @@ namespace Gestaurante.Models.Data
                     .ValueGeneratedOnAdd();
                 entity.Property(p => p.FechaPedido)
                     .IsRequired()
-                    .HasDefaultValueSql("GETUTCDATE()")
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'")
                     .ValueGeneratedOnAdd();
                 entity.Property(p => p.FechaModificacion)
                     .IsRequired(false)

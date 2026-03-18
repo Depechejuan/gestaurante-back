@@ -8,6 +8,7 @@ namespace Gestaurante.Models.Entities
     public abstract class Empleado
     {
         [Required]
+        [Key]
         public Guid Id { get; protected set; }
 
         [Required]
@@ -16,19 +17,19 @@ namespace Gestaurante.Models.Entities
         [Required]
         [MinLength(8)]
         [MaxLength(255)]
-        public string Password { get; protected set; } = string.Empty;
+        public string Password { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(150)]
-        public string FirstName { get; protected set; } = string.Empty;
+        public string FirstName { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(100)]
-        public string FirstLastName { get; protected set; } = string.Empty;
+        public string FirstLastName { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(100)]    
-        public string SecondLastName { get; protected set; } = string.Empty;
+        public string SecondLastName { get; set; } = string.Empty;
 
         [Required]
         [MinLength(9)]
@@ -37,9 +38,10 @@ namespace Gestaurante.Models.Entities
         [MinLength(13)]
         [Nuss]
         public string NUSS { get; protected set; } = string.Empty;
+        public bool Activo { get; set; } = true;
 
-        public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
-        public DateTime? UpdatedAt { get; protected set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; }
         public Empleado() { }
 
         protected Empleado(Guid id, string password, string firstName, string firstLastName, string secondLastName, string dni, string nuss)

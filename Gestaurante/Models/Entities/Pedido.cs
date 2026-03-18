@@ -13,15 +13,16 @@ namespace Gestaurante.Models.Entities
     }
     public class Pedido
     {
+        [Key]
         [Required]
         [MaxLength(100)]
-        public Guid IdPedido { get; protected set; }
+        public Guid IdPedido { get; private set; }
         
         //relacion con tabla DetallePedido
         public virtual ICollection<DetallePedido> DetallesPedido { get; set; } = new List<DetallePedido>();
 
         [Required]
-        public DateTime FechaPedido { get; protected set; } = DateTime.UtcNow;
+        public DateTime FechaPedido { get; set; } = DateTime.UtcNow;
         public DateTime? FechaModificacion { get; protected set; }
 
         [Required]

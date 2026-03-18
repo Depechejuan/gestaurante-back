@@ -10,9 +10,10 @@ namespace Gestaurante.Models.Entities
     }
     public class Factura
     {
+        [Key]
         [Required]
         [MaxLength(100)]
-        public Guid NumeroFactura { get; protected set; }
+        public Guid NumeroFactura { get; private set; }
 
         [Required]
         public double PrecioTotal { get; set; }

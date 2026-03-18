@@ -2,6 +2,7 @@
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
 {
@@ -14,9 +15,9 @@ namespace Gestaurante.Models.Services
             _db = db;
         }
 
-        public List<EmpleadoFullDTO> GetAllUsers()
+        public async Task<List<EmpleadoFullDTO>> GetAllUsers()
         {
-            var empleados = _db.Empleados.ToList();
+            var empleados = await _db.Empleados.ToListAsync();
             List<EmpleadoFullDTO> empleadosDto = new();
 
             foreach (var empleado in empleados)
@@ -39,7 +40,12 @@ namespace Gestaurante.Models.Services
                     empleado.DNI,
                     empleado.NUSS,
                     tipo
-                );
+                )
+                {
+                    Activo = empleado.Activo,
+                    CreatedAt = empleado.CreatedAt,
+                    UpdatedAt = empleado.UpdatedAt
+                };
 
                 empleadosDto.Add(dto);
             }
@@ -48,9 +54,9 @@ namespace Gestaurante.Models.Services
         }
 
 
-        public EmpleadoBasicDTO? GetBasicStaff(Guid id)
+        public async Task<EmpleadoBasicDTO?> GetBasicStaff(Guid id)
         {
-            var empleado = _db.Empleados.FirstOrDefault(e => e.Id == id);
+            var empleado = await _db.Empleados.FirstOrDefaultAsync(e => e.Id == id);
             if (empleado == null)
                 return null;
 
@@ -68,9 +74,12 @@ namespace Gestaurante.Models.Services
                 );
         }
 
-        public EmpleadoFullDTO GetFullUser(Guid id)
+        public async Task<EmpleadoFullDTO> GetFullUser(Guid id)
         {
-            var empleado = _db.Empleados.FirstOrDefault(e => e.Id == id);
+            var empleado = await _db.Empleados.FirstOrDefaultAsync(e => e.Id == id);
+            if (empleado == null)
+                throw new KeyNotFoundException("Empleado no encontrado.");
+
             TipoEmpleado tipo;
             if (empleado is Administrador)
                 tipo = TipoEmpleado.Administrador;
@@ -78,8 +87,14 @@ namespace Gestaurante.Models.Services
                 tipo = TipoEmpleado.Camarero;
             else
                 tipo = TipoEmpleado.Cocinero;
+            Console.WriteLine(empleado);
 
-            return new EmpleadoFullDTO(empleado.Id, empleado.FirstName, empleado.FirstLastName, empleado.SecondLastName, empleado.Email, empleado.DNI, empleado.NUSS, tipo);
+            return new EmpleadoFullDTO(empleado.Id, empleado.FirstName, empleado.FirstLastName, empleado.SecondLastName, empleado.Email, empleado.DNI, empleado.NUSS, tipo)
+            {
+                Activo = empleado.Activo,
+                CreatedAt = empleado.CreatedAt,
+                UpdatedAt = empleado.UpdatedAt
+            };
         }
     }
 }

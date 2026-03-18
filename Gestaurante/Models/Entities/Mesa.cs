@@ -5,9 +5,10 @@ namespace Gestaurante.Models.Entities
 {
     public class Mesa
     {
+        [Key]
         [Required]
         [MaxLength(100)]
-        public Guid IdMesa { get; protected set; }
+        public Guid IdMesa { get; private set; }
         public int Capacidad { get; set; }
         public bool Estado { get; set; }
         [Required]

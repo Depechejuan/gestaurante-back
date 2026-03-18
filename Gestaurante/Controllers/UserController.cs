@@ -15,18 +15,34 @@ namespace Gestaurante.Controllers
     {
         private readonly LoginService _loginService;
         private readonly IJwtService _jwtService;
+        //private readonly RegisterService _registerService;
 
-        public UserController(LoginService loginService, IJwtService jwtService)
+
+        public UserController(LoginService loginService, IJwtService jwtService, RegisterService registerService)
         {
             _loginService = loginService;
             _jwtService = jwtService;
+            //_registerService = registerService;
+
         }
 
-        //[HttpPost("seed")]
-        //public IActionResult SeedDatabase([FromServices] AppDbContext context)
+        // UNSAFE!!!
+        //[HttpPost("register")]
+        //public async Task<IActionResult> Register([FromBody] RegistroDTO dto)
         //{
-        //    DbInitializer.Seed(context);
-        //    return Ok("Datos iniciales insertados");
+        //    try
+        //    {
+        //        var empleado = await _registerService.CrearEmpleado(dto);
+        //        return ResponseHelper.SendResponse(new { id = empleado.Id });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return ResponseHelper.SendError(new
+        //        {
+        //            message = ex.Message,
+        //            detail = ex.InnerException?.Message
+        //        }, 500);
+        //    }
         //}
 
         [HttpPost("login")]
@@ -46,7 +62,7 @@ namespace Gestaurante.Controllers
                 var token = _jwtService.GenerarToken(empleado);
                 var expiracion = _jwtService.GetExpiracion();
 
-                var response = new TokenDTO(token, expiracion, empleado.Id);
+                var response = new TokenDTO(token, expiracion, empleado.Id, empleado.Tipo);
 
                 return ResponseHelper.SendResponse(response, 201);
             }
