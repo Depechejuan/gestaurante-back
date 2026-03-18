@@ -13,6 +13,8 @@ namespace Gestaurante.Models.DTO
 
     public class RegistroDTO
     {
+        public Guid Id { get; set; } = Guid.NewGuid();
+
         [Required]
         [EmailAddress]
         public string Email { get;  set; } = string.Empty;
@@ -38,10 +40,10 @@ namespace Gestaurante.Models.DTO
         public string NUSS { get;  set; } = string.Empty;
         [Required]
         public TipoEmpleado Tipo { get; set; }
+        public IFormFile Imagen { get; set; } = null!;
         public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
-        public Guid Id { get; set; } = Guid.NewGuid();
 
-        public RegistroDTO(string email, string password, string firstname, string firstlastname, string secondlastname, string dni, string nuss, TipoEmpleado tipo)
+        public RegistroDTO(string email, string password, string firstname, string firstlastname, string secondlastname, string dni, string nuss, TipoEmpleado tipo, IFormFile Imagen)
         {
             this.Email = email;
             this.Password = password;
@@ -51,6 +53,7 @@ namespace Gestaurante.Models.DTO
             this.DNI = dni;
             this.NUSS = nuss;
             this.Tipo = tipo;
+            this.Imagen = Imagen;
         }
     }
 }

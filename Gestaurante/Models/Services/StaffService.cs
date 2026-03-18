@@ -39,7 +39,8 @@ namespace Gestaurante.Models.Services
                     empleado.Email,
                     empleado.DNI,
                     empleado.NUSS,
-                    tipo
+                    tipo,
+                    empleado.ImageUrl
                 );
 
                 empleadosDto.Add(dto);
