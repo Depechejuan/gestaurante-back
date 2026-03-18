@@ -40,7 +40,12 @@ namespace Gestaurante.Models.Services
                     empleado.DNI,
                     empleado.NUSS,
                     tipo
-                );
+                )
+                {
+                    Activo = empleado.Activo,
+                    CreatedAt = empleado.CreatedAt,
+                    UpdatedAt = empleado.UpdatedAt
+                };
 
                 empleadosDto.Add(dto);
             }
@@ -72,6 +77,9 @@ namespace Gestaurante.Models.Services
         public async Task<EmpleadoFullDTO> GetFullUser(Guid id)
         {
             var empleado = await _db.Empleados.FirstOrDefaultAsync(e => e.Id == id);
+            if (empleado == null)
+                throw new KeyNotFoundException("Empleado no encontrado.");
+
             TipoEmpleado tipo;
             if (empleado is Administrador)
                 tipo = TipoEmpleado.Administrador;
@@ -81,7 +89,12 @@ namespace Gestaurante.Models.Services
                 tipo = TipoEmpleado.Cocinero;
             Console.WriteLine(empleado);
 
-            return new EmpleadoFullDTO(empleado.Id, empleado.FirstName, empleado.FirstLastName, empleado.SecondLastName, empleado.Email, empleado.DNI, empleado.NUSS, tipo);
+            return new EmpleadoFullDTO(empleado.Id, empleado.FirstName, empleado.FirstLastName, empleado.SecondLastName, empleado.Email, empleado.DNI, empleado.NUSS, tipo)
+            {
+                Activo = empleado.Activo,
+                CreatedAt = empleado.CreatedAt,
+                UpdatedAt = empleado.UpdatedAt
+            };
         }
     }
 }

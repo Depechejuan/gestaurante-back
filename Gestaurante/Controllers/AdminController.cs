@@ -10,7 +10,7 @@ namespace Gestaurante.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
     public class AdminController : ControllerBase
     {
         private readonly RegisterService _registerService;

@@ -17,6 +17,7 @@ namespace Gestaurante.Utils
                 tipo
             )
             {
+                Activo = empleado.Activo,
                 CreatedAt = empleado.CreatedAt,
                 UpdatedAt = empleado.UpdatedAt
             };

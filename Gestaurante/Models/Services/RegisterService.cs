@@ -61,6 +61,8 @@ namespace Gestaurante.Models.Services
                 _ => throw new ValidationException("Tipo de empleado no válido")
             };
 
+            empleado.Activo = true;
+
             await _db.Empleados.AddAsync(empleado);
             _db.SaveChanges();
 
@@ -81,6 +83,9 @@ namespace Gestaurante.Models.Services
                 oldEmpleado.FirstLastName = dto.Apellido1;
             if (oldEmpleado.SecondLastName != dto.Apellido2 && dto.Apellido2 != null)
                 oldEmpleado.SecondLastName = dto.Apellido2;
+
+            if (oldEmpleado.Activo != dto.Activo)
+                oldEmpleado.Activo = dto.Activo;
 
             oldEmpleado.UpdatedAt = DateTime.UtcNow;
 
