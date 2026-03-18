@@ -24,12 +24,14 @@ namespace Gestaurante.Controllers
 
 
         [HttpPost("register")]
+        //[Consumes("multipart/form-data")]
+        // NO ME DEJA REGISTRAR NUEVO USUARIO, PIDE FOTO ?????
         public async Task<IActionResult> Register([FromBody] RegistroDTO dto)
         {
             try
             {
                 var empleado = await _registerService.CrearEmpleado(dto);
-                return ResponseHelper.SendResponse(new { id = empleado.Id });
+                return ResponseHelper.SendResponse(new { id = empleado.Id, foto = empleado.ImageUrl });
             }
             catch (Exception ex)
             {
@@ -86,6 +88,30 @@ namespace Gestaurante.Controllers
             {
                 var empleado = await _staffService.GetFullUser(id);
                 return ResponseHelper.SendResponse(empleado);
+            }
+            catch (Exception ex)
+            {
+                return ResponseHelper.SendError(new
+                {
+                    message = ex.Message,
+                    detail = ex.InnerException?.Message
+                }, 500);
+            }
+        }
+
+        [HttpPut("user/{id}/photo")]
+        public async Task<IActionResult> UpdatePhoto([FromRoute] Guid id, [FromForm] IFormFile file)
+        {
+            try
+            {
+                EmpleadoFullDTO empleado = await _staffService.GetFullUser(id);
+                if (empleado == null)
+                    throw new Exception("Empleado no encontrado");
+
+                Empleado empleadoEdit = await _registerService.UploadPhoto(empleado, file, "empleados");
+                // actualizar empleadoEdit
+
+                return ResponseHelper.SendResponse(new { foto = empleadoEdit.ImageUrl });
             }
             catch (Exception ex)
             {

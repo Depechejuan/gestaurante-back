@@ -11,10 +11,24 @@ namespace Gestaurante.Models.Services
     public class RegisterService
     {
         private readonly AppDbContext _db;
+        private readonly CloudinaryService _cloudinary;
 
-        public RegisterService(AppDbContext db)
+        public RegisterService(AppDbContext db, CloudinaryService cloudinary)
         {
             _db = db;
+            _cloudinary = cloudinary;
+        }
+
+        public async Task<Empleado> UploadPhoto(EmpleadoFullDTO dto, IFormFile file, string location)
+        {
+            var empleado = await _db.Empleados.FindAsync(dto.Id);
+            string imageUrl = await _cloudinary.UploadImageAsync(empleado.Id, file, location);
+
+            empleado.ImageUrl = imageUrl;
+
+            await _db.SaveChangesAsync();
+
+            return empleado;
         }
 
         public async Task<Empleado> CrearEmpleado(RegistroDTO dto)
@@ -27,6 +41,11 @@ namespace Gestaurante.Models.Services
             );
             // se añade una "sal" para más complejidad de hasheo y que sea más difícil de romper.
 
+            //string imageUrl = string.Empty;
+
+            //if (dto.Imagen != null)
+            //    imageUrl = await _cloudinary.UploadImageAsync(dto.Imagen, "empleados");
+
             // Esto es un switch dependiendo del tipo, así empleado se crea dependiendo del caso
             Empleado empleado = dto.Tipo switch
             {
@@ -38,7 +57,6 @@ namespace Gestaurante.Models.Services
                     dto.SecondLastName,
                     dto.DNI,
                     dto.NUSS
-
                 ),
                 TipoEmpleado.Camarero => new Camarero(
                     dto.Email,
@@ -67,6 +85,12 @@ namespace Gestaurante.Models.Services
             return empleado;
         }
 
+        //public async Task<Empleado> ActualizarEmpleado(Empleado empleado)
+        //{
+            
+        //    await _db.SaveChangesAsync();
+        //    return existingEmpleado;
+        //}
 
         public async Task<Empleado?> EditarEmpleado(Guid id, EmpleadoFullDTO dto)
         {
