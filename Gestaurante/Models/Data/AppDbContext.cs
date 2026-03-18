@@ -277,6 +277,10 @@ namespace Gestaurante.Models.Data
                     .WithMany()
                     .HasForeignKey(dp => dp.IdPlato)
                     .OnDelete(DeleteBehavior.Restrict);
+                entity.HasOne<Pedido>()
+                    .WithMany(p => p.DetallesPedido)
+                    .HasForeignKey(dp => dp.IdPedido)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             //modelBuilder de Categoria
