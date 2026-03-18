@@ -38,6 +38,8 @@ namespace Gestaurante.Models.Entities
         [MinLength(13)]
         [Nuss]
         public string NUSS { get; protected set; } = string.Empty;
+        [MaxLength(500)]
+        public string ImageURL { get; set; } = string.Empty;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
