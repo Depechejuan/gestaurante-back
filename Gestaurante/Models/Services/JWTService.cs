@@ -36,9 +36,12 @@ namespace Gestaurante.Models.Services
 
             var claims = new[]
             {
-            new Claim(JwtRegisteredClaimNames.Sub, empleado.Id.ToString()),
-            new Claim(JwtRegisteredClaimNames.Email, empleado.Email)
-        };
+                new Claim(JwtRegisteredClaimNames.Sub, empleado.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.Email, empleado.Email),
+                new Claim(ClaimTypes.NameIdentifier, empleado.Id.ToString()),
+                new Claim(ClaimTypes.Email, empleado.Email),
+                new Claim(ClaimTypes.Role, empleado.Tipo.ToString())
+            };
 
             var token = new JwtSecurityToken(
                 issuer: emisor,

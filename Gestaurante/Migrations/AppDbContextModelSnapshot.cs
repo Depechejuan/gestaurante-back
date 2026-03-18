@@ -94,6 +94,12 @@ namespace Gestaurante.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("character varying(100)");
 
+                    b.Property<string>("ImageURL")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasDefaultValue("");
+
                     b.Property<string>("FirstLastName")
                         .IsRequired()
                         .HasMaxLength(100)
