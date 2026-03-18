@@ -42,9 +42,10 @@ namespace Gestaurante.Models.Data
                     .IsRequired()
                     .HasMaxLength(100);
 
-                entity.Property(e => e.Activo)
-                    .IsRequired()
-                    .HasDefaultValue(true);
+                entity.Property(e => e.ImageURL)
+                    .IsRequired(false)
+                    .HasMaxLength(500)
+                    .HasDefaultValue(string.Empty);
 
                 entity.HasIndex(e => e.Email)
                     .IsUnique();
