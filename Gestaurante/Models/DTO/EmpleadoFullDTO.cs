@@ -9,8 +9,10 @@
         public string Email { get; set; } = string.Empty;
         public string DNI { get; set; }
         public string NUSS { get; set; }
+        public string ImageURL { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public TipoEmpleado Tipo { get; set; }
+        public bool Activo { get; set; } = true;
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
         public EmpleadoFullDTO(Guid id, string nombre, string apellido1, string apellido2, string email, string dni, string nuss, TipoEmpleado tipo)

@@ -7,6 +7,8 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 //using Gestaurante.Models.Seed;
 
 
@@ -71,6 +73,31 @@ builder.Services
 
             ClockSkew = TimeSpan.Zero // elimina tolerancia de 5 min por defecto
         };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async context =>
+            {
+                var db = context.HttpContext.RequestServices.GetRequiredService<AppDbContext>();
+
+                var subject = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub)
+                    ?? context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+                var email = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Email)
+                    ?? context.Principal?.FindFirstValue(ClaimTypes.Email);
+
+                if (!Guid.TryParse(subject, out var userId) || string.IsNullOrWhiteSpace(email))
+                {
+                    context.Fail("Token inválido.");
+                    return;
+                }
+
+                var empleado = await db.Empleados.FirstOrDefaultAsync(e => e.Id == userId);
+                if (empleado == null || !empleado.Activo || !string.Equals(empleado.Email, email, StringComparison.OrdinalIgnoreCase))
+                {
+                    context.Fail("Usuario no válido o inactivo.");
+                }
+            }
+        };
     });
 
 
@@ -85,6 +112,7 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<RegisterService>();
 builder.Services.AddScoped<StaffService>();
 builder.Services.AddScoped<FacturaService>();
+builder.Services.AddHttpClient<IEmployeeImageService, CloudinaryEmployeeImageService>();
 
 
 
