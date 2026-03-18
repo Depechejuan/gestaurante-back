@@ -17,6 +17,7 @@ namespace Gestaurante.Utils
                 tipo
             )
             {
+                ImageURL = empleado.ImageURL,
                 CreatedAt = empleado.CreatedAt,
                 UpdatedAt = empleado.UpdatedAt
             };
