@@ -38,6 +38,7 @@ namespace Gestaurante.Models.Entities
         [MinLength(13)]
         [Nuss]
         public string NUSS { get; protected set; } = string.Empty;
+        public bool Activo { get; set; } = true;
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
