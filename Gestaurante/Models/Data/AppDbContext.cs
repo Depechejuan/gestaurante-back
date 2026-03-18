@@ -42,6 +42,11 @@ namespace Gestaurante.Models.Data
                     .IsRequired()
                     .HasMaxLength(100);
 
+                entity.Property(e => e.ImageURL)
+                    .IsRequired(false)
+                    .HasMaxLength(500)
+                    .HasDefaultValue(string.Empty);
+
                 entity.HasIndex(e => e.Email)
                     .IsUnique();
 
@@ -231,10 +236,9 @@ namespace Gestaurante.Models.Data
                     .IsRequired()
                     .HasDefaultValue(EstadoFactura.PENDIENTE);
 
-                // Relación con Pedido (si aplica)
                 entity.HasOne<Pedido>()
                     .WithMany()
-                    .HasForeignKey("IdPedido") // Asegúrate de que exista esta propiedad en Factura
+                    .HasForeignKey(f => f.IdPedido)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 
