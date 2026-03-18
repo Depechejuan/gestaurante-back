@@ -22,14 +22,7 @@ namespace Gestaurante.Models.Services
 
             foreach (var empleado in empleados)
             {
-                TipoEmpleado tipo;
-
-                if (empleado is Administrador)
-                    tipo = TipoEmpleado.Administrador;
-                else if (empleado is Camarero)
-                    tipo = TipoEmpleado.Camarero;
-                else
-                    tipo = TipoEmpleado.Cocinero;
+                var tipo = ResolveEmployeeType(empleado);
 
                 var dto = new EmpleadoFullDTO(
                     empleado.Id,
@@ -39,9 +32,20 @@ namespace Gestaurante.Models.Services
                     empleado.Email,
                     empleado.DNI,
                     empleado.NUSS,
+<<<<<<< HEAD
                     tipo,
                     empleado.ImageUrl
                 );
+=======
+                    tipo
+                )
+                {
+                    Activo = empleado.Activo,
+                    ImageURL = empleado.ImageURL,
+                    CreatedAt = empleado.CreatedAt,
+                    UpdatedAt = empleado.UpdatedAt
+                };
+>>>>>>> faae158368c361197c0256daa19653d3690ac784
 
                 empleadosDto.Add(dto);
             }
@@ -56,13 +60,7 @@ namespace Gestaurante.Models.Services
             if (empleado == null)
                 return null;
 
-            TipoEmpleado tipo;
-            if (empleado is Administrador)
-                tipo = TipoEmpleado.Administrador;
-            else if (empleado is Camarero)
-                tipo = TipoEmpleado.Camarero;
-            else
-                tipo = TipoEmpleado.Cocinero;
+            var tipo = ResolveEmployeeType(empleado);
 
             return new EmpleadoBasicDTO(
                     empleado.Id,
@@ -73,6 +71,9 @@ namespace Gestaurante.Models.Services
         public async Task<EmpleadoFullDTO> GetFullUser(Guid id)
         {
             var empleado = await _db.Empleados.FirstOrDefaultAsync(e => e.Id == id);
+            if (empleado == null)
+                throw new KeyNotFoundException("Empleado no encontrado.");
+
             TipoEmpleado tipo;
             if (empleado is Administrador)
                 tipo = TipoEmpleado.Administrador;
@@ -82,7 +83,28 @@ namespace Gestaurante.Models.Services
                 tipo = TipoEmpleado.Cocinero;
             Console.WriteLine(empleado);
 
-            return new EmpleadoFullDTO(empleado.Id, empleado.FirstName, empleado.FirstLastName, empleado.SecondLastName, empleado.Email, empleado.DNI, empleado.NUSS, tipo);
+            return new EmpleadoFullDTO(empleado.Id, empleado.FirstName, empleado.FirstLastName, empleado.SecondLastName, empleado.Email, empleado.DNI, empleado.NUSS, tipo)
+            {
+                Activo = empleado.Activo,
+                CreatedAt = empleado.CreatedAt,
+                UpdatedAt = empleado.UpdatedAt
+            };
+                throw new Exception("Empleado no encontrado");
+            var tipo = ResolveEmployeeType(empleado);
+
+            return new EmpleadoFullDTO(empleado.Id, empleado.FirstName, empleado.FirstLastName, empleado.SecondLastName, empleado.Email, empleado.DNI, empleado.NUSS, tipo)
+            {
+                ImageURL = empleado.ImageURL,
+                CreatedAt = empleado.CreatedAt,
+                UpdatedAt = empleado.UpdatedAt
+            };
+        }
+
+        private static TipoEmpleado ResolveEmployeeType(Empleado empleado)
+        {
+            if (empleado is Administrador) return TipoEmpleado.Administrador;
+            if (empleado is Camarero) return TipoEmpleado.Camarero;
+            return TipoEmpleado.Cocinero;
         }
     }
 }

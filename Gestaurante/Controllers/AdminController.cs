@@ -10,7 +10,7 @@ namespace Gestaurante.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
     public class AdminController : ControllerBase
     {
         private readonly RegisterService _registerService;
@@ -124,14 +124,16 @@ namespace Gestaurante.Controllers
         }
 
         [HttpPut("user/{id}")]
-        public async Task<IActionResult> GetUniqueUser([FromRoute] Guid id, [FromBody] EmpleadoFullDTO dto)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> GetUniqueUser([FromRoute] Guid id, [FromForm] EditarEmpleadoDTO dto, CancellationToken cancellationToken)
         {
             try
             {
-                var newEmpleado = await _registerService.EditarEmpleado(id, dto);
+                var newEmpleado = await _registerService.EditarEmpleado(id, dto, cancellationToken);
                 if (newEmpleado == null)
                     throw new Exception("Empleado no encontrado");
-                var empleado = ToDTO.EmpleadoToEmpleadoFullDTO(newEmpleado, dto.Tipo);
+                var tipo = dto.Tipo ?? (newEmpleado is Administrador ? TipoEmpleado.Administrador : newEmpleado is Camarero ? TipoEmpleado.Camarero : TipoEmpleado.Cocinero);
+                var empleado = ToDTO.EmpleadoToEmpleadoFullDTO(newEmpleado, tipo);
 
                 return ResponseHelper.SendResponse(empleado);
             } catch (Exception ex)
