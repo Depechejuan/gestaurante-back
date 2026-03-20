@@ -47,6 +47,10 @@ namespace Gestaurante.Models.Data
                     .HasMaxLength(500)
                     .HasDefaultValue(string.Empty);
 
+                entity.Property(e => e.Activo)
+                    .IsRequired()
+                    .HasDefaultValue(true);
+
                 entity.HasIndex(e => e.Email)
                     .IsUnique();
 
@@ -57,11 +61,11 @@ namespace Gestaurante.Models.Data
                 entity.HasIndex(e => e.DNI)
                     .IsUnique();
 
-                entity.Property(e => e.DNI)
+                entity.Property(e => e.NUSS)
                     .IsRequired()
                     .HasMaxLength(13);
 
-                entity.HasIndex(e => e.DNI)
+                entity.HasIndex(e => e.NUSS)
                     .IsUnique();
             });
 
