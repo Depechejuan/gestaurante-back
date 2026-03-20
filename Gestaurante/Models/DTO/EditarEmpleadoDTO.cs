@@ -12,6 +12,7 @@ namespace Gestaurante.Models.DTO
         public string? NUSS { get; set; }
         public string? Password { get; set; }
         public TipoEmpleado? Tipo { get; set; }
+        public bool Activo { get; set; } = true;
         public IFormFile? Photo { get; set; }
     }
 }

@@ -32,11 +32,6 @@ namespace Gestaurante.Models.Services
                     empleado.Email,
                     empleado.DNI,
                     empleado.NUSS,
-<<<<<<< HEAD
-                    tipo,
-                    empleado.ImageUrl
-                );
-=======
                     tipo
                 )
                 {
@@ -45,7 +40,6 @@ namespace Gestaurante.Models.Services
                     CreatedAt = empleado.CreatedAt,
                     UpdatedAt = empleado.UpdatedAt
                 };
->>>>>>> faae158368c361197c0256daa19653d3690ac784
 
                 empleadosDto.Add(dto);
             }
@@ -74,26 +68,11 @@ namespace Gestaurante.Models.Services
             if (empleado == null)
                 throw new KeyNotFoundException("Empleado no encontrado.");
 
-            TipoEmpleado tipo;
-            if (empleado is Administrador)
-                tipo = TipoEmpleado.Administrador;
-            else if (empleado is Camarero)
-                tipo = TipoEmpleado.Camarero;
-            else
-                tipo = TipoEmpleado.Cocinero;
-            Console.WriteLine(empleado);
-
-            return new EmpleadoFullDTO(empleado.Id, empleado.FirstName, empleado.FirstLastName, empleado.SecondLastName, empleado.Email, empleado.DNI, empleado.NUSS, tipo)
-            {
-                Activo = empleado.Activo,
-                CreatedAt = empleado.CreatedAt,
-                UpdatedAt = empleado.UpdatedAt
-            };
-                throw new Exception("Empleado no encontrado");
             var tipo = ResolveEmployeeType(empleado);
 
             return new EmpleadoFullDTO(empleado.Id, empleado.FirstName, empleado.FirstLastName, empleado.SecondLastName, empleado.Email, empleado.DNI, empleado.NUSS, tipo)
             {
+                Activo = empleado.Activo,
                 ImageURL = empleado.ImageURL,
                 CreatedAt = empleado.CreatedAt,
                 UpdatedAt = empleado.UpdatedAt

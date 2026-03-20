@@ -31,7 +31,7 @@ namespace Gestaurante.Controllers
             try
             {
                 var empleado = await _registerService.CrearEmpleado(dto);
-                return ResponseHelper.SendResponse(new { id = empleado.Id, foto = empleado.ImageUrl });
+                return ResponseHelper.SendResponse(new { id = empleado.Id, foto = empleado.ImageURL });
             }
             catch (Exception ex)
             {
@@ -111,7 +111,7 @@ namespace Gestaurante.Controllers
                 Empleado empleadoEdit = await _registerService.UploadPhoto(empleado, file, "empleados");
                 // actualizar empleadoEdit
 
-                return ResponseHelper.SendResponse(new { foto = empleadoEdit.ImageUrl });
+                return ResponseHelper.SendResponse(new { foto = empleadoEdit.ImageURL });
             }
             catch (Exception ex)
             {
