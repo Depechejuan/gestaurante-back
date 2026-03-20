@@ -63,11 +63,6 @@ namespace Gestaurante.Models.Data
 
                 entity.HasIndex(e => e.DNI)
                     .IsUnique();
-
-                entity.Property(e => e.ImageUrl)
-                    .IsRequired(false)
-                    .HasMaxLength(500)
-                    .HasDefaultValue(string.Empty);
             });
 
             //modelBuilder de Platos

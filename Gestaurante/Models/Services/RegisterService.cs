@@ -10,33 +10,24 @@ namespace Gestaurante.Models.Services
     public class RegisterService
     {
         private readonly AppDbContext _db;
-<<<<<<< HEAD
-        private readonly CloudinaryService _cloudinary;
-
-        public RegisterService(AppDbContext db, CloudinaryService cloudinary)
-        {
-            _db = db;
-            _cloudinary = cloudinary;
-        }
-
-        public async Task<Empleado> UploadPhoto(EmpleadoFullDTO dto, IFormFile file, string location)
-        {
-            var empleado = await _db.Empleados.FindAsync(dto.Id);
-            string imageUrl = await _cloudinary.UploadImageAsync(empleado.Id, file, location);
-
-            empleado.ImageUrl = imageUrl;
-
-            await _db.SaveChangesAsync();
-
-            return empleado;
-=======
         private readonly IEmployeeImageService _employeeImageService;
 
         public RegisterService(AppDbContext db, IEmployeeImageService employeeImageService)
         {
             _db = db;
             _employeeImageService = employeeImageService;
->>>>>>> faae158368c361197c0256daa19653d3690ac784
+        }
+
+        public async Task<Empleado> UploadPhoto(EmpleadoFullDTO dto, IFormFile file, string location)
+        {
+            var empleado = await _db.Empleados.FindAsync(dto.Id)
+                ?? throw new KeyNotFoundException("Empleado no encontrado.");
+
+            empleado.ImageURL = await _employeeImageService.UploadOrReplaceEmployeeImageAsync(empleado.Id, file);
+            empleado.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync();
+            return empleado;
         }
 
         public async Task<Empleado> CrearEmpleado(RegistroDTO dto)
@@ -154,6 +145,7 @@ namespace Gestaurante.Models.Services
                     ""SecondLastName"" = {nextSecondLastName},
                     ""DNI"" = {nextDni},
                     ""NUSS"" = {nextNuss},
+                    ""Activo"" = {dto.Activo},
                     ""ImageURL"" = {nextImageUrl},
                     ""UpdatedAt"" = {updatedAt},
                     ""Tipo"" = {(int)nextRole}

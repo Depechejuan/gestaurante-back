@@ -33,8 +33,11 @@ string dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD")
 string connectionString =
     $"Server={dbHost};Port={dbPort};Database={dbName};User Id={dbUser};Password={dbPassword};SSL Mode=Require;Trust Server Certificate=true;";
 
+string appPort = Environment.GetEnvironmentVariable("PORT") ?? "3000";
+
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls($"http://localhost:{appPort}");
 
 builder.Services.AddCors(options =>
 {
@@ -111,14 +114,10 @@ builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<RegisterService>();
 builder.Services.AddScoped<StaffService>();
-<<<<<<< HEAD
-builder.Services.AddScoped<CloudinaryService>();
-=======
 builder.Services.AddScoped<PedidoService>();
 builder.Services.AddScoped<MesaService>();
 builder.Services.AddScoped<FacturaService>();
 builder.Services.AddHttpClient<IEmployeeImageService, CloudinaryEmployeeImageService>();
->>>>>>> faae158368c361197c0256daa19653d3690ac784
 
 
 

@@ -44,7 +44,6 @@ namespace Gestaurante.Models.Entities
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
-        public string ImageUrl { get; set; } = string.Empty;
         public Empleado() { }
 
         protected Empleado(Guid id, string password, string firstName, string firstLastName, string secondLastName, string dni, string nuss)
