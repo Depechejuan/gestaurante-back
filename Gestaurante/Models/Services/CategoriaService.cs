@@ -1,6 +1,6 @@
 ﻿using Gestaurante.Models.Data;
-using Gestaurante.Models.Entities;
 using Gestaurante.Models.DTO;
+using Gestaurante.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
@@ -41,7 +41,7 @@ namespace Gestaurante.Models.Services
         }
 
         public async Task<bool> Delete(Guid id)
-        {
+            {
             var categoria = await _db.Categorias.FindAsync(id);
             if (categoria == null) return false;
             _db.Categorias.Remove(categoria);

@@ -33,9 +33,9 @@ namespace Gestaurante.Models.Services
                 dto.Descripcion,
                 dto.Imagen,
                 dto.Disponible,
-                dto.Precio
+                dto.Precio,
+                categoria 
             );
-            plato.Categoria = categoria;
 
             // Asignar ingredientes
             foreach (var ing in dto.Ingredientes)
