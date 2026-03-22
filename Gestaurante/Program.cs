@@ -48,30 +48,30 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
+//builder.Services
+//    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+//    .AddJwtBearer(options =>
+//    {
+//        options.TokenValidationParameters = new TokenValidationParameters
+//        {
+//            ValidateIssuer = true,
+//            ValidateAudience = true,
+//            ValidateLifetime = true,
+//            ValidateIssuerSigningKey = true,
 
-            ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
-            ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
+//            ValidIssuer = Environment.GetEnvironmentVariable("JWT_ISSUER"),
+//            ValidAudience = Environment.GetEnvironmentVariable("JWT_AUDIENCE"),
 
-            IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(
-                    Environment.GetEnvironmentVariable("JWT_KEY")
-                    ?? throw new Exception("JWT_KEY no definida")
-                )
-            ),
+//            IssuerSigningKey = new SymmetricSecurityKey(
+//                Encoding.UTF8.GetBytes(
+//                    Environment.GetEnvironmentVariable("JWT_KEY")
+//                    ?? throw new Exception("JWT_KEY no definida")
+//                )
+//            ),
 
-            ClockSkew = TimeSpan.Zero // elimina tolerancia de 5 min por defecto
-        };
-    });
+//            ClockSkew = TimeSpan.Zero // elimina tolerancia de 5 min por defecto
+//        };
+//    });
 
 
 builder.Services.AddDbContext<AppDbContext>(options =>
@@ -85,6 +85,8 @@ builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<RegisterService>();
 builder.Services.AddScoped<StaffService>();
 builder.Services.AddScoped<IngredienteService>();
+builder.Services.AddScoped<PlatoService>();
+builder.Services.AddScoped<CategoriaService>();
 
 
 

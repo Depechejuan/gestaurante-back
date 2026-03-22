@@ -28,7 +28,15 @@ namespace Gestaurante.Controllers
                 List<PlatoDTO> resultado = new List<PlatoDTO>();
                 for (int i = 0; i < platos.Count; i++)
                 {
-                    resultado.Add(new PlatoDTO(platos[i].Nombre, platos[i].Descripcion, platos[i].Imagen, platos[i].Disponible, platos[i].Precio, platos[i].Categoria, platos[i].PlatoIngredientes));
+                    resultado.Add(new PlatoDTO(
+                        platos[i].Nombre,
+                        platos[i].Descripcion,
+                        platos[i].Imagen,
+                        platos[i].Disponible,
+                        platos[i].Precio,
+                        platos[i].IdCategoria,
+                        platos[i].PlatoIngredientes.Select(pi => new PlatoIngredienteDTO { IdIngrediente = pi.IdIngrediente }).ToList()
+                    ));
                 }
                 return ResponseHelper.SendResponse(resultado, 200);
             }
@@ -41,6 +49,8 @@ namespace Gestaurante.Controllers
                 }, 500);
             }
         }
+
+        //[Authorize]
         [HttpPost("create")]
         public async Task<IActionResult> CreatePlato([FromBody, Required] PlatoDTO dto)
         {

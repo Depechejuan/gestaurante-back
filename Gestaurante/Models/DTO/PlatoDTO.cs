@@ -1,5 +1,5 @@
-﻿using Gestaurante.Models.Entities;
-using System.Text.Json.Serialization;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Gestaurante.Models.DTO
 {
@@ -11,34 +11,21 @@ namespace Gestaurante.Models.DTO
         public string Imagen { get; set; } = string.Empty;
         public bool Disponible { get; set; } = false;
         public decimal Precio { get; set; }
-        public Categoria Categoria { get; set; } = null!;
-        public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
-        public DateTime? UpdatedAt { get; set; }
-        public ICollection<PlatoIngrediente> Ingredientes { get; set; }
+        public Guid IdCategoria { get; set; } // Solo el ID de la categoría
+        public ICollection<PlatoIngredienteDTO> Ingredientes { get; set; } = new List<PlatoIngredienteDTO>();
 
+        public PlatoDTO() { }
 
-        [JsonConstructor]
-        public PlatoDTO(string Nombre, string Descripcion, string Imagen, bool Disponible, decimal Precio, Categoria Categoria, ICollection<PlatoIngrediente> ingredientes)
+        public PlatoDTO(string nombre, string descripcion, string imagen, bool disponible, decimal precio, Guid idCategoria, ICollection<PlatoIngredienteDTO> ingredientes)
         {
-            this.IdPlato = new Guid();
-            this.Nombre = Nombre;
-            this.Descripcion = Descripcion;
-            this.Imagen = Imagen;
-            this.Disponible = Disponible;
-            this.Precio = Precio;
-            this.Categoria = Categoria;
-            this.Ingredientes = ingredientes;
-        }
-        public PlatoDTO(Guid PlatoId, string Nombre, string Descripcion, string Imagen, bool Disponible, decimal Precio, Categoria Categoria, ICollection<PlatoIngrediente> ingredientes) 
-        {
-            this.IdPlato = PlatoId;
-            this.Nombre = Nombre;
-            this.Descripcion = Descripcion;
-            this.Imagen = Imagen;
-            this.Disponible = Disponible;
-            this.Precio = Precio;
-            this.Categoria = Categoria;
-            this.Ingredientes = ingredientes;
+            IdPlato = Guid.NewGuid();
+            Nombre = nombre;
+            Descripcion = descripcion;
+            Imagen = imagen;
+            Disponible = disponible;
+            Precio = precio;
+            IdCategoria = idCategoria;
+            Ingredientes = ingredientes;
         }
     }
 }

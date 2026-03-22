@@ -29,9 +29,9 @@ namespace Gestaurante.Models.Entities
         public DateTime? UpdatedAt { get; set; }
 
         [Required]
-        public Guid IdCategoria { get; set; } // Clave foránea
+        public Guid IdCategoria { get; set; }
 
-        public virtual Categoria Categoria { get; set; } // Propiedad de navegación
+        public virtual Categoria Categoria { get; set; } 
 
         public virtual ICollection<PlatoIngrediente> PlatoIngredientes { get; set; } = new List<PlatoIngrediente>();
 

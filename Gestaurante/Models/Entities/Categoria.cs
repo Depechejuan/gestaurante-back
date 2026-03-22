@@ -6,7 +6,6 @@ namespace Gestaurante.Models.Entities
     {
         [Key]
         [Required]
-        [MaxLength(100)]
         public Guid IdCategoria { get; private set; }
         [Required]
         public string Descripcion { get; set; } = string.Empty;
