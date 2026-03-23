@@ -24,12 +24,14 @@ namespace Gestaurante.Controllers
 
 
         [HttpPost("register")]
+        //[Consumes("multipart/form-data")]
+        // NO ME DEJA REGISTRAR NUEVO USUARIO, PIDE FOTO ?????
         public async Task<IActionResult> Register([FromBody] RegistroDTO dto)
         {
             try
             {
                 var empleado = await _registerService.CrearEmpleado(dto);
-                return ResponseHelper.SendResponse(new { id = empleado.Id });
+                return ResponseHelper.SendResponse(new { id = empleado.Id, foto = empleado.ImageURL });
             }
             catch (Exception ex)
             {
@@ -97,15 +99,41 @@ namespace Gestaurante.Controllers
             }
         }
 
-        [HttpPut("user/{id}")]
-        public async Task<IActionResult> GetUniqueUser([FromRoute] Guid id, [FromBody] EmpleadoFullDTO dto)
+        [HttpPut("user/{id}/photo")]
+        public async Task<IActionResult> UpdatePhoto([FromRoute] Guid id, [FromForm] IFormFile file)
         {
             try
             {
-                var newEmpleado = await _registerService.EditarEmpleado(id, dto);
+                EmpleadoFullDTO empleado = await _staffService.GetFullUser(id);
+                if (empleado == null)
+                    throw new Exception("Empleado no encontrado");
+
+                Empleado empleadoEdit = await _registerService.UploadPhoto(empleado, file, "empleados");
+                // actualizar empleadoEdit
+
+                return ResponseHelper.SendResponse(new { foto = empleadoEdit.ImageURL });
+            }
+            catch (Exception ex)
+            {
+                return ResponseHelper.SendError(new
+                {
+                    message = ex.Message,
+                    detail = ex.InnerException?.Message
+                }, 500);
+            }
+        }
+
+        [HttpPut("user/{id}")]
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> GetUniqueUser([FromRoute] Guid id, [FromForm] EditarEmpleadoDTO dto, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var newEmpleado = await _registerService.EditarEmpleado(id, dto, cancellationToken);
                 if (newEmpleado == null)
                     throw new Exception("Empleado no encontrado");
-                var empleado = ToDTO.EmpleadoToEmpleadoFullDTO(newEmpleado, dto.Tipo);
+                var tipo = dto.Tipo ?? (newEmpleado is Administrador ? TipoEmpleado.Administrador : newEmpleado is Camarero ? TipoEmpleado.Camarero : TipoEmpleado.Cocinero);
+                var empleado = ToDTO.EmpleadoToEmpleadoFullDTO(newEmpleado, tipo);
 
                 return ResponseHelper.SendResponse(empleado);
             } catch (Exception ex)

@@ -9,11 +9,15 @@
         public string Email { get; set; } = string.Empty;
         public string DNI { get; set; }
         public string NUSS { get; set; }
+        public string ImageURL { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public TipoEmpleado Tipo { get; set; }
         public bool Activo { get; set; } = true;
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+        public EmpleadoFullDTO()
+        {
+        }
         public EmpleadoFullDTO(Guid id, string nombre, string apellido1, string apellido2, string email, string dni, string nuss, TipoEmpleado tipo)
         {
             this.Id = id;
@@ -24,6 +28,18 @@
             this.DNI = dni;
             this.NUSS = nuss;
             this.Tipo = tipo;
+        }
+        public EmpleadoFullDTO(Guid id, string nombre, string apellido1, string apellido2, string email, string dni, string nuss, TipoEmpleado tipo, string imageUrl)
+        {
+            this.Id = id;
+            this.Nombre = nombre;
+            this.Apellido1 = apellido1;
+            this.Apellido2 = apellido2;
+            this.Email = email;
+            this.DNI = dni;
+            this.NUSS = nuss;
+            this.Tipo = tipo;
+            this.ImageURL = imageUrl;
         }
     }
 }

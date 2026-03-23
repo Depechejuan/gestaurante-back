@@ -18,6 +18,7 @@ namespace Gestaurante.Utils
             )
             {
                 Activo = empleado.Activo,
+                ImageURL = empleado.ImageURL,
                 CreatedAt = empleado.CreatedAt,
                 UpdatedAt = empleado.UpdatedAt
             };
