@@ -33,18 +33,28 @@ string dbPassword = Environment.GetEnvironmentVariable("DB_PASSWORD")
 string connectionString =
     $"Server={dbHost};Port={dbPort};Database={dbName};User Id={dbUser};Password={dbPassword};SSL Mode=Require;Trust Server Certificate=true;";
 
+string appPort = Environment.GetEnvironmentVariable("PORT") ?? "3000";
+
 
 var builder = WebApplication.CreateBuilder(args);
+builder.WebHost.UseUrls($"http://localhost:{appPort}");
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("LocalPolicy", policy =>
     {
-        policy.WithOrigins(
-                "http://localhost:3000",
-                "http://localhost:5173",
-                "https://localhost:5173"
-            )
+        policy.SetIsOriginAllowed(origin =>
+            {
+                if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+                {
+                    return false;
+                }
+
+                var isLocalHost = uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase)
+                    || uri.Host.Equals("127.0.0.1");
+
+                return isLocalHost && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+            })
             .AllowAnyHeader()
             .WithMethods("PUT", "PATCH", "POST", "GET", "DELETE");
     });
@@ -111,6 +121,10 @@ builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<RegisterService>();
 builder.Services.AddScoped<StaffService>();
+builder.Services.AddScoped<PedidoService>();
+builder.Services.AddScoped<MesaService>();
+builder.Services.AddScoped<FacturaService>();
+builder.Services.AddHttpClient<IEmployeeImageService, CloudinaryEmployeeImageService>();
 
 
 

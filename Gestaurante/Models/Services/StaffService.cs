@@ -22,14 +22,7 @@ namespace Gestaurante.Models.Services
 
             foreach (var empleado in empleados)
             {
-                TipoEmpleado tipo;
-
-                if (empleado is Administrador)
-                    tipo = TipoEmpleado.Administrador;
-                else if (empleado is Camarero)
-                    tipo = TipoEmpleado.Camarero;
-                else
-                    tipo = TipoEmpleado.Cocinero;
+                var tipo = ResolveEmployeeType(empleado);
 
                 var dto = new EmpleadoFullDTO(
                     empleado.Id,
@@ -43,6 +36,7 @@ namespace Gestaurante.Models.Services
                 )
                 {
                     Activo = empleado.Activo,
+                    ImageURL = empleado.ImageURL,
                     CreatedAt = empleado.CreatedAt,
                     UpdatedAt = empleado.UpdatedAt
                 };
@@ -60,13 +54,7 @@ namespace Gestaurante.Models.Services
             if (empleado == null)
                 return null;
 
-            TipoEmpleado tipo;
-            if (empleado is Administrador)
-                tipo = TipoEmpleado.Administrador;
-            else if (empleado is Camarero)
-                tipo = TipoEmpleado.Camarero;
-            else
-                tipo = TipoEmpleado.Cocinero;
+            var tipo = ResolveEmployeeType(empleado);
 
             return new EmpleadoBasicDTO(
                     empleado.Id,
@@ -80,21 +68,22 @@ namespace Gestaurante.Models.Services
             if (empleado == null)
                 throw new KeyNotFoundException("Empleado no encontrado.");
 
-            TipoEmpleado tipo;
-            if (empleado is Administrador)
-                tipo = TipoEmpleado.Administrador;
-            else if (empleado is Camarero)
-                tipo = TipoEmpleado.Camarero;
-            else
-                tipo = TipoEmpleado.Cocinero;
-            Console.WriteLine(empleado);
+            var tipo = ResolveEmployeeType(empleado);
 
             return new EmpleadoFullDTO(empleado.Id, empleado.FirstName, empleado.FirstLastName, empleado.SecondLastName, empleado.Email, empleado.DNI, empleado.NUSS, tipo)
             {
                 Activo = empleado.Activo,
+                ImageURL = empleado.ImageURL,
                 CreatedAt = empleado.CreatedAt,
                 UpdatedAt = empleado.UpdatedAt
             };
+        }
+
+        private static TipoEmpleado ResolveEmployeeType(Empleado empleado)
+        {
+            if (empleado is Administrador) return TipoEmpleado.Administrador;
+            if (empleado is Camarero) return TipoEmpleado.Camarero;
+            return TipoEmpleado.Cocinero;
         }
     }
 }

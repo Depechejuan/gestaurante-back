@@ -3,6 +3,7 @@ using System;
 using Gestaurante.Models.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestaurante.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260217172105_AddFotoUrlToEmpleado")]
+    partial class AddFotoUrlToEmpleado
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -59,15 +62,18 @@ namespace Gestaurante.Migrations
                     b.Property<Guid>("IdPlato")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("PedidoIdPedido")
+                        .HasColumnType("uuid");
+
                     b.Property<double>("PrecioUnitario")
                         .HasColumnType("decimal(10,2)");
 
                     b.HasKey("IdDetallePedido")
                         .HasName("PK_DetallePedido");
 
-                    b.HasIndex("IdPedido");
-
                     b.HasIndex("IdPlato");
+
+                    b.HasIndex("PedidoIdPedido");
 
                     b.ToTable("DetallesPedido");
                 });
@@ -78,18 +84,13 @@ namespace Gestaurante.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
-                    b.Property<bool>("Activo")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<string>("DNI")
                         .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("character varying(10)");
+                        .HasMaxLength(13)
+                        .HasColumnType("character varying(13)");
 
                     b.Property<string>("Email")
                         .IsRequired()
@@ -106,7 +107,7 @@ namespace Gestaurante.Migrations
                         .HasMaxLength(150)
                         .HasColumnType("character varying(150)");
 
-                    b.Property<string>("ImageURL")
+                    b.Property<string>("ImageUrl")
                         .ValueGeneratedOnAdd()
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)")
@@ -114,8 +115,7 @@ namespace Gestaurante.Migrations
 
                     b.Property<string>("NUSS")
                         .IsRequired()
-                        .HasMaxLength(13)
-                        .HasColumnType("character varying(13)");
+                        .HasColumnType("text");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -140,9 +140,6 @@ namespace Gestaurante.Migrations
                         .IsUnique();
 
                     b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("NUSS")
                         .IsUnique();
 
                     b.ToTable("Empleados");
@@ -400,17 +397,15 @@ namespace Gestaurante.Migrations
 
             modelBuilder.Entity("Gestaurante.Models.Entities.DetallePedido", b =>
                 {
-                    b.HasOne("Gestaurante.Models.Entities.Pedido", null)
-                        .WithMany("DetallesPedido")
-                        .HasForeignKey("IdPedido")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Gestaurante.Models.Entities.Plato", null)
                         .WithMany()
                         .HasForeignKey("IdPlato")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
+
+                    b.HasOne("Gestaurante.Models.Entities.Pedido", null)
+                        .WithMany("DetallesPedido")
+                        .HasForeignKey("PedidoIdPedido");
                 });
 
             modelBuilder.Entity("Gestaurante.Models.Entities.Factura", b =>
