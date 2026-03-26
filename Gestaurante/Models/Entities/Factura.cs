@@ -2,12 +2,6 @@
 
 namespace Gestaurante.Models.Entities
 {
-    public enum EstadoFactura
-    {
-        PENDIENTE,
-        PAGADO,
-        CANCELADO
-    }
     public class Factura
     {
         [Key]

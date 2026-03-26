@@ -4,13 +4,6 @@ using Gestaurante.Validation;
 
 namespace Gestaurante.Models.DTO
 {
-    public enum TipoEmpleado
-    {
-        Administrador,
-        Camarero,
-        Cocinero
-    }
-
     public class RegistroDTO
     {
         public Guid Id { get; set; } = Guid.NewGuid();

@@ -2,15 +2,6 @@
 
 namespace Gestaurante.Models.Entities
 {
-    public enum EstadoPedido
-    {
-        PENDIENTE,
-        CONFIRMADO,
-        PREPARACION,
-        LISTO,
-        ENTREGADO,
-        CANCELADO
-    }
     public class Pedido
     {
         [Key]

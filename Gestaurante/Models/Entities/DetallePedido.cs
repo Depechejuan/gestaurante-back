@@ -2,12 +2,6 @@
 
 namespace Gestaurante.Models.Entities
 {
-    public enum EstadoDetallePedido
-    {
-        ACTIVA,
-        CANCELADA
-    }
-
     public class DetallePedido
     {
         [Key]
