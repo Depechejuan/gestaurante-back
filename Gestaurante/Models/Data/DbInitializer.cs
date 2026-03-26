@@ -1,55 +1,86 @@
-﻿//using Gestaurante.Models.Data;
-//using Gestaurante.Models.DTO;
-//using Gestaurante.Models.Entities;
-//using DotNetEnv;
+using BCrypt.Net;
+using Gestaurante.Models.Entities;
+using Microsoft.EntityFrameworkCore;
 
+namespace Gestaurante.Models.Data
+{
+    public static class DbInitializer
+    {
+        public static async Task SeedDefaultEmployeesAsync(AppDbContext context, CancellationToken cancellationToken = default)
+        {
+            if (await context.Empleados.AnyAsync(cancellationToken))
+            {
+                await SeedDefaultMesasAsync(context, cancellationToken);
+                return;
+            }
 
-//namespace Gestaurante.Models.Seed
-//{
-//    public static class DbInitializer
-//    {
-//        public static void Seed(AppDbContext context)
-//        {
-//            // Asegúrate de crear la base de datos si no existe
-//            context.Database.EnsureCreated();
+            string adminPassword = Environment.GetEnvironmentVariable("DEFAULT_ADMIN_PASSWORD")
+                ?? throw new Exception("DEFAULT_ADMIN_PASSWORD no definido");
+            string camareroPassword = Environment.GetEnvironmentVariable("DEFAULT_CAMARERO_PASSWORD")
+                ?? throw new Exception("DEFAULT_CAMARERO_PASSWORD no definido");
+            string cocineroPassword = Environment.GetEnvironmentVariable("DEFAULT_COCINERO_PASSWORD")
+                ?? throw new Exception("DEFAULT_COCINERO_PASSWORD no definido");
 
+            string adminHash = BCrypt.Net.BCrypt.HashPassword(adminPassword, BCrypt.Net.BCrypt.GenerateSalt(12));
+            string camareroHash = BCrypt.Net.BCrypt.HashPassword(camareroPassword, BCrypt.Net.BCrypt.GenerateSalt(12));
+            string cocineroHash = BCrypt.Net.BCrypt.HashPassword(cocineroPassword, BCrypt.Net.BCrypt.GenerateSalt(12));
 
-//            Env.Load();
-//            string email = Environment.GetEnvironmentVariable("ADMIN_EMAIL")
-//                ?? throw new Exception("ADMIN_EMAIL no definido");
-//            string pass = Environment.GetEnvironmentVariable("ADMIN_PASS")
-//                ?? throw new Exception("ADMIN_PASS no definido");
-//            string name = Environment.GetEnvironmentVariable("ADMIN_NAME")
-//                ?? throw new Exception("ADMIN_NAME no definido");
-//            string surename1 = Environment.GetEnvironmentVariable("ADMIN_SURENAME1")
-//                ?? throw new Exception("ADMIN_EMAIL no definido");
-//            string surename2 = Environment.GetEnvironmentVariable("ADMIN_SURENAME2")
-//                ?? throw new Exception("ADMIN_SURENAME2 no definido");
-//            string dni = Environment.GetEnvironmentVariable("ADMIN_DNI")
-//                ?? throw new Exception("ADMIN_DNI no definido");
-//            string nuss = Environment.GetEnvironmentVariable("ADMIN_NUSS")
-//                ?? throw new Exception("ADMIN_NUSS no definido");
+            var empleados = new List<Empleado>
+            {
+                new Administrador("admin@gestaurante.com", adminHash, "Admin", "Gestaurante", "Principal", "00000000T", "0111111111111"),
 
+                new Cocinero("lucas.romero@gestaurante.com", cocineroHash, "Lucas", "Romero", "Santos", "00000001R", "0222222222221"),
+                new Cocinero("maria.santos@gestaurante.com", cocineroHash, "Maria", "Santos", "Ruiz", "00000002W", "0222222222222"),
+                new Cocinero("alberto.molina@gestaurante.com", cocineroHash, "Alberto", "Molina", "Perez", "00000003A", "0222222222223"),
+                new Cocinero("natalia.ramos@gestaurante.com", cocineroHash, "Natalia", "Ramos", "Lopez", "00000004G", "0222222222224"),
+                new Cocinero("carmen.navarro@gestaurante.com", cocineroHash, "Carmen", "Navarro", "Diaz", "00000005M", "0222222222225"),
 
-//            var existing = context.Empleados.FirstOrDefault(e => e.Email == email);
-//            if (existing != null)
-//            {
-//                context.Empleados.Remove(existing);
-//                context.SaveChanges();
-//                Console.WriteLine($"Empleado con email {email} eliminado.");
-//            }
+                new Camarero("paula.garcia@gestaurante.com", camareroHash, "Paula", "Garcia", "Martin", "00000006Y", "0333333333331"),
+                new Camarero("diego.herrera@gestaurante.com", camareroHash, "Diego", "Herrera", "Gil", "00000007F", "0333333333332"),
+                new Camarero("laura.perez@gestaurante.com", camareroHash, "Laura", "Perez", "Vega", "00000008P", "0333333333333"),
+                new Camarero("jorge.ruiz@gestaurante.com", camareroHash, "Jorge", "Ruiz", "Ortega", "00000009D", "0333333333334"),
+                new Camarero("elena.flores@gestaurante.com", camareroHash, "Elena", "Flores", "Cano", "00000010X", "0333333333335")
+            };
 
-//            string passHashed = BCrypt.Net.BCrypt.HashPassword(pass);
-//            Console.WriteLine("Password hasheado para el administrador.");
-//            Console.WriteLine($"{passHashed}");
-//            // Crear empleados de ejemplo
-//            var empleados = new List<Empleado>
-//            {
-//                new Administrador(email, passHashed, name, surename1, surename2, dni, nuss)
-//            };
+            foreach (var empleado in empleados)
+            {
+                empleado.Activo = true;
+                empleado.ImageURL = string.Empty;
+            }
 
-//            context.Empleados.AddRange(empleados);
-//            context.SaveChanges();
-//        }
-//    }
-//}
+            await context.Empleados.AddRangeAsync(empleados, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+            await SeedDefaultMesasAsync(context, cancellationToken);
+        }
+
+        private static async Task SeedDefaultMesasAsync(AppDbContext context, CancellationToken cancellationToken)
+        {
+            if (await context.Mesas.AnyAsync(cancellationToken))
+            {
+                return;
+            }
+
+            var mesas = new List<Mesa>
+            {
+                new Mesa(Guid.NewGuid(), 2, true, "Terraza A1"),
+                new Mesa(Guid.NewGuid(), 2, true, "Terraza A2"),
+                new Mesa(Guid.NewGuid(), 2, true, "Terraza A3"),
+                new Mesa(Guid.NewGuid(), 4, true, "Interior B1"),
+                new Mesa(Guid.NewGuid(), 4, true, "Interior B2"),
+                new Mesa(Guid.NewGuid(), 4, true, "Interior B3"),
+                new Mesa(Guid.NewGuid(), 4, true, "Interior B4"),
+                new Mesa(Guid.NewGuid(), 6, true, "Salon C1"),
+                new Mesa(Guid.NewGuid(), 6, true, "Salon C2"),
+                new Mesa(Guid.NewGuid(), 6, true, "Salon C3"),
+                new Mesa(Guid.NewGuid(), 8, true, "Reservado D1"),
+                new Mesa(Guid.NewGuid(), 8, true, "Reservado D2"),
+                new Mesa(Guid.NewGuid(), 10, true, "Salon Grande E1"),
+                new Mesa(Guid.NewGuid(), 10, true, "Salon Grande E2"),
+                new Mesa(Guid.NewGuid(), 12, true, "Evento F1")
+            };
+
+            await context.Mesas.AddRangeAsync(mesas, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+    }
+}

@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-//using Gestaurante.Models.Seed;
 
 
 // Cargar variables del .env
@@ -142,7 +141,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
-    //DbInitializer.Seed(db);
+    await DbInitializer.SeedDefaultEmployeesAsync(db);
 }
 
 // Configure the HTTP request pipeline.
