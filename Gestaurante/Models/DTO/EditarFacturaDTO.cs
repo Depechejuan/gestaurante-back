@@ -5,6 +5,7 @@ namespace Gestaurante.Models.DTO
 {
     public class EditarFacturaDTO
     {
+        public Guid? IdMesa { get; set; }
         public Guid? IdPedido { get; set; }
 
         [Range(0, double.MaxValue)]

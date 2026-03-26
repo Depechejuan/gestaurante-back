@@ -1,6 +1,10 @@
 # gestaurante-back
 Back-end de la Aplicación de Gestaurante
 
+## Documentación de Operaciones de Sala
+- El plan técnico preparado para `mesas -> pedidos -> factura` está detallado en [Gestaurante/docs/operaciones-sala-plan.md](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/docs/operaciones-sala-plan.md).
+- Este documento describe el alcance implementado sin tocar la lógica de `platos/ingredientes`, que se mantiene fuera de esta rama para no pisar el trabajo paralelo en curso.
+
 
 # Dependencias NuGet
 - Pomelo.EntityFrameworkCore.MySql 

@@ -15,6 +15,7 @@ namespace Gestaurante.Models.Entities
         [MaxLength(100)]
         public Guid NumeroFactura { get; private set; }
 
+        public Guid? IdMesa { get; set; }
         public Guid? IdPedido { get; set; }
         [Required]
         public double PrecioTotal { get; set; }
@@ -22,9 +23,10 @@ namespace Gestaurante.Models.Entities
         public EstadoFactura Estado { get; set; } = EstadoFactura.PENDIENTE;
         public DateTime FechaFactura { get; set; } = DateTime.UtcNow;
         public Factura() { }
-        public Factura(Guid numeroFactura, Guid? idPedido, double precioTotal, double descuento, EstadoFactura estado, DateTime? fechaFactura = null) 
+        public Factura(Guid numeroFactura, Guid? idMesa, Guid? idPedido, double precioTotal, double descuento, EstadoFactura estado, DateTime? fechaFactura = null) 
         {
             NumeroFactura = numeroFactura;
+            IdMesa = idMesa;
             IdPedido = idPedido;
             PrecioTotal = precioTotal;
             Descuento = descuento;

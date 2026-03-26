@@ -124,6 +124,7 @@ builder.Services.AddScoped<StaffService>();
 builder.Services.AddScoped<PedidoService>();
 builder.Services.AddScoped<MesaService>();
 builder.Services.AddScoped<FacturaService>();
+builder.Services.AddScoped<MesaPublicSessionService>();
 builder.Services.AddHttpClient<IEmployeeImageService, CloudinaryEmployeeImageService>();
 
 

@@ -3,6 +3,7 @@ using System;
 using Gestaurante.Models.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestaurante.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260326074217_EnrichMesaPedidoFacturaOperations")]
+    partial class EnrichMesaPedidoFacturaOperations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -281,47 +284,6 @@ namespace Gestaurante.Migrations
                     b.ToTable("Mesas");
                 });
 
-            modelBuilder.Entity("Gestaurante.Models.Entities.MesaPublicSession", b =>
-                {
-                    b.Property<Guid>("IdMesaPublicSession")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime?>("ClosedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("timestamp with time zone")
-                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
-
-                    b.Property<DateTime>("ExpiresAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<Guid>("IdMesa")
-                        .HasColumnType("uuid");
-
-                    b.Property<bool>("IsActive")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("boolean")
-                        .HasDefaultValue(true);
-
-                    b.Property<DateTime?>("LastSeenAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("TokenHash")
-                        .IsRequired()
-                        .HasMaxLength(128)
-                        .HasColumnType("character varying(128)");
-
-                    b.HasKey("IdMesaPublicSession")
-                        .HasName("PK_MesaPublicSessions");
-
-                    b.HasIndex("IdMesa", "IsActive", "ExpiresAt");
-
-                    b.ToTable("MesaPublicSessions");
-                });
-
             modelBuilder.Entity("Gestaurante.Models.Entities.Pedido", b =>
                 {
                     b.Property<Guid>("IdPedido")
@@ -349,17 +311,12 @@ namespace Gestaurante.Migrations
                     b.Property<Guid?>("IdMesa")
                         .HasColumnType("uuid");
 
-                    b.Property<Guid?>("IdMesaPublicSession")
-                        .HasColumnType("uuid");
-
                     b.HasKey("IdPedido")
                         .HasName("PK_Pedidos");
 
                     b.HasIndex("IdFactura");
 
                     b.HasIndex("IdMesa");
-
-                    b.HasIndex("IdMesaPublicSession");
 
                     b.ToTable("Pedidos");
                 });
@@ -495,15 +452,6 @@ namespace Gestaurante.Migrations
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
-            modelBuilder.Entity("Gestaurante.Models.Entities.MesaPublicSession", b =>
-                {
-                    b.HasOne("Gestaurante.Models.Entities.Mesa", null)
-                        .WithMany()
-                        .HasForeignKey("IdMesa")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Gestaurante.Models.Entities.Pedido", b =>
                 {
                     b.HasOne("Gestaurante.Models.Entities.Factura", null)
@@ -514,11 +462,6 @@ namespace Gestaurante.Migrations
                     b.HasOne("Gestaurante.Models.Entities.Mesa", null)
                         .WithMany()
                         .HasForeignKey("IdMesa")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.HasOne("Gestaurante.Models.Entities.MesaPublicSession", null)
-                        .WithMany()
-                        .HasForeignKey("IdMesaPublicSession")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 

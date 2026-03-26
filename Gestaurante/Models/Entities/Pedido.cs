@@ -17,8 +17,11 @@ namespace Gestaurante.Models.Entities
         [Required]
         [MaxLength(100)]
         public Guid IdPedido { get; private set; }
-        
-        //relacion con tabla DetallePedido
+
+        public Guid? IdMesa { get; set; }
+        public Guid? IdFactura { get; set; }
+        public Guid? IdMesaPublicSession { get; set; }
+
         public virtual ICollection<DetallePedido> DetallesPedido { get; set; } = new List<DetallePedido>();
 
         [Required]
@@ -30,11 +33,13 @@ namespace Gestaurante.Models.Entities
 
         public Pedido() { }
 
-        public Pedido(Guid idPedido, DateTime fechaPedido, EstadoPedido estado) 
+        public Pedido(Guid idPedido, Guid? idMesa, DateTime fechaPedido, EstadoPedido estado, Guid? idMesaPublicSession = null)
         {
             IdPedido = idPedido;
+            IdMesa = idMesa;
             FechaPedido = fechaPedido;
             Estado = estado;
+            IdMesaPublicSession = idMesaPublicSession;
         }
     }
 }
