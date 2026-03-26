@@ -16,9 +16,12 @@ namespace Gestaurante.Models.Services
         public CloudinaryEmployeeImageService(HttpClient httpClient)
         {
             _httpClient = httpClient;
-            _cloudName = Environment.GetEnvironmentVariable("CLOUDINARY_CLOUD_NAME");
-            _apiKey = Environment.GetEnvironmentVariable("CLOUDINARY_API_KEY");
-            _apiSecret = Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET");
+            _cloudName = Environment.GetEnvironmentVariable("CLOUDINARY_CLOUD_NAME")
+                ?? Environment.GetEnvironmentVariable("CLOUDINARY_CLOUDNAME");
+            _apiKey = Environment.GetEnvironmentVariable("CLOUDINARY_API_KEY")
+                ?? Environment.GetEnvironmentVariable("CLOUDINARY_APIKEY");
+            _apiSecret = Environment.GetEnvironmentVariable("CLOUDINARY_API_SECRET")
+                ?? Environment.GetEnvironmentVariable("CLOUDINARY_APISECRET");
             _employeeFolder = Environment.GetEnvironmentVariable("CLOUDINARY_EMPLOYEE_FOLDER") ?? "gestaurante/empleados";
         }
 

@@ -53,6 +53,14 @@ namespace Gestaurante.Migrations
                         .HasColumnType("integer")
                         .HasDefaultValue(1);
 
+                    b.Property<int>("Estado")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime?>("FechaCancelacion")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<Guid>("IdPedido")
                         .HasColumnType("uuid");
 
@@ -174,6 +182,9 @@ namespace Gestaurante.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
 
+                    b.Property<Guid?>("IdMesa")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("IdPedido")
                         .HasColumnType("uuid");
 
@@ -184,6 +195,8 @@ namespace Gestaurante.Migrations
 
                     b.HasKey("NumeroFactura")
                         .HasName("PK_Facturas");
+
+                    b.HasIndex("IdMesa");
 
                     b.HasIndex("IdPedido");
 
@@ -268,6 +281,47 @@ namespace Gestaurante.Migrations
                     b.ToTable("Mesas");
                 });
 
+            modelBuilder.Entity("Gestaurante.Models.Entities.MesaPublicSession", b =>
+                {
+                    b.Property<Guid>("IdMesaPublicSession")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("IdMesa")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime?>("LastSeenAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.HasKey("IdMesaPublicSession")
+                        .HasName("PK_MesaPublicSessions");
+
+                    b.HasIndex("IdMesa", "IsActive", "ExpiresAt");
+
+                    b.ToTable("MesaPublicSessions");
+                });
+
             modelBuilder.Entity("Gestaurante.Models.Entities.Pedido", b =>
                 {
                     b.Property<Guid>("IdPedido")
@@ -289,8 +343,23 @@ namespace Gestaurante.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
 
+                    b.Property<Guid?>("IdFactura")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("IdMesa")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("IdMesaPublicSession")
+                        .HasColumnType("uuid");
+
                     b.HasKey("IdPedido")
                         .HasName("PK_Pedidos");
+
+                    b.HasIndex("IdFactura");
+
+                    b.HasIndex("IdMesa");
+
+                    b.HasIndex("IdMesaPublicSession");
 
                     b.ToTable("Pedidos");
                 });
@@ -415,9 +484,41 @@ namespace Gestaurante.Migrations
 
             modelBuilder.Entity("Gestaurante.Models.Entities.Factura", b =>
                 {
+                    b.HasOne("Gestaurante.Models.Entities.Mesa", null)
+                        .WithMany()
+                        .HasForeignKey("IdMesa")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Gestaurante.Models.Entities.Pedido", null)
                         .WithMany()
                         .HasForeignKey("IdPedido")
+                        .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("Gestaurante.Models.Entities.MesaPublicSession", b =>
+                {
+                    b.HasOne("Gestaurante.Models.Entities.Mesa", null)
+                        .WithMany()
+                        .HasForeignKey("IdMesa")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gestaurante.Models.Entities.Pedido", b =>
+                {
+                    b.HasOne("Gestaurante.Models.Entities.Factura", null)
+                        .WithMany()
+                        .HasForeignKey("IdFactura")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Gestaurante.Models.Entities.Mesa", null)
+                        .WithMany()
+                        .HasForeignKey("IdMesa")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Gestaurante.Models.Entities.MesaPublicSession", null)
+                        .WithMany()
+                        .HasForeignKey("IdMesaPublicSession")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 

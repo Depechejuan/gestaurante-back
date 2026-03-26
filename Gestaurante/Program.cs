@@ -9,7 +9,6 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-//using Gestaurante.Models.Seed;
 
 
 // Cargar variables del .env
@@ -121,9 +120,13 @@ builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<RegisterService>();
 builder.Services.AddScoped<StaffService>();
+builder.Services.AddScoped<CategoriaService>();
+builder.Services.AddScoped<IngredienteService>();
+builder.Services.AddScoped<PlatoService>();
 builder.Services.AddScoped<PedidoService>();
 builder.Services.AddScoped<MesaService>();
 builder.Services.AddScoped<FacturaService>();
+builder.Services.AddScoped<MesaPublicSessionService>();
 builder.Services.AddHttpClient<IEmployeeImageService, CloudinaryEmployeeImageService>();
 
 
@@ -141,7 +144,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     db.Database.Migrate();
-    //DbInitializer.Seed(db);
+    await DbInitializer.SeedDefaultEmployeesAsync(db);
 }
 
 // Configure the HTTP request pipeline.

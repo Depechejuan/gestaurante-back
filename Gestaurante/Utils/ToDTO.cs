@@ -4,7 +4,7 @@ namespace Gestaurante.Utils
 {
     public class ToDTO
     {
-        public static Models.DTO.EmpleadoFullDTO EmpleadoToEmpleadoFullDTO(Models.Entities.Empleado empleado, Models.DTO.TipoEmpleado tipo)
+        public static Models.DTO.EmpleadoFullDTO EmpleadoToEmpleadoFullDTO(Models.Entities.Empleado empleado, TipoEmpleado tipo)
         {
             return new Models.DTO.EmpleadoFullDTO(
                 empleado.Id,

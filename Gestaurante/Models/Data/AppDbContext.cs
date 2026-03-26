@@ -19,6 +19,7 @@ namespace Gestaurante.Models.Data
         public DbSet<Pedido> Pedidos => Set<Pedido>();
         public DbSet<Factura> Facturas => Set<Factura>();
         public DbSet<DetallePedido> DetallesPedido => Set<DetallePedido>();
+        public DbSet<MesaPublicSession> MesaPublicSessions => Set<MesaPublicSession>();
         public DbSet<Categoria> Categorias => Set<Categoria>(); 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -210,6 +211,44 @@ namespace Gestaurante.Models.Data
                     .HasComment("Ubicación física de la mesa en el restaurante");
             });
 
+            modelBuilder.Entity<MesaPublicSession>(entity =>
+            {
+                entity.HasKey(s => s.IdMesaPublicSession)
+                    .HasName("PK_MesaPublicSessions");
+
+                entity.Property(s => s.IdMesaPublicSession)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(s => s.TokenHash)
+                    .IsRequired()
+                    .HasMaxLength(128);
+
+                entity.Property(s => s.IsActive)
+                    .IsRequired()
+                    .HasDefaultValue(true);
+
+                entity.Property(s => s.CreatedAt)
+                    .IsRequired()
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                entity.Property(s => s.ExpiresAt)
+                    .IsRequired();
+
+                entity.Property(s => s.LastSeenAt)
+                    .IsRequired(false);
+
+                entity.Property(s => s.ClosedAt)
+                    .IsRequired(false);
+
+                entity.HasIndex(s => new { s.IdMesa, s.IsActive, s.ExpiresAt });
+
+                entity.HasOne<Mesa>()
+                    .WithMany()
+                    .HasForeignKey(s => s.IdMesa)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
             //modelBuilder de Factura   
 
             modelBuilder.Entity<Factura>(entity =>
@@ -240,6 +279,11 @@ namespace Gestaurante.Models.Data
                     .IsRequired()
                     .HasDefaultValue(EstadoFactura.PENDIENTE);
 
+                entity.HasOne<Mesa>()
+                    .WithMany()
+                    .HasForeignKey(f => f.IdMesa)
+                    .OnDelete(DeleteBehavior.Restrict);
+
                 entity.HasOne<Pedido>()
                     .WithMany()
                     .HasForeignKey(f => f.IdPedido)
@@ -265,6 +309,21 @@ namespace Gestaurante.Models.Data
                 entity.Property(p => p.Estado)
                     .IsRequired()
                     .HasDefaultValue(EstadoPedido.PENDIENTE);
+
+                entity.HasOne<Mesa>()
+                    .WithMany()
+                    .HasForeignKey(p => p.IdMesa)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<Factura>()
+                    .WithMany()
+                    .HasForeignKey(p => p.IdFactura)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<MesaPublicSession>()
+                    .WithMany()
+                    .HasForeignKey(p => p.IdMesaPublicSession)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             //modelBuilder de DetallePedido
@@ -281,6 +340,11 @@ namespace Gestaurante.Models.Data
                 entity.Property(dp => dp.PrecioUnitario)
                     .IsRequired()
                     .HasColumnType("decimal(10,2)");
+                entity.Property(dp => dp.Estado)
+                    .IsRequired()
+                    .HasDefaultValue(EstadoDetallePedido.ACTIVA);
+                entity.Property(dp => dp.FechaCancelacion)
+                    .IsRequired(false);
                 entity.HasOne<Plato>()
                     .WithMany()
                     .HasForeignKey(dp => dp.IdPlato)

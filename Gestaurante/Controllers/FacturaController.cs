@@ -8,7 +8,7 @@ namespace Gestaurante.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    [Authorize(Roles = "Administrador,Camarero")]
     public class FacturaController : ControllerBase
     {
         private readonly FacturaService _facturaService;
@@ -66,15 +66,26 @@ namespace Gestaurante.Controllers
             {
                 return ResponseHelper.NotFound(ex.Message);
             }
+            catch (InvalidOperationException ex)
+            {
+                return ResponseHelper.Conflict(ex.Message);
+            }
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            var deleted = await _facturaService.DeleteAsync(id, cancellationToken);
-            return deleted
-                ? ResponseHelper.SendResponse(new { id, deleted = true })
-                : ResponseHelper.NotFound("Factura no encontrada.");
+            try
+            {
+                var deleted = await _facturaService.DeleteAsync(id, cancellationToken);
+                return deleted
+                    ? ResponseHelper.SendResponse(new { id, deleted = true })
+                    : ResponseHelper.NotFound("Factura no encontrada.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ResponseHelper.Conflict(ex.Message);
+            }
         }
     }
 }

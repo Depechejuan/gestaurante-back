@@ -19,7 +19,7 @@ namespace Gestaurante.Models.Entities
         public string Imagen { get; set; } = string.Empty;
         public virtual ICollection<PlatoIngrediente> PlatoIngredientes { get; set; } = new List<PlatoIngrediente>();
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? UpdatedAt { get; protected set; }
+        public DateTime? UpdatedAt { get; set; }
         protected Ingrediente() { }
         public Ingrediente(Guid idIngrediente, string nombre,  bool alergenico, bool disponibilidad, string imagen)
         {

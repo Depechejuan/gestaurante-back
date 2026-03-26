@@ -47,12 +47,8 @@ namespace Gestaurante.Migrations
                 oldType: "character varying(13)",
                 oldMaxLength: 13);
 
-            migrationBuilder.AddColumn<bool>(
-                name: "Activo",
-                table: "Empleados",
-                type: "boolean",
-                nullable: false,
-                defaultValue: true);
+            migrationBuilder.Sql(
+                @"ALTER TABLE ""Empleados"" ADD COLUMN IF NOT EXISTS ""Activo"" boolean NOT NULL DEFAULT TRUE;");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Empleados_NUSS",

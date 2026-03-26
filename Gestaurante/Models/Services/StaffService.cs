@@ -36,7 +36,7 @@ namespace Gestaurante.Models.Services
                 )
                 {
                     Activo = empleado.Activo,
-                    ImageURL = empleado.ImageURL,
+                    ImageURL = NormalizeEmployeeImageUrl(empleado.ImageURL),
                     CreatedAt = empleado.CreatedAt,
                     UpdatedAt = empleado.UpdatedAt
                 };
@@ -73,10 +73,29 @@ namespace Gestaurante.Models.Services
             return new EmpleadoFullDTO(empleado.Id, empleado.FirstName, empleado.FirstLastName, empleado.SecondLastName, empleado.Email, empleado.DNI, empleado.NUSS, tipo)
             {
                 Activo = empleado.Activo,
-                ImageURL = empleado.ImageURL,
+                ImageURL = NormalizeEmployeeImageUrl(empleado.ImageURL),
                 CreatedAt = empleado.CreatedAt,
                 UpdatedAt = empleado.UpdatedAt
             };
+        }
+
+        private static string NormalizeEmployeeImageUrl(string imageUrl)
+        {
+            if (string.IsNullOrWhiteSpace(imageUrl))
+                return string.Empty;
+
+            if (Uri.TryCreate(imageUrl, UriKind.Absolute, out var uri) &&
+                (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+            {
+                return imageUrl;
+            }
+
+            var cloudName = Environment.GetEnvironmentVariable("CLOUDINARY_CLOUD_NAME")
+                ?? Environment.GetEnvironmentVariable("CLOUDINARY_CLOUDNAME");
+            if (string.IsNullOrWhiteSpace(cloudName))
+                return imageUrl;
+
+            return $"https://res.cloudinary.com/{cloudName}/image/upload/{imageUrl.TrimStart('/')}";
         }
 
         private static TipoEmpleado ResolveEmployeeType(Empleado empleado)

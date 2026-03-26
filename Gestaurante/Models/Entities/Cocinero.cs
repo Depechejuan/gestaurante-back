@@ -16,7 +16,7 @@ namespace Gestaurante.Models.Entities
             this.DNI = dni;
             this.NUSS = nuss;
 
-            this.Id = new Guid();
+            this.Id = Guid.NewGuid();
             this.CreatedAt = DateTime.UtcNow;
         }
 
