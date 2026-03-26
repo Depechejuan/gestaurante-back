@@ -13,7 +13,7 @@ La idea no es implementarlo todo a la vez, sino avanzar por fases y con contrato
 ### Resumen
 - Cerrar primero el catálogo real como fuente única de datos para cliente, staff y admin.
 - Mantener la base ya preparada de `mesa -> pedido -> factura`.
-- Reforzar la API pública para QR y reutilizar ese patrón en el futuro pedido online.
+- Reutilizar la API pública de QR ya creada como base del futuro pedido online.
 - Añadir después recogida y, en una fase posterior, `delivery` con pago online opcional.
 
 ### Prioridades de backend
@@ -34,18 +34,15 @@ La idea no es implementarlo todo a la vez, sino avanzar por fases y con contrato
   - quién genera factura
 
 #### API pública de cliente
-- Mantener sesiones públicas temporales para QR.
 - Repetir el mismo patrón para checkout público sin registro.
-- No reutilizar JWT interno para cliente.
 - Añadir rate limiting y validaciones anti abuso en endpoints públicos.
 
 ### Plan por fases
 
 #### Fase 1: QR de mesa completo
 - Exponer catálogo real para `/public/mesa/{id}`.
-- Permitir consultar pedidos de la sesión pública.
-- Crear pedidos reales desde QR con precio copiado en `DetallePedido`.
-- Invalidar sesiones públicas al cerrar la mesa.
+- Terminar el flujo sobre catálogo real en lugar de mocks.
+- Revisar el DTO/respuesta final que consumirá el cliente para su histórico visible.
 
 #### Fase 2: pedido online para recogida
 - Crear endpoints públicos de checkout sin registro.
@@ -103,6 +100,16 @@ Endpoints orientativos:
 - El carrito vive en cliente hasta que se confirma el pedido.
 - Una vez enviado, el pedido se vuelve inmutable y cualquier corrección posterior se hace por cancelación.
 - El histórico de facturas y pedidos debe conservar el precio original aunque el plato cambie después.
+
+### Ya implementado
+- Base operativa `mesa -> pedido -> factura`.
+- Precio copiado en `DetallePedido` en el momento de crear el pedido.
+- Cancelacion de pedido y de linea como flujo operativo.
+- Sesion publica temporal por mesa para QR.
+- Consulta de pedidos de la sesion publica.
+- Creacion de pedidos reales desde QR.
+- Invalidacion de sesiones publicas al cerrar mesa.
+- Separacion entre auth interna por JWT y acceso publico de cliente sin registro.
 
 
 # Dependencias NuGet
