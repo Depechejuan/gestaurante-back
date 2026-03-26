@@ -9,11 +9,11 @@ namespace Gestaurante.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    public class PlatoController : ControllerBase
+    public class CategoriaController : ControllerBase
     {
-        private readonly PlatoService _service;
+        private readonly CategoriaService _service;
 
-        public PlatoController(PlatoService service)
+        public CategoriaController(CategoriaService service)
         {
             _service = service;
         }
@@ -21,30 +21,30 @@ namespace Gestaurante.Controllers
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
-            var platos = await _service.GetAllAsync(cancellationToken);
-            return ResponseHelper.SendResponse(platos);
+            var categorias = await _service.GetAllAsync(cancellationToken);
+            return ResponseHelper.SendResponse(categorias);
         }
 
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
-            var plato = await _service.GetByIdAsync(id, cancellationToken);
-            if (plato == null)
+            var categoria = await _service.GetByIdAsync(id, cancellationToken);
+            if (categoria == null)
             {
-                return ResponseHelper.NotFound("Plato no encontrado.");
+                return ResponseHelper.NotFound("Categoria no encontrada.");
             }
 
-            return ResponseHelper.SendResponse(plato);
+            return ResponseHelper.SendResponse(categoria);
         }
 
         [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] PlatoDTO dto, CancellationToken cancellationToken)
+        public async Task<IActionResult> Create([FromBody] CategoriaDTO dto, CancellationToken cancellationToken)
         {
             try
             {
-                var plato = await _service.CreateAsync(dto, cancellationToken);
-                return ResponseHelper.SendResponse(plato, 201);
+                var categoria = await _service.CreateAsync(dto, cancellationToken);
+                return ResponseHelper.SendResponse(categoria, 201);
             }
             catch (InvalidOperationException ex)
             {
@@ -54,17 +54,17 @@ namespace Gestaurante.Controllers
 
         [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] PlatoDTO dto, CancellationToken cancellationToken)
+        public async Task<IActionResult> Update(Guid id, [FromBody] CategoriaDTO dto, CancellationToken cancellationToken)
         {
             try
             {
-                var plato = await _service.UpdateAsync(id, dto, cancellationToken);
-                if (plato == null)
+                var categoria = await _service.UpdateAsync(id, dto, cancellationToken);
+                if (categoria == null)
                 {
-                    return ResponseHelper.NotFound("Plato no encontrado.");
+                    return ResponseHelper.NotFound("Categoria no encontrada.");
                 }
 
-                return ResponseHelper.SendResponse(plato);
+                return ResponseHelper.SendResponse(categoria);
             }
             catch (InvalidOperationException ex)
             {
@@ -81,7 +81,7 @@ namespace Gestaurante.Controllers
                 var deleted = await _service.DeleteAsync(id, cancellationToken);
                 if (!deleted)
                 {
-                    return ResponseHelper.NotFound("Plato no encontrado.");
+                    return ResponseHelper.NotFound("Categoria no encontrada.");
                 }
 
                 return ResponseHelper.SendResponse(new { deleted = true });
