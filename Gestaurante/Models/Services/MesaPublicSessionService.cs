@@ -26,9 +26,7 @@ namespace Gestaurante.Models.Services
 
             var mesa = await _db.Mesas.FirstOrDefaultAsync(m => m.IdMesa == mesaId, cancellationToken);
             if (mesa == null)
-            {
                 throw new KeyNotFoundException("Mesa no encontrada.");
-            }
 
             var activeSession = await _db.MesaPublicSessions
                 .Where(s => s.IdMesa == mesaId && s.IsActive && s.ExpiresAt > DateTime.UtcNow)
@@ -57,9 +55,7 @@ namespace Gestaurante.Models.Services
             }
 
             if (!mesa.Estado)
-            {
                 throw new InvalidOperationException("La mesa ya está ocupada y no puede aceptar una nueva sesión pública.");
-            }
 
             var sessionToken = CreateSessionToken();
             var session = new MesaPublicSession(Guid.NewGuid(), mesaId, HashToken(sessionToken), BuildExpiry())
@@ -115,18 +111,14 @@ namespace Gestaurante.Models.Services
                 .ToListAsync(cancellationToken);
 
             if (activeSessions.Count == 0)
-            {
                 return;
-            }
 
             foreach (var session in activeSessions)
             {
                 session.IsActive = false;
                 session.ClosedAt = DateTime.UtcNow;
                 if (session.ExpiresAt > DateTime.UtcNow)
-                {
                     session.ExpiresAt = DateTime.UtcNow;
-                }
             }
 
             await _db.SaveChangesAsync(cancellationToken);
@@ -146,9 +138,7 @@ namespace Gestaurante.Models.Services
                     cancellationToken);
 
             if (session == null)
-            {
                 throw new UnauthorizedAccessException("La sesión pública no es válida o ha expirado.");
-            }
 
             session.LastSeenAt = DateTime.UtcNow;
             session.ExpiresAt = BuildExpiry();
@@ -163,9 +153,7 @@ namespace Gestaurante.Models.Services
                 .ToListAsync(cancellationToken);
 
             if (expiredSessions.Count == 0)
-            {
                 return;
-            }
 
             foreach (var session in expiredSessions)
             {
@@ -187,9 +175,7 @@ namespace Gestaurante.Models.Services
                     .AnyAsync(d => pendingPedidoIds.Contains(d.IdPedido) && d.Estado == EstadoDetallePedido.ACTIVA, cancellationToken);
 
                 if (!hasActiveLines)
-                {
                     mesa.Estado = true;
-                }
             }
 
             await _db.SaveChangesAsync(cancellationToken);

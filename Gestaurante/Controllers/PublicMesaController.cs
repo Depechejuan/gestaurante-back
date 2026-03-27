@@ -38,9 +38,7 @@ namespace Gestaurante.Controllers
         public async Task<IActionResult> GetMyPedidos(Guid id, [FromHeader(Name = "X-Mesa-Session")] string? sessionToken, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(sessionToken))
-            {
                 return ResponseHelper.NotAuthorized("Debes indicar una sesión pública válida.");
-            }
 
             try
             {
@@ -57,9 +55,7 @@ namespace Gestaurante.Controllers
         public async Task<IActionResult> CreatePedido(Guid id, [FromHeader(Name = "X-Mesa-Session")] string? sessionToken, [FromBody] CrearPedidoPublicoDTO dto, CancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(sessionToken))
-            {
                 return ResponseHelper.NotAuthorized("Debes indicar una sesión pública válida.");
-            }
 
             try
             {
