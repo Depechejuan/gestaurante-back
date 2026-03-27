@@ -132,7 +132,11 @@ namespace Gestaurante.Controllers
                 var newEmpleado = await _registerService.EditarEmpleado(id, dto, cancellationToken);
                 if (newEmpleado == null)
                     throw new Exception("Empleado no encontrado");
-                var tipo = dto.Tipo ?? (newEmpleado is Administrador ? TipoEmpleado.Administrador : newEmpleado is Camarero ? TipoEmpleado.Camarero : TipoEmpleado.Cocinero);
+                var tipo = dto.Tipo
+                    ?? (newEmpleado is Administrador ? TipoEmpleado.Administrador
+                    : newEmpleado is Camarero ? TipoEmpleado.Camarero
+                    : newEmpleado is Repartidor ? TipoEmpleado.Repartidor
+                    : TipoEmpleado.Cocinero);
                 var empleado = ToDTO.EmpleadoToEmpleadoFullDTO(newEmpleado, tipo);
 
                 return ResponseHelper.SendResponse(empleado);

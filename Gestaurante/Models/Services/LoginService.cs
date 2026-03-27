@@ -27,6 +27,8 @@ namespace Gestaurante.Models.Services
                 tipo = TipoEmpleado.Administrador;
             else if (empleado is Camarero)
                 tipo = TipoEmpleado.Camarero;
+            else if (empleado is Repartidor)
+                tipo = TipoEmpleado.Repartidor;
             else
                 tipo = TipoEmpleado.Cocinero;
 

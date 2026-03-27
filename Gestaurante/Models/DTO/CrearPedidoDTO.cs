@@ -5,10 +5,18 @@ namespace Gestaurante.Models.DTO
 {
     public class CrearPedidoDTO
     {
-        [Required]
-        public Guid IdMesa { get; set; }
+        public Guid? IdMesa { get; set; }
 
         public EstadoPedido Estado { get; set; } = EstadoPedido.PENDIENTE;
+        public CanalPedido CanalPedido { get; set; } = CanalPedido.SALA;
+        public TipoEntrega TipoEntrega { get; set; } = TipoEntrega.MESA;
+        public EstadoPago EstadoPago { get; set; } = EstadoPago.NO_APLICA;
+        public Guid? IdUsuarioCliente { get; set; }
+        public string ClienteNombre { get; set; } = string.Empty;
+        public string ClienteEmail { get; set; } = string.Empty;
+        public string ClienteTelefono { get; set; } = string.Empty;
+        public string ClienteDireccionSnapshot { get; set; } = string.Empty;
+        public string Notas { get; set; } = string.Empty;
         public List<CrearDetallePedidoDTO> Detalles { get; set; } = new();
     }
 }

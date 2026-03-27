@@ -64,7 +64,8 @@ namespace Gestaurante.Models.Services
                 dto.PrecioTotal.Value,
                 dto.Descuento,
                 dto.Estado,
-                dto.FechaFactura
+                dto.FechaFactura,
+                dto.CanalPedido
             );
 
             await _db.Facturas.AddAsync(factura, cancellationToken);
@@ -176,7 +177,8 @@ namespace Gestaurante.Models.Services
                 total,
                 descuento,
                 estado,
-                fechaFactura
+                fechaFactura,
+                pedido.CanalPedido
             );
 
             await _db.Facturas.AddAsync(factura, cancellationToken);
@@ -227,7 +229,8 @@ namespace Gestaurante.Models.Services
                 total,
                 descuento,
                 estado,
-                fechaFactura
+                fechaFactura,
+                pedidosFacturables.FirstOrDefault()?.CanalPedido
             );
 
             await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
@@ -312,6 +315,7 @@ namespace Gestaurante.Models.Services
                 NumeroFactura = factura.NumeroFactura,
                 IdMesa = factura.IdMesa,
                 IdPedido = factura.IdPedido,
+                CanalPedido = factura.CanalPedido,
                 PrecioTotal = factura.PrecioTotal,
                 Descuento = factura.Descuento,
                 TotalConDescuento = Math.Max(0, factura.PrecioTotal - factura.Descuento),

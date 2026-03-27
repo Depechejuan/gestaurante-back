@@ -20,7 +20,11 @@ namespace Gestaurante.Models.Data
         public DbSet<Factura> Facturas => Set<Factura>();
         public DbSet<DetallePedido> DetallesPedido => Set<DetallePedido>();
         public DbSet<MesaPublicSession> MesaPublicSessions => Set<MesaPublicSession>();
-        public DbSet<Categoria> Categorias => Set<Categoria>(); 
+        public DbSet<Categoria> Categorias => Set<Categoria>();
+        public DbSet<UsuarioCliente> UsuariosCliente => Set<UsuarioCliente>();
+        public DbSet<ClienteEmailVerification> ClienteEmailVerifications => Set<ClienteEmailVerification>();
+        public DbSet<ClienteDireccion> ClienteDirecciones => Set<ClienteDireccion>();
+        public DbSet<ClienteMetodoPago> ClienteMetodosPago => Set<ClienteMetodoPago>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -34,7 +38,8 @@ namespace Gestaurante.Models.Data
                     .HasDiscriminator<TipoEmpleado>("Tipo")
                     .HasValue<Administrador>(TipoEmpleado.Administrador)
                     .HasValue<Camarero>(TipoEmpleado.Camarero)
-                    .HasValue<Cocinero>(TipoEmpleado.Cocinero);
+                    .HasValue<Cocinero>(TipoEmpleado.Cocinero)
+                    .HasValue<Repartidor>(TipoEmpleado.Repartidor);
 
                 entity.HasKey(e => e.Id)
                     .HasName("PK_Empleados");
@@ -68,6 +73,169 @@ namespace Gestaurante.Models.Data
 
                 entity.HasIndex(e => e.NUSS)
                     .IsUnique();
+            });
+
+            modelBuilder.Entity<UsuarioCliente>(entity =>
+            {
+                entity.HasKey(u => u.IdUsuarioCliente)
+                    .HasName("PK_UsuariosCliente");
+
+                entity.Property(u => u.IdUsuarioCliente)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(u => u.Email)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.HasIndex(u => u.Email)
+                    .IsUnique();
+
+                entity.Property(u => u.PasswordHash)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.Property(u => u.FirstName)
+                    .IsRequired()
+                    .HasMaxLength(120);
+
+                entity.Property(u => u.LastName)
+                    .IsRequired()
+                    .HasMaxLength(160);
+
+                entity.Property(u => u.Phone)
+                    .IsRequired()
+                    .HasMaxLength(25);
+
+                entity.Property(u => u.Activo)
+                    .IsRequired()
+                    .HasDefaultValue(true);
+
+                entity.Property(u => u.EmailVerificado)
+                    .IsRequired()
+                    .HasDefaultValue(false);
+
+                entity.Property(u => u.CreatedAt)
+                    .IsRequired()
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                entity.Property(u => u.UpdatedAt)
+                    .IsRequired(false);
+            });
+
+            modelBuilder.Entity<ClienteEmailVerification>(entity =>
+            {
+                entity.HasKey(v => v.IdClienteEmailVerification)
+                    .HasName("PK_ClienteEmailVerifications");
+
+                entity.Property(v => v.IdClienteEmailVerification)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(v => v.CodeHash)
+                    .IsRequired()
+                    .HasMaxLength(128);
+
+                entity.Property(v => v.CreatedAt)
+                    .IsRequired()
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                entity.HasIndex(v => new { v.IdUsuarioCliente, v.ExpiresAt });
+
+                entity.HasOne<UsuarioCliente>()
+                    .WithMany()
+                    .HasForeignKey(v => v.IdUsuarioCliente)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ClienteDireccion>(entity =>
+            {
+                entity.HasKey(d => d.IdClienteDireccion)
+                    .HasName("PK_ClienteDirecciones");
+
+                entity.Property(d => d.IdClienteDireccion)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(d => d.Alias)
+                    .IsRequired()
+                    .HasMaxLength(80);
+
+                entity.Property(d => d.Street)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(d => d.City)
+                    .IsRequired()
+                    .HasMaxLength(120);
+
+                entity.Property(d => d.Province)
+                    .IsRequired()
+                    .HasMaxLength(120);
+
+                entity.Property(d => d.PostalCode)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(d => d.Notes)
+                    .IsRequired(false)
+                    .HasMaxLength(200)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(d => d.IsDefault)
+                    .IsRequired()
+                    .HasDefaultValue(false);
+
+                entity.Property(d => d.CreatedAt)
+                    .IsRequired()
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                entity.Property(d => d.UpdatedAt)
+                    .IsRequired(false);
+
+                entity.HasOne<UsuarioCliente>()
+                    .WithMany(u => u.Direcciones)
+                    .HasForeignKey(d => d.IdUsuarioCliente)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ClienteMetodoPago>(entity =>
+            {
+                entity.HasKey(m => m.IdClienteMetodoPago)
+                    .HasName("PK_ClienteMetodosPago");
+
+                entity.Property(m => m.IdClienteMetodoPago)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(m => m.MockPaymentToken)
+                    .IsRequired()
+                    .HasMaxLength(120);
+
+                entity.Property(m => m.Brand)
+                    .IsRequired()
+                    .HasMaxLength(40);
+
+                entity.Property(m => m.Last4)
+                    .IsRequired()
+                    .HasMaxLength(4);
+
+                entity.Property(m => m.HolderName)
+                    .IsRequired()
+                    .HasMaxLength(120);
+
+                entity.Property(m => m.IsDefault)
+                    .IsRequired()
+                    .HasDefaultValue(false);
+
+                entity.Property(m => m.CreatedAt)
+                    .IsRequired()
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                entity.HasOne<UsuarioCliente>()
+                    .WithMany(u => u.MetodosPago)
+                    .HasForeignKey(m => m.IdUsuarioCliente)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             //modelBuilder de Platos
@@ -279,6 +447,9 @@ namespace Gestaurante.Models.Data
                     .IsRequired()
                     .HasDefaultValue(EstadoFactura.PENDIENTE);
 
+                entity.Property(f => f.CanalPedido)
+                    .IsRequired(false);
+
                 entity.HasOne<Mesa>()
                     .WithMany()
                     .HasForeignKey(f => f.IdMesa)
@@ -309,6 +480,35 @@ namespace Gestaurante.Models.Data
                 entity.Property(p => p.Estado)
                     .IsRequired()
                     .HasDefaultValue(EstadoPedido.PENDIENTE);
+                entity.Property(p => p.CanalPedido)
+                    .IsRequired()
+                    .HasDefaultValue(CanalPedido.SALA);
+                entity.Property(p => p.TipoEntrega)
+                    .IsRequired()
+                    .HasDefaultValue(TipoEntrega.MESA);
+                entity.Property(p => p.EstadoPago)
+                    .IsRequired()
+                    .HasDefaultValue(EstadoPago.NO_APLICA);
+                entity.Property(p => p.ClienteNombre)
+                    .IsRequired(false)
+                    .HasMaxLength(160)
+                    .HasDefaultValue(string.Empty);
+                entity.Property(p => p.ClienteEmail)
+                    .IsRequired(false)
+                    .HasMaxLength(100)
+                    .HasDefaultValue(string.Empty);
+                entity.Property(p => p.ClienteTelefono)
+                    .IsRequired(false)
+                    .HasMaxLength(25)
+                    .HasDefaultValue(string.Empty);
+                entity.Property(p => p.ClienteDireccionSnapshot)
+                    .IsRequired(false)
+                    .HasMaxLength(400)
+                    .HasDefaultValue(string.Empty);
+                entity.Property(p => p.Notas)
+                    .IsRequired(false)
+                    .HasMaxLength(500)
+                    .HasDefaultValue(string.Empty);
 
                 entity.HasOne<Mesa>()
                     .WithMany()
@@ -323,6 +523,11 @@ namespace Gestaurante.Models.Data
                 entity.HasOne<MesaPublicSession>()
                     .WithMany()
                     .HasForeignKey(p => p.IdMesaPublicSession)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<UsuarioCliente>()
+                    .WithMany()
+                    .HasForeignKey(p => p.IdUsuarioCliente)
                     .OnDelete(DeleteBehavior.Restrict);
             });
 

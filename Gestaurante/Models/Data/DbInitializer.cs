@@ -10,6 +10,7 @@ namespace Gestaurante.Models.Data
         {
             if (await context.Empleados.AnyAsync(cancellationToken))
             {
+                await SeedDefaultRepartidoresAsync(context, cancellationToken);
                 await SeedDefaultMesasAsync(context, cancellationToken);
                 return;
             }
@@ -20,10 +21,13 @@ namespace Gestaurante.Models.Data
                 ?? throw new Exception("DEFAULT_CAMARERO_PASSWORD no definido");
             string cocineroPassword = Environment.GetEnvironmentVariable("DEFAULT_COCINERO_PASSWORD")
                 ?? throw new Exception("DEFAULT_COCINERO_PASSWORD no definido");
+            string repartidorPassword = Environment.GetEnvironmentVariable("DEFAULT_REPARTIDOR_PASSWORD")
+                ?? camareroPassword;
 
             string adminHash = BCrypt.Net.BCrypt.HashPassword(adminPassword, BCrypt.Net.BCrypt.GenerateSalt(12));
             string camareroHash = BCrypt.Net.BCrypt.HashPassword(camareroPassword, BCrypt.Net.BCrypt.GenerateSalt(12));
             string cocineroHash = BCrypt.Net.BCrypt.HashPassword(cocineroPassword, BCrypt.Net.BCrypt.GenerateSalt(12));
+            string repartidorHash = BCrypt.Net.BCrypt.HashPassword(repartidorPassword, BCrypt.Net.BCrypt.GenerateSalt(12));
 
             var empleados = new List<Empleado>
             {
@@ -39,7 +43,10 @@ namespace Gestaurante.Models.Data
                 new Camarero("diego.herrera@gestaurante.com", camareroHash, "Diego", "Herrera", "Gil", "00000007F", "0333333333332"),
                 new Camarero("laura.perez@gestaurante.com", camareroHash, "Laura", "Perez", "Vega", "00000008P", "0333333333333"),
                 new Camarero("jorge.ruiz@gestaurante.com", camareroHash, "Jorge", "Ruiz", "Ortega", "00000009D", "0333333333334"),
-                new Camarero("elena.flores@gestaurante.com", camareroHash, "Elena", "Flores", "Cano", "00000010X", "0333333333335")
+                new Camarero("elena.flores@gestaurante.com", camareroHash, "Elena", "Flores", "Cano", "00000010X", "0333333333335"),
+
+                new Repartidor("sergio.reparto@gestaurante.com", repartidorHash, "Sergio", "Morales", "Cruz", "00000011B", "0444444444441"),
+                new Repartidor("irene.reparto@gestaurante.com", repartidorHash, "Irene", "Campos", "Sanz", "00000012N", "0444444444442")
             };
 
             foreach (var empleado in empleados)
@@ -53,12 +60,38 @@ namespace Gestaurante.Models.Data
             await SeedDefaultMesasAsync(context, cancellationToken);
         }
 
+        private static async Task SeedDefaultRepartidoresAsync(AppDbContext context, CancellationToken cancellationToken)
+        {
+            var existingRepartidores = await context.Empleados.OfType<Repartidor>().AnyAsync(cancellationToken);
+            if (existingRepartidores)
+                return;
+
+            string repartidorPassword = Environment.GetEnvironmentVariable("DEFAULT_REPARTIDOR_PASSWORD")
+                ?? Environment.GetEnvironmentVariable("DEFAULT_CAMARERO_PASSWORD")
+                ?? throw new Exception("DEFAULT_REPARTIDOR_PASSWORD o DEFAULT_CAMARERO_PASSWORD no definido");
+
+            string repartidorHash = BCrypt.Net.BCrypt.HashPassword(repartidorPassword, BCrypt.Net.BCrypt.GenerateSalt(12));
+
+            var repartidores = new List<Repartidor>
+            {
+                new Repartidor("sergio.reparto@gestaurante.com", repartidorHash, "Sergio", "Morales", "Cruz", "00000011B", "0444444444441"),
+                new Repartidor("irene.reparto@gestaurante.com", repartidorHash, "Irene", "Campos", "Sanz", "00000012N", "0444444444442")
+            };
+
+            foreach (var repartidor in repartidores)
+            {
+                repartidor.Activo = true;
+                repartidor.ImageURL = string.Empty;
+            }
+
+            await context.Empleados.AddRangeAsync(repartidores, cancellationToken);
+            await context.SaveChangesAsync(cancellationToken);
+        }
+
         private static async Task SeedDefaultMesasAsync(AppDbContext context, CancellationToken cancellationToken)
         {
             if (await context.Mesas.AnyAsync(cancellationToken))
-            {
                 return;
-            }
 
             var mesas = new List<Mesa>
             {

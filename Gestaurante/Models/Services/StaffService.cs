@@ -102,6 +102,7 @@ namespace Gestaurante.Models.Services
         {
             if (empleado is Administrador) return TipoEmpleado.Administrador;
             if (empleado is Camarero) return TipoEmpleado.Camarero;
+            if (empleado is Repartidor) return TipoEmpleado.Repartidor;
             return TipoEmpleado.Cocinero;
         }
     }

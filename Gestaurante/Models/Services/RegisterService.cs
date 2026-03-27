@@ -75,6 +75,15 @@ namespace Gestaurante.Models.Services
                     dto.DNI,
                     dto.NUSS
                 ),
+                TipoEmpleado.Repartidor => new Repartidor(
+                    dto.Email,
+                    hashedPassword,
+                    dto.FirstName,
+                    dto.FirstLastName,
+                    dto.SecondLastName,
+                    dto.DNI,
+                    dto.NUSS
+                ),
                 _ => throw new ValidationException("Tipo de empleado no válido")
             };
 
@@ -164,6 +173,7 @@ namespace Gestaurante.Models.Services
         {
             if (empleado is Administrador) return TipoEmpleado.Administrador;
             if (empleado is Camarero) return TipoEmpleado.Camarero;
+            if (empleado is Repartidor) return TipoEmpleado.Repartidor;
             return TipoEmpleado.Cocinero;
         }
     }

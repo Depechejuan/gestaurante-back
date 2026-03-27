@@ -95,6 +95,9 @@ namespace Gestaurante.Models.Services
             {
                 IdMesa = mesaId,
                 Estado = EstadoPedido.PENDIENTE,
+                CanalPedido = CanalPedido.QR,
+                TipoEntrega = TipoEntrega.MESA,
+                EstadoPago = EstadoPago.NO_APLICA,
                 Detalles = dto.Detalles
             }, session.IdMesaPublicSession, cancellationToken);
 

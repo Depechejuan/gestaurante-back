@@ -7,6 +7,7 @@ namespace Gestaurante.Models.DTO
         public Guid NumeroFactura { get; set; }
         public Guid? IdMesa { get; set; }
         public Guid? IdPedido { get; set; }
+        public CanalPedido? CanalPedido { get; set; }
         public double PrecioTotal { get; set; }
         public double Descuento { get; set; }
         public double TotalConDescuento { get; set; }

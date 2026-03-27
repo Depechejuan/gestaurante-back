@@ -8,7 +8,7 @@ namespace Gestaurante.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize(Roles = "Administrador,Camarero,Cocinero")]
+    [Authorize(Roles = "Administrador,Camarero,Cocinero,Repartidor")]
     public class PedidoController : ControllerBase
     {
         private readonly PedidoService _pedidoService;

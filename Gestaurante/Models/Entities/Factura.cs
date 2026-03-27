@@ -15,9 +15,10 @@ namespace Gestaurante.Models.Entities
         public double PrecioTotal { get; set; }
         public double Descuento { get; set; }
         public EstadoFactura Estado { get; set; } = EstadoFactura.PENDIENTE;
+        public CanalPedido? CanalPedido { get; set; }
         public DateTime FechaFactura { get; set; } = DateTime.UtcNow;
         public Factura() { }
-        public Factura(Guid numeroFactura, Guid? idMesa, Guid? idPedido, double precioTotal, double descuento, EstadoFactura estado, DateTime? fechaFactura = null) 
+        public Factura(Guid numeroFactura, Guid? idMesa, Guid? idPedido, double precioTotal, double descuento, EstadoFactura estado, DateTime? fechaFactura = null, CanalPedido? canalPedido = null) 
         {
             NumeroFactura = numeroFactura;
             IdMesa = idMesa;
@@ -26,6 +27,7 @@ namespace Gestaurante.Models.Entities
             Descuento = descuento;
             Estado = estado;
             FechaFactura = fechaFactura ?? DateTime.UtcNow;
+            CanalPedido = canalPedido;
         }
     }
 }

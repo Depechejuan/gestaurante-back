@@ -45,9 +45,7 @@ builder.Services.AddCors(options =>
         policy.SetIsOriginAllowed(origin =>
             {
                 if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
-                {
                     return false;
-                }
 
                 var isLocalHost = uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase)
                     || uri.Host.Equals("127.0.0.1");
@@ -102,9 +100,48 @@ builder.Services
 
                 var empleado = await db.Empleados.FirstOrDefaultAsync(e => e.Id == userId);
                 if (empleado == null || !empleado.Activo || !string.Equals(empleado.Email, email, StringComparison.OrdinalIgnoreCase))
-                {
                     context.Fail("Usuario no válido o inactivo.");
+            }
+        };
+    })
+    .AddJwtBearer("CustomerBearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = Environment.GetEnvironmentVariable("CUSTOMER_JWT_ISSUER"),
+            ValidAudience = Environment.GetEnvironmentVariable("CUSTOMER_JWT_AUDIENCE"),
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.UTF8.GetBytes(
+                    Environment.GetEnvironmentVariable("CUSTOMER_JWT_KEY")
+                    ?? throw new Exception("CUSTOMER_JWT_KEY no definida")
+                )
+            ),
+            ClockSkew = TimeSpan.Zero
+        };
+
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async context =>
+            {
+                var db = context.HttpContext.RequestServices.GetRequiredService<AppDbContext>();
+                var subject = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub)
+                    ?? context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+                var email = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Email)
+                    ?? context.Principal?.FindFirstValue(ClaimTypes.Email);
+
+                if (!Guid.TryParse(subject, out var customerId) || string.IsNullOrWhiteSpace(email))
+                {
+                    context.Fail("Token de cliente inválido.");
+                    return;
                 }
+
+                var cliente = await db.UsuariosCliente.FirstOrDefaultAsync(u => u.IdUsuarioCliente == customerId);
+                if (cliente == null || !cliente.Activo || !cliente.EmailVerificado || !string.Equals(cliente.Email, email, StringComparison.OrdinalIgnoreCase))
+                    context.Fail("Cliente no válido o inactivo.");
             }
         };
     });
@@ -127,6 +164,11 @@ builder.Services.AddScoped<PedidoService>();
 builder.Services.AddScoped<MesaService>();
 builder.Services.AddScoped<FacturaService>();
 builder.Services.AddScoped<MesaPublicSessionService>();
+builder.Services.AddScoped<ICustomerJwtService, CustomerJwtService>();
+builder.Services.AddScoped<CustomerAccountService>();
+builder.Services.AddScoped<MockPaymentService>();
+builder.Services.AddScoped<PublicCheckoutService>();
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddHttpClient<IEmployeeImageService, CloudinaryEmployeeImageService>();
 
 
@@ -149,9 +191,7 @@ using (var scope = app.Services.CreateScope())
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
-{
     app.MapOpenApi();
-}
 
 app.UseHttpsRedirection();
 app.UseCors("LocalPolicy");

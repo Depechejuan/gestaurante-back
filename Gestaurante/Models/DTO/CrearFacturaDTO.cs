@@ -7,6 +7,7 @@ namespace Gestaurante.Models.DTO
     {
         public Guid? IdMesa { get; set; }
         public Guid? IdPedido { get; set; }
+        public CanalPedido? CanalPedido { get; set; }
 
         [Range(0, double.MaxValue)]
         public double? PrecioTotal { get; set; }
