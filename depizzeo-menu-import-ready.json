@@ -1,0 +1,5446 @@
+{
+  "source": {
+    "site": "https://depizzeo.foodeo.es",
+    "apiBase": "https://depizzeo.foodeoadmin.com",
+    "capturedAt": "2026-03-30T06:22:38Z",
+    "notes": [
+      "Datos extraidos desde la API publica consumida por la web.",
+      "Las imagenes siguen apuntando a sus URLs origen; Cloudinary aun no se ha usado en esta exportacion.",
+      "Los alergenos vienen como IDs numericos porque la app publica no expone claramente el diccionario en la source map descargada."
+    ]
+  },
+  "summary": {
+    "categoriesCount": 9,
+    "productsCount": 130,
+    "ingredientesCount": 131
+  },
+  "categorias": [
+    {
+      "IdCategoria": "9234b245-3991-5490-8887-949f90c68595",
+      "Descripcion": "Ensaladas",
+      "SourceExternalId": 4,
+      "ImagenOriginal": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/categories/2390100080.png",
+      "Orden": 1,
+      "Disponible": true
+    },
+    {
+      "IdCategoria": "1e31407f-d270-5137-8d45-ee1fe2d17a27",
+      "Descripcion": "Entrantes",
+      "SourceExternalId": 6,
+      "ImagenOriginal": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/categories/2982884531.png",
+      "Orden": 2,
+      "Disponible": true
+    },
+    {
+      "IdCategoria": "ec0d7d61-28b7-58ef-994d-97935468fb44",
+      "Descripcion": "Platos Principales",
+      "SourceExternalId": 33,
+      "ImagenOriginal": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/categories/959948688.png",
+      "Orden": 3,
+      "Disponible": true
+    },
+    {
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "Descripcion": "Pizzas Especiales",
+      "SourceExternalId": 8,
+      "ImagenOriginal": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/categories/2122559804.png",
+      "Orden": 4,
+      "Disponible": true
+    },
+    {
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "Descripcion": "Pizzas",
+      "SourceExternalId": 7,
+      "ImagenOriginal": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/categories/2007088004.png",
+      "Orden": 5,
+      "Disponible": true
+    },
+    {
+      "IdCategoria": "bf7c7454-cbc4-5540-ba8f-cbabf7b2062f",
+      "Descripcion": "Postres",
+      "SourceExternalId": 27,
+      "ImagenOriginal": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/categories/1184206010.png",
+      "Orden": 7,
+      "Disponible": true
+    },
+    {
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "Descripcion": "Bebidas",
+      "SourceExternalId": 2,
+      "ImagenOriginal": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/categories/1071053309.png",
+      "Orden": 8,
+      "Disponible": true
+    },
+    {
+      "IdCategoria": "cc7eb684-90fa-5d65-b006-a4d5dadd5b87",
+      "Descripcion": "Vinos",
+      "SourceExternalId": 5,
+      "ImagenOriginal": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/categories/564407463.png",
+      "Orden": 14,
+      "Disponible": true
+    },
+    {
+      "IdCategoria": "7871aad0-9304-5459-b455-79025f9b8c1b",
+      "Descripcion": "Cafes",
+      "SourceExternalId": 3,
+      "ImagenOriginal": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/categories/224905071.png",
+      "Orden": 15,
+      "Disponible": true
+    }
+  ],
+  "ingredientes": [
+    {
+      "IdIngrediente": "38b60aef-0052-55f0-b830-99eb87ad072d",
+      "Nombre": "Lechuga mixta",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "df3ff12a-823c-599a-90f8-069c7dc85fab",
+      "Nombre": "queso bufala",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "58d5b8ed-ebc9-5bec-ba23-b2744864f8e3",
+      "Nombre": "tomates cherry y aceitunas",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "6356ce87-ed58-522f-a3ec-0809449f2635",
+      "Nombre": "salsa balsámica",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "a08b9619-e633-52c9-9e4c-10b8b3038840",
+      "Nombre": "nueces",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "f3d574a9-3919-5d0d-b3e2-d569af6f7cee",
+      "Nombre": "tomates cherry",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "15ffd699-8efd-5e47-92ca-6b746a0a1ccb",
+      "Nombre": "pasas",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "f261be32-c2c8-5d9f-9426-4350e940249c",
+      "Nombre": "queso de cabra a la plancha",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "9507f74a-0f8a-5463-a2ed-099e3d8c97d2",
+      "Nombre": "su salsa de mostaza y miel",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "81470287-ccac-5b44-b3a3-8ae45d695ad3",
+      "Nombre": "pollo crujiente",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "00b41987-3036-5acf-a195-07b7b8ccc757",
+      "Nombre": "queso provolone",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "72216003-9e6b-5909-accf-7934ef0362ed",
+      "Nombre": "picatostes",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "f45925eb-3d96-52b6-aff8-41ceeaab9382",
+      "Nombre": "salsa cesar casera",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "8ba7f4f0-f123-5542-865a-c2089575dec1",
+      "Nombre": "salmón ahumado",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "3e49fe36-b832-5c4d-a71a-ed36780815a6",
+      "Nombre": "aceitunas y tomates cherry",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "edeaed71-c2cd-585e-8cf0-42d53312a1c6",
+      "Nombre": "nuestra salsa de yogurt DEPIZZEO",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "147f435c-4d22-515e-99d8-f46389711bf6",
+      "Nombre": "Albóndigas caseras de ternera estilo napolitano en salsa de tomate",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "8a9eb699-8334-55eb-87be-3bf1d899214e",
+      "Nombre": "Queso provolone al horno con chorizo picante",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "84353aea-ea9d-54a3-aa2e-871eed7312fa",
+      "Nombre": "Croquetas caseras de queso gorgonzola con guanciale crujiente",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "b4819974-c0a0-57a7-840c-e2b9ea28b465",
+      "Nombre": "Coquetas caseras de jamón serrano",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "a9c126a5-a10d-5d0b-9e17-1616fdb4b3a4",
+      "Nombre": "nuestra focaccia con rucula",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "963a342e-edb7-5ecb-8062-3895a01fb9fa",
+      "Nombre": "tomatios cherry",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "657f2eaa-f0d8-5611-be4d-b95a60ac8873",
+      "Nombre": "jamon serrano y queso burrata/bufala",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "1f1d5981-2182-5747-aac9-a48d523b94bc",
+      "Nombre": "Laminas de berenjenas fritas",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+      "Nombre": "mozzarella",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "7da6dc5c-e6d1-5000-8a99-22bb2975ed95",
+      "Nombre": "grana padano y salsa de tomate",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "f047471f-f7c9-5543-baef-a38d2d8387ab",
+      "Nombre": "Fingers de pollo crujiente con nuestra salsa de yogurt DEPIZZEO",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "f05188bd-d060-5ca5-ac11-baf7254949fe",
+      "Nombre": "Carpaccio de redondo de ternera cocido a baja temperatura con su salsa de atún",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "390d9b87-9838-5521-8638-791aa24b2af6",
+      "Nombre": "rúcula",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "01122e5e-c239-5669-bce4-25729d94e24a",
+      "Nombre": "y tomatitos cherry",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "278dd275-53d3-5622-888a-8e532470db7f",
+      "Nombre": "Tierna costilla de vaca",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "76810c5a-700f-5d44-b2d6-7f5d755aa96f",
+      "Nombre": "cocinada 36 horas a baja temperatura acompañada de patata duquesa",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "15ed0e1e-d118-5e5d-9507-2facec5cac0d",
+      "Nombre": "pimiento italiano frito tomtes secos y demiglace al vino oporto",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "cc3bd954-6d56-59ae-9538-99f2f174cc26",
+      "Nombre": "La autentica lasagna de carne con salsa boloñesa casera",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "22464b1a-8db6-58d6-b0c5-905835292358",
+      "Nombre": "Macarones Napolitanos formato especial",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "26705847-5497-5c31-936a-55f8ec946c1a",
+      "Nombre": "salsa boloñesa casera ¡estofada 8horas a fuego lento!",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "132e5785-c9b1-55d1-b25c-62453fd853de",
+      "Nombre": "Raviolis caseros rellenos de ricotta de oveja y setas mixtas con salsa de boletus y trufa",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "cb77fb94-79ca-52f2-a488-4389921e1274",
+      "Nombre": "Tortelli de pasta fresca rellenos de ternera braseada a baja temperatura en salsa de carne acompañados de tomates secos y su ternera",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "ce9865fa-9de9-5c78-857c-e81a621b351d",
+      "Nombre": "Solomillo de cerdo marinado en mostaza",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "322aeaac-1316-529e-84c3-9c3ca7a63477",
+      "Nombre": "envuelto en jamón y cocinado a baja temperatura",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "b0dda348-5ab7-58d4-b6ef-776e64d796fa",
+      "Nombre": "con juliana de pimiento italiano en agridulce y salsa de mostaza",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "522aaa6e-33cd-5f93-adae-cf2b3db4f664",
+      "Nombre": "Receta original con crema de yema de huevo",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "b8e334cb-4e1d-5cc3-b502-007f4be2a604",
+      "Nombre": "guanciale de Roma",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "5052587d-3917-565e-b56b-4a8bf37a73c0",
+      "Nombre": "queso pecorino y pimienta negra",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "1ba7b8f9-ba25-5db1-bbd8-7874de48d9fb",
+      "Nombre": "Tagliatelle al huevo con cola de gambon",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "0d83ad64-02c7-5579-9065-dfb9c432b2b8",
+      "Nombre": "calamar",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "bad9886c-4368-5da3-bae5-fd52204d0797",
+      "Nombre": "almejas y mejillones",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "5381b2de-0e66-54eb-9234-60cab3855761",
+      "Nombre": "NUESTRA PIZZA CON MOZZARELLA",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "78247d99-bb64-5492-b5d3-bce90c48f31f",
+      "Nombre": "RODAJITAS DE LONGANIZA",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "33ab18fd-3990-5509-b597-e41736ce3784",
+      "Nombre": "GRELOS SALTEADOS",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "0624495f-7259-588c-8fc7-be7bab5b5963",
+      "Nombre": "PROVOLONE Y PARMESANO",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "8d2b716b-eb30-5102-93b4-9dd11660f77b",
+      "Nombre": "Crema de trufa",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "a71713e1-f18e-5548-a049-cc0d6f9a3dd7",
+      "Nombre": "mozzarella fiordilatte",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "59b85775-b47d-57b1-b1bd-3ee468c6465f",
+      "Nombre": "jamón serrano",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "531526da-dbf1-5ccc-acb2-2341be9ed339",
+      "Nombre": "y nuestra burrata inyectada con crema de boletus casera",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "0718bc5e-55d3-55c3-9ab6-949a70925653",
+      "Nombre": "No te arrepentiras!!",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "98d28699-086f-527a-8502-ccd1db8a8ef5",
+      "Nombre": "Os presentamos nuestra nueva creación la pizza bazucca",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "67c5cd63-574a-5d0d-b5e8-e30200e56034",
+      "Nombre": "calabaza pochada al romero",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "1fa07096-c0b4-5f63-a69a-2dd02196dd69",
+      "Nombre": "nuestra mozzarella de búfala",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "433bd3cf-357c-55c0-b1c2-ebee6a46a46c",
+      "Nombre": "espec",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "fee0340a-4b6a-500a-9e08-cc8bf7dd66fe",
+      "Nombre": "pimienta negra tostada y una lluvia de parmesano",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "0282a96b-0424-58ff-bac5-50674aa12350",
+      "Nombre": "Nuestra crema de trufa",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "e1f96c65-771e-58c9-85b7-e994f6c3183c",
+      "Nombre": "nuestra mozzarella fior di latte",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "bfbae520-c7d8-5c50-a37e-17b6568a2870",
+      "Nombre": "champiñones",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "0637a241-c503-5edb-9021-00ee8acaddb3",
+      "Nombre": "cebolla crujiente y una lluvia rucula fresca",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "4078cb49-f3e7-524d-bde5-34f1f47141a6",
+      "Nombre": "Mozzarella fior di latte",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "ccb422e6-411a-5574-8f85-6a3d8520ec87",
+      "Nombre": "porketta ahumada",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "a4acba4d-299a-52f2-8408-87bd66c61735",
+      "Nombre": "rúcula fresca",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "a705e017-3252-542c-a71b-19d387ce8f5e",
+      "Nombre": "burrata",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "79e5e3ad-9019-5132-be48-faf6de17d53a",
+      "Nombre": "y crema de turrón 100% antiu xixona",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "d42d518b-7d8f-5f97-8a1d-1defbd179127",
+      "Nombre": "Base de crema de remolacha",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "579b0542-94c7-5778-8c3a-f3edb98b1983",
+      "Nombre": "finocchiona",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "c449cbe2-257a-5ab1-81d1-298adee1ccde",
+      "Nombre": "albahaca y su miel picante",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+      "Nombre": "tomate",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "b79f5a58-a889-5564-ab39-a7410234cb29",
+      "Nombre": "mozzarella de búfala fresca",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "8c08b121-ef05-5e3f-a2a5-395f13ab4bec",
+      "Nombre": "albahaca",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "4a73ae4b-4f2d-5c16-a279-b6c0c7939035",
+      "Nombre": "queso burrata",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "156d4f94-6e28-54d9-badd-61aff0c0e29d",
+      "Nombre": "nata",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "9651ea69-ec14-5bd5-816e-a0dc3c8f6133",
+      "Nombre": "cebolla roja",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "3212b626-26ae-580a-bddb-ce12c3dfec22",
+      "Nombre": "grana padano",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "e3161991-ec6a-59d3-ad5a-da5ccafc41cd",
+      "Nombre": "croquetas caseras de jamon",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "82a2fff1-338b-5d65-8dd6-4207e7b4a46e",
+      "Nombre": "crema de queso burrata",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "58e7425e-a414-5855-8b7c-6d00c2a1a0b5",
+      "Nombre": "salsa boloñesa casera",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "76d65f8f-2f49-5516-9d58-cb97f9f40bc4",
+      "Nombre": "mozzarella de búfala",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "3399ba71-3c40-5a0b-9602-65ae282043e3",
+      "Nombre": "bacon pimiento rojo asado",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "e294b112-1e47-551f-a6e0-3d870d0f9129",
+      "Nombre": "patatas fritas",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "779cc5e1-1995-5d45-b851-537d252f6e72",
+      "Nombre": "rucula",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "1f521de1-ea46-5660-92c5-e7e847df145c",
+      "Nombre": "mortadela con pistachos",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "1c25d9bd-49b5-51ea-b6e0-4f8061b6361c",
+      "Nombre": "pesto de pistachos",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "5d4f6252-d8b0-59d5-81cb-2d36d530ef43",
+      "Nombre": "nduja picante",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "b4ada057-3983-5921-a205-c9646d2e85b9",
+      "Nombre": "miel",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "a9bc8fe7-adaf-5911-8761-f1071a620a3e",
+      "Nombre": "Crema de espinacas",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "c597407c-0ebf-5e2f-98fa-d298e4318987",
+      "Nombre": "queso philadelphia",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "054c59ba-50ba-5f6a-8b3b-269f5a9d9755",
+      "Nombre": "granelas de almendras",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "262f5ac5-9c45-5627-be1c-dbcabbdc4f8b",
+      "Nombre": "salmón ahumado gambas",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "daccac0e-0412-5c56-9ce6-4200010656af",
+      "Nombre": "carne picada",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "bdfd3a19-10d6-57df-99cb-fef0f61c8ff2",
+      "Nombre": "huevo",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "1831176c-fd4b-5627-8932-c8f9bd4fb394",
+      "Nombre": "aceite de trufa",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "322fd257-41ce-58ba-a575-9ee56b0f369f",
+      "Nombre": "provolone",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "d2ccfd6b-82e3-5a52-aae9-d94e25c856ea",
+      "Nombre": "gorgonzola",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "4a3e0f43-3e69-5104-9298-8475310fb8cc",
+      "Nombre": "jamón york",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "3c3908d1-35ca-5984-9d18-b6e585541351",
+      "Nombre": "aceitunas",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "b118be9a-fdb0-57d3-a305-a678ac8ac197",
+      "Nombre": "alcachofas",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "f8453599-8928-5b86-92af-4f0cab898b32",
+      "Nombre": "frankfurt",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "02bd4ade-38da-5b6e-b426-b2dc2fcb26d6",
+      "Nombre": "bacon",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "f5a74fc3-03eb-5eea-a892-1157af2dd048",
+      "Nombre": "pollo",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "23a4cdb0-cab7-59b0-96f3-ac471bccbc55",
+      "Nombre": "chorizo",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "442b56a7-c681-50ae-b747-6af05138fd91",
+      "Nombre": "jamon york",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "000c183e-f0d4-50b9-bb16-7388321c9204",
+      "Nombre": "chorizo picante",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "74ed9a45-b9ba-54c1-b227-47091c1d469e",
+      "Nombre": "queso de cabra",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "70f75027-26ad-5e2c-a2ec-13bfd0c095e1",
+      "Nombre": "bacon crujiente",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "783710e1-5d47-5212-8964-dc7a66b27182",
+      "Nombre": "atún",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "f0eed174-800a-5f0e-860d-e8a4aed74c6a",
+      "Nombre": "piña",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "e3b0bb8b-c695-5c88-b42b-9c5fd9d4fbf3",
+      "Nombre": "Pesto genovese",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "11ae4b46-1d3d-5218-a68e-08da65ca9384",
+      "Nombre": "La clásica 4 quesos mas el toque de la carne picada",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "09daa3b2-de3b-5d56-8b52-63a0c1084693",
+      "Nombre": "salsa de ajo",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "95ebca78-ccaf-57d2-bba3-72c0faaec241",
+      "Nombre": "aceite",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "7959c837-8116-5282-820c-05bd0dc39443",
+      "Nombre": "anchoas",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "defeac07-ceb5-5008-97d6-8270940e6fd0",
+      "Nombre": "alcaparras",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "3798b721-99a0-564c-b9fc-9aeb02410215",
+      "Nombre": "berenjenas fritas",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "27359117-fb77-5437-816b-035df85b7fd1",
+      "Nombre": "pechuga de pollo",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "b3a0b4aa-9cc6-5531-a151-7534c0e1ae39",
+      "Nombre": "salsa bbq",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "437df47e-6718-5724-82f7-0a7b0a6a9755",
+      "Nombre": "calabacín",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "6e4baf9c-6234-5bc4-aeae-1c2d887fcee4",
+      "Nombre": "berenjenas",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "a52df6b4-cc4b-55a8-a60f-6e86b5af3dd4",
+      "Nombre": "pimiento rojo asado",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "41b5d50f-c2a3-58c7-8729-5c591debd549",
+      "Nombre": "Calzone relleno de crema de pistachos con gránela de almendras y azúcar glas",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "cf89f9d1-2a97-525e-b8d7-6566e6eb514d",
+      "Nombre": "Fanta de Limon",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "1f99c4ba-60eb-5673-9d0a-21b70b5adfeb",
+      "Nombre": "Tercio Ambar Sin Alchool",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "2d7863c4-f91d-5ccd-904c-4d3f22c54d05",
+      "Nombre": "Italiano o rioja",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "1ec0a02d-4a47-5a75-a4c7-b559c3410e05",
+      "Nombre": "RIVERA FINCA RESALSO",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    },
+    {
+      "IdIngrediente": "6b7b78ac-32c2-5815-9e1f-b2529a93aacf",
+      "Nombre": "BODEGAS EMILIO MORO",
+      "Alergenico": false,
+      "Disponible": true,
+      "Imagen": "",
+      "CreatedAt": "2026-03-30T06:22:38Z",
+      "UpdatedAt": null
+    }
+  ],
+  "platos": [
+    {
+      "IdPlato": "1d190ec6-f335-501e-97fe-4ce74e858865",
+      "Nombre": "Ensalada Burrata",
+      "Descripcion": "Ensalada fresca preparada con Lechuga mixta, queso bufala, tomates cherry y aceitunas y más ingredientes.",
+      "IngredientesTexto": [
+        "Lechuga mixta",
+        "queso bufala",
+        "tomates cherry y aceitunas",
+        "salsa balsámica"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1491770707.jpg",
+      "Disponible": true,
+      "Precio": 12.0,
+      "IdCategoria": "9234b245-3991-5490-8887-949f90c68595",
+      "CategoriaDescripcion": "Ensaladas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "38b60aef-0052-55f0-b830-99eb87ad072d",
+          "Nombre": "Lechuga mixta"
+        },
+        {
+          "IdIngrediente": "df3ff12a-823c-599a-90f8-069c7dc85fab",
+          "Nombre": "queso bufala"
+        },
+        {
+          "IdIngrediente": "58d5b8ed-ebc9-5bec-ba23-b2744864f8e3",
+          "Nombre": "tomates cherry y aceitunas"
+        },
+        {
+          "IdIngrediente": "6356ce87-ed58-522f-a3ec-0809449f2635",
+          "Nombre": "salsa balsámica"
+        }
+      ],
+      "SourceExternalId": 25,
+      "SourceSerial": "P0000124",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        4,
+        9,
+        10
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "db8fe1e0-cd1b-5dc8-aed9-731fbf9b5c55",
+      "Nombre": "Ensalada Cabra",
+      "Descripcion": "Ensalada fresca preparada con Lechuga mixta, nueces, tomates cherry y más ingredientes.",
+      "IngredientesTexto": [
+        "Lechuga mixta",
+        "nueces",
+        "tomates cherry",
+        "pasas",
+        "queso de cabra a la plancha",
+        "su salsa de mostaza y miel"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2403093525.jpg",
+      "Disponible": true,
+      "Precio": 12.5,
+      "IdCategoria": "9234b245-3991-5490-8887-949f90c68595",
+      "CategoriaDescripcion": "Ensaladas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "38b60aef-0052-55f0-b830-99eb87ad072d",
+          "Nombre": "Lechuga mixta"
+        },
+        {
+          "IdIngrediente": "a08b9619-e633-52c9-9e4c-10b8b3038840",
+          "Nombre": "nueces"
+        },
+        {
+          "IdIngrediente": "f3d574a9-3919-5d0d-b3e2-d569af6f7cee",
+          "Nombre": "tomates cherry"
+        },
+        {
+          "IdIngrediente": "15ffd699-8efd-5e47-92ca-6b746a0a1ccb",
+          "Nombre": "pasas"
+        },
+        {
+          "IdIngrediente": "f261be32-c2c8-5d9f-9426-4350e940249c",
+          "Nombre": "queso de cabra a la plancha"
+        },
+        {
+          "IdIngrediente": "9507f74a-0f8a-5463-a2ed-099e3d8c97d2",
+          "Nombre": "su salsa de mostaza y miel"
+        }
+      ],
+      "SourceExternalId": 28,
+      "SourceSerial": "P0000127",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        5,
+        7,
+        8,
+        9,
+        10
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "c8962dfa-c315-524c-ba0c-0fcc46d94a28",
+      "Nombre": "Ensalada Cesar",
+      "Descripcion": "Ensalada fresca preparada con lechuga mixta, pollo crujiente, queso provolone y más ingredientes.",
+      "IngredientesTexto": [
+        "lechuga mixta",
+        "pollo crujiente",
+        "queso provolone",
+        "picatostes",
+        "salsa cesar casera"
+      ],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 12.5,
+      "IdCategoria": "9234b245-3991-5490-8887-949f90c68595",
+      "CategoriaDescripcion": "Ensaladas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "38b60aef-0052-55f0-b830-99eb87ad072d",
+          "Nombre": "Lechuga mixta"
+        },
+        {
+          "IdIngrediente": "81470287-ccac-5b44-b3a3-8ae45d695ad3",
+          "Nombre": "pollo crujiente"
+        },
+        {
+          "IdIngrediente": "00b41987-3036-5acf-a195-07b7b8ccc757",
+          "Nombre": "queso provolone"
+        },
+        {
+          "IdIngrediente": "72216003-9e6b-5909-accf-7934ef0362ed",
+          "Nombre": "picatostes"
+        },
+        {
+          "IdIngrediente": "f45925eb-3d96-52b6-aff8-41ceeaab9382",
+          "Nombre": "salsa cesar casera"
+        }
+      ],
+      "SourceExternalId": 27,
+      "SourceSerial": "P0000126",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        4,
+        5,
+        7,
+        9,
+        10
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "3ce4feb2-1a1a-55fd-a94c-1e70bcf6db50",
+      "Nombre": "Ensalada de salmón",
+      "Descripcion": "Ensalada fresca preparada con Lechuga mixta, salmón ahumado, aceitunas y tomates cherry y más ingredientes.",
+      "IngredientesTexto": [
+        "Lechuga mixta",
+        "salmón ahumado",
+        "aceitunas y tomates cherry",
+        "nuestra salsa de yogurt DEPIZZEO"
+      ],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 12.5,
+      "IdCategoria": "9234b245-3991-5490-8887-949f90c68595",
+      "CategoriaDescripcion": "Ensaladas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "38b60aef-0052-55f0-b830-99eb87ad072d",
+          "Nombre": "Lechuga mixta"
+        },
+        {
+          "IdIngrediente": "8ba7f4f0-f123-5542-865a-c2089575dec1",
+          "Nombre": "salmón ahumado"
+        },
+        {
+          "IdIngrediente": "3e49fe36-b832-5c4d-a71a-ed36780815a6",
+          "Nombre": "aceitunas y tomates cherry"
+        },
+        {
+          "IdIngrediente": "edeaed71-c2cd-585e-8cf0-42d53312a1c6",
+          "Nombre": "nuestra salsa de yogurt DEPIZZEO"
+        }
+      ],
+      "SourceExternalId": 26,
+      "SourceSerial": "P0000125",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        2,
+        4,
+        5,
+        6,
+        7,
+        9,
+        10,
+        13
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "6ade1a04-6d9f-5ea7-b0aa-4e6d89d626c5",
+      "Nombre": "Albondigas",
+      "Descripcion": "Entrante ideal para compartir con Albóndigas caseras de ternera estilo napolitano en salsa de tomate.",
+      "IngredientesTexto": [
+        "Albóndigas caseras de ternera estilo napolitano en salsa de tomate"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2090911505.jpg",
+      "Disponible": true,
+      "Precio": 6.0,
+      "IdCategoria": "1e31407f-d270-5137-8d45-ee1fe2d17a27",
+      "CategoriaDescripcion": "Entrantes",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "147f435c-4d22-515e-99d8-f46389711bf6",
+          "Nombre": "Albóndigas caseras de ternera estilo napolitano en salsa de tomate"
+        }
+      ],
+      "SourceExternalId": 558,
+      "SourceSerial": "P0000657",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        2,
+        7,
+        9,
+        10
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "ef6724c7-df53-5cca-aabe-0b97ebc0925a",
+      "Nombre": "BOTELLA ACEITE PICANTE 250ML",
+      "Descripcion": "Entrante ideal para compartir.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/169229387.jpg",
+      "Disponible": true,
+      "Precio": 18.0,
+      "IdCategoria": "1e31407f-d270-5137-8d45-ee1fe2d17a27",
+      "CategoriaDescripcion": "Entrantes",
+      "Ingredientes": [],
+      "SourceExternalId": 669,
+      "SourceSerial": "P0000669",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "f53992ea-a5d5-5dec-a891-d276e927f024",
+      "Nombre": "Bruschetta + mozzarella",
+      "Descripcion": "Entrante ideal para compartir.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3862890141.jpg",
+      "Disponible": true,
+      "Precio": 7.5,
+      "IdCategoria": "1e31407f-d270-5137-8d45-ee1fe2d17a27",
+      "CategoriaDescripcion": "Entrantes",
+      "Ingredientes": [],
+      "SourceExternalId": 50,
+      "SourceSerial": "P0000149",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        5,
+        7,
+        9,
+        10
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "41ca89c3-2987-5c4c-890c-e15ecdb2e0c4",
+      "Nombre": "Chorizo y queso",
+      "Descripcion": "Entrante ideal para compartir con Queso provolone al horno con chorizo picante.",
+      "IngredientesTexto": [
+        "Queso provolone al horno con chorizo picante"
+      ],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 8.0,
+      "IdCategoria": "1e31407f-d270-5137-8d45-ee1fe2d17a27",
+      "CategoriaDescripcion": "Entrantes",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8a9eb699-8334-55eb-87be-3bf1d899214e",
+          "Nombre": "Queso provolone al horno con chorizo picante"
+        }
+      ],
+      "SourceExternalId": 46,
+      "SourceSerial": "P0000145",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        7,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "99c2aafe-0ec3-5380-8d4c-2474ddc9203a",
+      "Nombre": "Croquetas de gorgonzola y guanciale crujiente",
+      "Descripcion": "Entrante ideal para compartir con Croquetas caseras de queso gorgonzola con guanciale crujiente.",
+      "IngredientesTexto": [
+        "Croquetas caseras de queso gorgonzola con guanciale crujiente"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1824272724.jpg",
+      "Disponible": true,
+      "Precio": 3.5,
+      "IdCategoria": "1e31407f-d270-5137-8d45-ee1fe2d17a27",
+      "CategoriaDescripcion": "Entrantes",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "84353aea-ea9d-54a3-aa2e-871eed7312fa",
+          "Nombre": "Croquetas caseras de queso gorgonzola con guanciale crujiente"
+        }
+      ],
+      "SourceExternalId": 43,
+      "SourceSerial": "P0000142",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        7,
+        9,
+        10
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "7736a921-93f4-5cd1-b2e1-2e3f6e0215ae",
+      "Nombre": "Croquetas de jamón",
+      "Descripcion": "Entrante ideal para compartir con Coquetas caseras de jamón serrano.",
+      "IngredientesTexto": [
+        "Coquetas caseras de jamón serrano"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2454786840.jpg",
+      "Disponible": true,
+      "Precio": 3.0,
+      "IdCategoria": "1e31407f-d270-5137-8d45-ee1fe2d17a27",
+      "CategoriaDescripcion": "Entrantes",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "b4819974-c0a0-57a7-840c-e2b9ea28b465",
+          "Nombre": "Coquetas caseras de jamón serrano"
+        }
+      ],
+      "SourceExternalId": 593,
+      "SourceSerial": "P0000593",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        7,
+        9,
+        10
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "f7c53c2d-9364-5733-95f0-ab509e85cb51",
+      "Nombre": "Focaccia búfala/burrata y serrano",
+      "Descripcion": "Entrante ideal para compartir con nuestra focaccia con rucula, tomatios cherry, jamon serrano y queso burrata/bufala.",
+      "IngredientesTexto": [
+        "nuestra focaccia con rucula",
+        "tomatios cherry",
+        "jamon serrano y queso burrata/bufala"
+      ],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 12.5,
+      "IdCategoria": "1e31407f-d270-5137-8d45-ee1fe2d17a27",
+      "CategoriaDescripcion": "Entrantes",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "a9c126a5-a10d-5d0b-9e17-1616fdb4b3a4",
+          "Nombre": "nuestra focaccia con rucula"
+        },
+        {
+          "IdIngrediente": "963a342e-edb7-5ecb-8062-3895a01fb9fa",
+          "Nombre": "tomatios cherry"
+        },
+        {
+          "IdIngrediente": "657f2eaa-f0d8-5611-be4d-b95a60ac8873",
+          "Nombre": "jamon serrano y queso burrata/bufala"
+        }
+      ],
+      "SourceExternalId": 54,
+      "SourceSerial": "P0000153",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        7,
+        9,
+        10
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "1ea38f02-9135-5c0c-b251-b25691892291",
+      "Nombre": "PAN",
+      "Descripcion": "Entrante ideal para compartir.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 1.5,
+      "IdCategoria": "1e31407f-d270-5137-8d45-ee1fe2d17a27",
+      "CategoriaDescripcion": "Entrantes",
+      "Ingredientes": [],
+      "SourceExternalId": 605,
+      "SourceSerial": "P0000605",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "543c7c42-15af-5126-9132-e91363cdf168",
+      "Nombre": "Pan Ajo + mozzarella",
+      "Descripcion": "Entrante ideal para compartir.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1327742059.jpg",
+      "Disponible": true,
+      "Precio": 6.5,
+      "IdCategoria": "1e31407f-d270-5137-8d45-ee1fe2d17a27",
+      "CategoriaDescripcion": "Entrantes",
+      "Ingredientes": [],
+      "SourceExternalId": 48,
+      "SourceSerial": "P0000147",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "955bffe8-f236-5ce6-aabe-bd055d57579a",
+      "Nombre": "Parmigiana de berenjenas",
+      "Descripcion": "Entrante ideal para compartir con Laminas de berenjenas fritas, mozzarella, grana padano y salsa de tomate.",
+      "IngredientesTexto": [
+        "Laminas de berenjenas fritas",
+        "mozzarella",
+        "grana padano y salsa de tomate"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3562498862.jpg",
+      "Disponible": true,
+      "Precio": 11.5,
+      "IdCategoria": "1e31407f-d270-5137-8d45-ee1fe2d17a27",
+      "CategoriaDescripcion": "Entrantes",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "1f1d5981-2182-5747-aac9-a48d523b94bc",
+          "Nombre": "Laminas de berenjenas fritas"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "7da6dc5c-e6d1-5000-8a99-22bb2975ed95",
+          "Nombre": "grana padano y salsa de tomate"
+        }
+      ],
+      "SourceExternalId": 505,
+      "SourceSerial": "P0000604",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        7,
+        9,
+        10
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "7c09c7b6-39fb-5de6-bc53-d90bdcca65e5",
+      "Nombre": "Patatas fritas",
+      "Descripcion": "Entrante ideal para compartir.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1526319470.jpg",
+      "Disponible": true,
+      "Precio": 3.5,
+      "IdCategoria": "1e31407f-d270-5137-8d45-ee1fe2d17a27",
+      "CategoriaDescripcion": "Entrantes",
+      "Ingredientes": [],
+      "SourceExternalId": 41,
+      "SourceSerial": "P0000140",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "1b074bdc-a258-5106-bd7f-a556ffa9a1c2",
+      "Nombre": "Pollo crujiente",
+      "Descripcion": "Entrante ideal para compartir con Fingers de pollo crujiente con nuestra salsa de yogurt DEPIZZEO.",
+      "IngredientesTexto": [
+        "Fingers de pollo crujiente con nuestra salsa de yogurt DEPIZZEO"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3241573736.jpg",
+      "Disponible": true,
+      "Precio": 9.5,
+      "IdCategoria": "1e31407f-d270-5137-8d45-ee1fe2d17a27",
+      "CategoriaDescripcion": "Entrantes",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "f047471f-f7c9-5543-baef-a38d2d8387ab",
+          "Nombre": "Fingers de pollo crujiente con nuestra salsa de yogurt DEPIZZEO"
+        }
+      ],
+      "SourceExternalId": 592,
+      "SourceSerial": "P0000592",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        2,
+        6,
+        7,
+        8,
+        9,
+        10
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "0f3fd56e-4287-5dee-88e7-4ece12ce18e8",
+      "Nombre": "Vitel tonné",
+      "Descripcion": "Entrante ideal para compartir con Carpaccio de redondo de ternera cocido a baja temperatura con su salsa de atún, rúcula, y tomatitos cherry.",
+      "IngredientesTexto": [
+        "Carpaccio de redondo de ternera cocido a baja temperatura con su salsa de atún",
+        "rúcula",
+        "y tomatitos cherry"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/452589645.jpg",
+      "Disponible": true,
+      "Precio": 13.0,
+      "IdCategoria": "1e31407f-d270-5137-8d45-ee1fe2d17a27",
+      "CategoriaDescripcion": "Entrantes",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "f05188bd-d060-5ca5-ac11-baf7254949fe",
+          "Nombre": "Carpaccio de redondo de ternera cocido a baja temperatura con su salsa de atún"
+        },
+        {
+          "IdIngrediente": "390d9b87-9838-5521-8638-791aa24b2af6",
+          "Nombre": "rúcula"
+        },
+        {
+          "IdIngrediente": "01122e5e-c239-5669-bce4-25729d94e24a",
+          "Nombre": "y tomatitos cherry"
+        }
+      ],
+      "SourceExternalId": 502,
+      "SourceSerial": "P0000601",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        4,
+        7,
+        8,
+        9,
+        10
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "136dd524-320d-5992-aa13-027d1154ad25",
+      "Nombre": "Costilla de ternera",
+      "Descripcion": "Plato principal elaborado con Tierna costilla de vaca, cocinada 36 horas a baja temperatura acompañada de patata duquesa, pimiento italiano frito tomtes secos y demiglace al vino oporto.",
+      "IngredientesTexto": [
+        "Tierna costilla de vaca",
+        "cocinada 36 horas a baja temperatura acompañada de patata duquesa",
+        "pimiento italiano frito tomtes secos y demiglace al vino oporto"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3551835080.jpg",
+      "Disponible": true,
+      "Precio": 21.0,
+      "IdCategoria": "ec0d7d61-28b7-58ef-994d-97935468fb44",
+      "CategoriaDescripcion": "Platos Principales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "278dd275-53d3-5622-888a-8e532470db7f",
+          "Nombre": "Tierna costilla de vaca"
+        },
+        {
+          "IdIngrediente": "76810c5a-700f-5d44-b2d6-7f5d755aa96f",
+          "Nombre": "cocinada 36 horas a baja temperatura acompañada de patata duquesa"
+        },
+        {
+          "IdIngrediente": "15ed0e1e-d118-5e5d-9507-2facec5cac0d",
+          "Nombre": "pimiento italiano frito tomtes secos y demiglace al vino oporto"
+        }
+      ],
+      "SourceExternalId": 657,
+      "SourceSerial": "P0000657",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        7,
+        9,
+        10,
+        12
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "978b779f-eaa5-5fd0-93e2-be983ed912f4",
+      "Nombre": "EXTRA QUESO",
+      "Descripcion": "Plato de la categoría Platos Principales.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1072058440.jpg",
+      "Disponible": true,
+      "Precio": 1.5,
+      "IdCategoria": "ec0d7d61-28b7-58ef-994d-97935468fb44",
+      "CategoriaDescripcion": "Platos Principales",
+      "Ingredientes": [],
+      "SourceExternalId": 653,
+      "SourceSerial": "P0000653",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "bf0e0b03-b94d-5317-9413-7a0d1cf5520c",
+      "Nombre": "Lasagna bolognese",
+      "Descripcion": "Plato principal elaborado con La autentica lasagna de carne con salsa boloñesa casera.",
+      "IngredientesTexto": [
+        "La autentica lasagna de carne con salsa boloñesa casera"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/181063075.jpeg",
+      "Disponible": true,
+      "Precio": 13.0,
+      "IdCategoria": "ec0d7d61-28b7-58ef-994d-97935468fb44",
+      "CategoriaDescripcion": "Platos Principales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "cc3bd954-6d56-59ae-9538-99f2f174cc26",
+          "Nombre": "La autentica lasagna de carne con salsa boloñesa casera"
+        }
+      ],
+      "SourceExternalId": 506,
+      "SourceSerial": "P0000605",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        2,
+        7,
+        9,
+        10,
+        12
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "aedbecae-6cb9-5736-bd4c-223f006b1fce",
+      "Nombre": "Pennotti alla Bolognese",
+      "Descripcion": "Plato principal elaborado con Macarones Napolitanos formato especial, salsa boloñesa casera ¡estofada 8horas a fuego lento!.",
+      "IngredientesTexto": [
+        "Macarones Napolitanos formato especial",
+        "salsa boloñesa casera ¡estofada 8horas a fuego lento!"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3137654542.jpg",
+      "Disponible": true,
+      "Precio": 12.0,
+      "IdCategoria": "ec0d7d61-28b7-58ef-994d-97935468fb44",
+      "CategoriaDescripcion": "Platos Principales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "22464b1a-8db6-58d6-b0c5-905835292358",
+          "Nombre": "Macarones Napolitanos formato especial"
+        },
+        {
+          "IdIngrediente": "26705847-5497-5c31-936a-55f8ec946c1a",
+          "Nombre": "salsa boloñesa casera ¡estofada 8horas a fuego lento!"
+        }
+      ],
+      "SourceExternalId": 559,
+      "SourceSerial": "P0000559",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        7,
+        9,
+        10,
+        12
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "39340ce0-8ba7-5be4-9135-98de2458a450",
+      "Nombre": "Ravioli boletus y trufa",
+      "Descripcion": "Plato principal elaborado con Raviolis caseros rellenos de ricotta de oveja y setas mixtas con salsa de boletus y trufa.",
+      "IngredientesTexto": [
+        "Raviolis caseros rellenos de ricotta de oveja y setas mixtas con salsa de boletus y trufa"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2478606716.jpg",
+      "Disponible": true,
+      "Precio": 13.5,
+      "IdCategoria": "ec0d7d61-28b7-58ef-994d-97935468fb44",
+      "CategoriaDescripcion": "Platos Principales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "132e5785-c9b1-55d1-b25c-62453fd853de",
+          "Nombre": "Raviolis caseros rellenos de ricotta de oveja y setas mixtas con salsa de boletus y trufa"
+        }
+      ],
+      "SourceExternalId": 494,
+      "SourceSerial": "P0000593",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        7,
+        9,
+        10
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "e18d910e-c09a-5c89-b033-97543508898e",
+      "Nombre": "Ravioli de carne",
+      "Descripcion": "Plato principal elaborado con Tortelli de pasta fresca rellenos de ternera braseada a baja temperatura en salsa de carne acompañados de tomates secos y su ternera.",
+      "IngredientesTexto": [
+        "Tortelli de pasta fresca rellenos de ternera braseada a baja temperatura en salsa de carne acompañados de tomates secos y su ternera"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2626555046.jpg",
+      "Disponible": true,
+      "Precio": 15.0,
+      "IdCategoria": "ec0d7d61-28b7-58ef-994d-97935468fb44",
+      "CategoriaDescripcion": "Platos Principales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "cb77fb94-79ca-52f2-a488-4389921e1274",
+          "Nombre": "Tortelli de pasta fresca rellenos de ternera braseada a baja temperatura en salsa de carne acompañados de tomates secos y su ternera"
+        }
+      ],
+      "SourceExternalId": 542,
+      "SourceSerial": "P0000641",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        7,
+        9,
+        10,
+        12
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "171bfee2-18d6-5125-8f36-1cbb6bcf03b2",
+      "Nombre": "Solomillo de cerdo",
+      "Descripcion": "Plato principal elaborado con Solomillo de cerdo marinado en mostaza, envuelto en jamón y cocinado a baja temperatura, con juliana de pimiento italiano en agridulce y salsa de mostaza.",
+      "IngredientesTexto": [
+        "Solomillo de cerdo marinado en mostaza",
+        "envuelto en jamón y cocinado a baja temperatura",
+        "con juliana de pimiento italiano en agridulce y salsa de mostaza"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1105728509.jpg",
+      "Disponible": true,
+      "Precio": 18.0,
+      "IdCategoria": "ec0d7d61-28b7-58ef-994d-97935468fb44",
+      "CategoriaDescripcion": "Platos Principales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "ce9865fa-9de9-5c78-857c-e81a621b351d",
+          "Nombre": "Solomillo de cerdo marinado en mostaza"
+        },
+        {
+          "IdIngrediente": "322aeaac-1316-529e-84c3-9c3ca7a63477",
+          "Nombre": "envuelto en jamón y cocinado a baja temperatura"
+        },
+        {
+          "IdIngrediente": "b0dda348-5ab7-58d4-b6ef-776e64d796fa",
+          "Nombre": "con juliana de pimiento italiano en agridulce y salsa de mostaza"
+        }
+      ],
+      "SourceExternalId": 667,
+      "SourceSerial": "P0000667",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        6,
+        8,
+        9,
+        10
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "b5419dab-6a5b-5879-afb0-438ad1938803",
+      "Nombre": "Spaghetti carbonara",
+      "Descripcion": "Plato principal elaborado con Receta original con crema de yema de huevo, guanciale de Roma, queso pecorino y pimienta negra.",
+      "IngredientesTexto": [
+        "Receta original con crema de yema de huevo",
+        "guanciale de Roma",
+        "queso pecorino y pimienta negra"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2020949777.jpg",
+      "Disponible": true,
+      "Precio": 13.0,
+      "IdCategoria": "ec0d7d61-28b7-58ef-994d-97935468fb44",
+      "CategoriaDescripcion": "Platos Principales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "522aaa6e-33cd-5f93-adae-cf2b3db4f664",
+          "Nombre": "Receta original con crema de yema de huevo"
+        },
+        {
+          "IdIngrediente": "b8e334cb-4e1d-5cc3-b502-007f4be2a604",
+          "Nombre": "guanciale de Roma"
+        },
+        {
+          "IdIngrediente": "5052587d-3917-565e-b56b-4a8bf37a73c0",
+          "Nombre": "queso pecorino y pimienta negra"
+        }
+      ],
+      "SourceExternalId": 496,
+      "SourceSerial": "P0000595",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        2,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "bc797aac-96f5-5b4a-86f8-d9bc6c64b260",
+      "Nombre": "Tagliatelle allo scoglio",
+      "Descripcion": "Plato principal elaborado con Tagliatelle al huevo con cola de gambon, calamar, almejas y mejillones.",
+      "IngredientesTexto": [
+        "Tagliatelle al huevo con cola de gambon",
+        "calamar",
+        "almejas y mejillones"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/932430581.jpg",
+      "Disponible": true,
+      "Precio": 18.0,
+      "IdCategoria": "ec0d7d61-28b7-58ef-994d-97935468fb44",
+      "CategoriaDescripcion": "Platos Principales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "1ba7b8f9-ba25-5db1-bbd8-7874de48d9fb",
+          "Nombre": "Tagliatelle al huevo con cola de gambon"
+        },
+        {
+          "IdIngrediente": "0d83ad64-02c7-5579-9065-dfb9c432b2b8",
+          "Nombre": "calamar"
+        },
+        {
+          "IdIngrediente": "bad9886c-4368-5da3-bae5-fd52204d0797",
+          "Nombre": "almejas y mejillones"
+        }
+      ],
+      "SourceExternalId": 666,
+      "SourceSerial": "P0000666",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        2,
+        3,
+        4,
+        7,
+        9,
+        10,
+        12,
+        14
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "24cd344d-c85f-5660-8d04-1e16aa4c2bbb",
+      "Nombre": "!NOVEDAD! SALSICCE E FRIARIELLI",
+      "Descripcion": "Pizza artesana elaborada con NUESTRA PIZZA CON MOZZARELLA, RODAJITAS DE LONGANIZA, GRELOS SALTEADOS y más ingredientes.",
+      "IngredientesTexto": [
+        "NUESTRA PIZZA CON MOZZARELLA",
+        "RODAJITAS DE LONGANIZA",
+        "GRELOS SALTEADOS",
+        "PROVOLONE Y PARMESANO"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2052284776.jpg",
+      "Disponible": true,
+      "Precio": 14.5,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "5381b2de-0e66-54eb-9234-60cab3855761",
+          "Nombre": "NUESTRA PIZZA CON MOZZARELLA"
+        },
+        {
+          "IdIngrediente": "78247d99-bb64-5492-b5d3-bce90c48f31f",
+          "Nombre": "RODAJITAS DE LONGANIZA"
+        },
+        {
+          "IdIngrediente": "33ab18fd-3990-5509-b597-e41736ce3784",
+          "Nombre": "GRELOS SALTEADOS"
+        },
+        {
+          "IdIngrediente": "0624495f-7259-588c-8fc7-be7bab5b5963",
+          "Nombre": "PROVOLONE Y PARMESANO"
+        }
+      ],
+      "SourceExternalId": 655,
+      "SourceSerial": "P0000655",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        9,
+        10
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "92c3ee47-fa7b-538c-b28d-e1cfe401c8d7",
+      "Nombre": "1!!NOVEDAD!! LA EXPLOSIVA",
+      "Descripcion": "Pizza artesana elaborada con Crema de trufa, mozzarella fiordilatte, jamón serrano y más ingredientes.",
+      "IngredientesTexto": [
+        "Crema de trufa",
+        "mozzarella fiordilatte",
+        "jamón serrano",
+        "y nuestra burrata inyectada con crema de boletus casera",
+        "No te arrepentiras!!"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/588027835.jpg",
+      "Disponible": true,
+      "Precio": 16.5,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d2b716b-eb30-5102-93b4-9dd11660f77b",
+          "Nombre": "Crema de trufa"
+        },
+        {
+          "IdIngrediente": "a71713e1-f18e-5548-a049-cc0d6f9a3dd7",
+          "Nombre": "mozzarella fiordilatte"
+        },
+        {
+          "IdIngrediente": "59b85775-b47d-57b1-b1bd-3ee468c6465f",
+          "Nombre": "jamón serrano"
+        },
+        {
+          "IdIngrediente": "531526da-dbf1-5ccc-acb2-2341be9ed339",
+          "Nombre": "y nuestra burrata inyectada con crema de boletus casera"
+        },
+        {
+          "IdIngrediente": "0718bc5e-55d3-55c3-9ab6-949a70925653",
+          "Nombre": "No te arrepentiras!!"
+        }
+      ],
+      "SourceExternalId": 630,
+      "SourceSerial": "P0000630",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        7,
+        9,
+        10
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "f52e85a5-9ac4-5b65-afe4-c486a60ce1a4",
+      "Nombre": "2. NOVEDAD!!! BAZUCCA",
+      "Descripcion": "Pizza artesana elaborada con Os presentamos nuestra nueva creación la pizza bazucca, calabaza pochada al romero, nuestra mozzarella de búfala y más ingredientes.",
+      "IngredientesTexto": [
+        "Os presentamos nuestra nueva creación la pizza bazucca",
+        "calabaza pochada al romero",
+        "nuestra mozzarella de búfala",
+        "espec",
+        "pimienta negra tostada y una lluvia de parmesano"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/274311015.jpg",
+      "Disponible": true,
+      "Precio": 15.0,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "98d28699-086f-527a-8502-ccd1db8a8ef5",
+          "Nombre": "Os presentamos nuestra nueva creación la pizza bazucca"
+        },
+        {
+          "IdIngrediente": "67c5cd63-574a-5d0d-b5e8-e30200e56034",
+          "Nombre": "calabaza pochada al romero"
+        },
+        {
+          "IdIngrediente": "1fa07096-c0b4-5f63-a69a-2dd02196dd69",
+          "Nombre": "nuestra mozzarella de búfala"
+        },
+        {
+          "IdIngrediente": "433bd3cf-357c-55c0-b1c2-ebee6a46a46c",
+          "Nombre": "espec"
+        },
+        {
+          "IdIngrediente": "fee0340a-4b6a-500a-9e08-cc8bf7dd66fe",
+          "Nombre": "pimienta negra tostada y una lluvia de parmesano"
+        }
+      ],
+      "SourceExternalId": 643,
+      "SourceSerial": "P0000643",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "0a9d7a62-98f0-5aeb-825b-ac927253e9bd",
+      "Nombre": "3.NOVEDAD!!! TRUFA 2.0!",
+      "Descripcion": "Pizza artesana elaborada con Nuestra crema de trufa, nuestra mozzarella fior di latte, champiñones y más ingredientes.",
+      "IngredientesTexto": [
+        "Nuestra crema de trufa",
+        "nuestra mozzarella fior di latte",
+        "champiñones",
+        "cebolla crujiente y una lluvia rucula fresca"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1127488309.jpg",
+      "Disponible": true,
+      "Precio": 13.0,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "0282a96b-0424-58ff-bac5-50674aa12350",
+          "Nombre": "Nuestra crema de trufa"
+        },
+        {
+          "IdIngrediente": "e1f96c65-771e-58c9-85b7-e994f6c3183c",
+          "Nombre": "nuestra mozzarella fior di latte"
+        },
+        {
+          "IdIngrediente": "bfbae520-c7d8-5c50-a37e-17b6568a2870",
+          "Nombre": "champiñones"
+        },
+        {
+          "IdIngrediente": "0637a241-c503-5edb-9021-00ee8acaddb3",
+          "Nombre": "cebolla crujiente y una lluvia rucula fresca"
+        }
+      ],
+      "SourceExternalId": 637,
+      "SourceSerial": "P0000637",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        7,
+        9,
+        10
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "25f59c36-5c79-584d-8c5c-102aa11b975d",
+      "Nombre": "3.NOVEDAD!!!!. LA PORCELLINA",
+      "Descripcion": "Pizza artesana elaborada con Mozzarella fior di latte, porketta ahumada, rúcula fresca y más ingredientes.",
+      "IngredientesTexto": [
+        "Mozzarella fior di latte",
+        "porketta ahumada",
+        "rúcula fresca",
+        "nueces",
+        "burrata",
+        "y crema de turrón 100% antiu xixona"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3521083015.jpg",
+      "Disponible": true,
+      "Precio": 16.0,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "4078cb49-f3e7-524d-bde5-34f1f47141a6",
+          "Nombre": "Mozzarella fior di latte"
+        },
+        {
+          "IdIngrediente": "ccb422e6-411a-5574-8f85-6a3d8520ec87",
+          "Nombre": "porketta ahumada"
+        },
+        {
+          "IdIngrediente": "a4acba4d-299a-52f2-8408-87bd66c61735",
+          "Nombre": "rúcula fresca"
+        },
+        {
+          "IdIngrediente": "a08b9619-e633-52c9-9e4c-10b8b3038840",
+          "Nombre": "nueces"
+        },
+        {
+          "IdIngrediente": "a705e017-3252-542c-a71b-19d387ce8f5e",
+          "Nombre": "burrata"
+        },
+        {
+          "IdIngrediente": "79e5e3ad-9019-5132-be48-faf6de17d53a",
+          "Nombre": "y crema de turrón 100% antiu xixona"
+        }
+      ],
+      "SourceExternalId": 635,
+      "SourceSerial": "P0000635",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "ef5d79dd-37e0-514c-9d8c-501645786c3e",
+      "Nombre": "5.¡¡¡NOVEDAD!!!! LA STRANGER THINGS",
+      "Descripcion": "Pizza artesana elaborada con Base de crema de remolacha, mozzarella fior di latte, finocchiona y más ingredientes.",
+      "IngredientesTexto": [
+        "Base de crema de remolacha",
+        "mozzarella fior di latte",
+        "finocchiona",
+        "burrata",
+        "albahaca y su miel picante"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2584399457.jpg",
+      "Disponible": true,
+      "Precio": 16.5,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "d42d518b-7d8f-5f97-8a1d-1defbd179127",
+          "Nombre": "Base de crema de remolacha"
+        },
+        {
+          "IdIngrediente": "4078cb49-f3e7-524d-bde5-34f1f47141a6",
+          "Nombre": "Mozzarella fior di latte"
+        },
+        {
+          "IdIngrediente": "579b0542-94c7-5778-8c3a-f3edb98b1983",
+          "Nombre": "finocchiona"
+        },
+        {
+          "IdIngrediente": "a705e017-3252-542c-a71b-19d387ce8f5e",
+          "Nombre": "burrata"
+        },
+        {
+          "IdIngrediente": "c449cbe2-257a-5ab1-81d1-298adee1ccde",
+          "Nombre": "albahaca y su miel picante"
+        }
+      ],
+      "SourceExternalId": 670,
+      "SourceSerial": "P0000670",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "e184dd9c-2118-5b05-899c-c21ff668e75f",
+      "Nombre": "Búfala",
+      "Descripcion": "Pizza artesana elaborada con tomate, mozzarella de búfala fresca, albahaca.",
+      "IngredientesTexto": [
+        "tomate",
+        "mozzarella de búfala fresca",
+        "albahaca"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1809075944.jpg",
+      "Disponible": true,
+      "Precio": 13.0,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "b79f5a58-a889-5564-ab39-a7410234cb29",
+          "Nombre": "mozzarella de búfala fresca"
+        },
+        {
+          "IdIngrediente": "8c08b121-ef05-5e3f-a2a5-395f13ab4bec",
+          "Nombre": "albahaca"
+        }
+      ],
+      "SourceExternalId": 104,
+      "SourceSerial": "P0000203",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "a4461c2c-4ab4-5037-8dde-a7da88983100",
+      "Nombre": "Burrata",
+      "Descripcion": "Pizza artesana elaborada con Tomate, queso burrata, albahaca.",
+      "IngredientesTexto": [
+        "Tomate",
+        "queso burrata",
+        "albahaca"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2713752121.jpg",
+      "Disponible": true,
+      "Precio": 13.0,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "4a73ae4b-4f2d-5c16-a279-b6c0c7939035",
+          "Nombre": "queso burrata"
+        },
+        {
+          "IdIngrediente": "8c08b121-ef05-5e3f-a2a5-395f13ab4bec",
+          "Nombre": "albahaca"
+        }
+      ],
+      "SourceExternalId": 102,
+      "SourceSerial": "P0000201",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "e66289dc-47e7-5f19-94ee-e8c8c7470b19",
+      "Nombre": "Carbonara de mar",
+      "Descripcion": "Pizza artesana elaborada con nata, mozzarella, salmón ahumado y más ingredientes.",
+      "IngredientesTexto": [
+        "nata",
+        "mozzarella",
+        "salmón ahumado",
+        "cebolla roja",
+        "grana padano"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1038080034.jpg",
+      "Disponible": true,
+      "Precio": 14.0,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "156d4f94-6e28-54d9-badd-61aff0c0e29d",
+          "Nombre": "nata"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "8ba7f4f0-f123-5542-865a-c2089575dec1",
+          "Nombre": "salmón ahumado"
+        },
+        {
+          "IdIngrediente": "9651ea69-ec14-5bd5-816e-a0dc3c8f6133",
+          "Nombre": "cebolla roja"
+        },
+        {
+          "IdIngrediente": "3212b626-26ae-580a-bddb-ce12c3dfec22",
+          "Nombre": "grana padano"
+        }
+      ],
+      "SourceExternalId": 110,
+      "SourceSerial": "P0000209",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        4,
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "9390adf5-ae48-5e7d-9767-73a2a5b802ac",
+      "Nombre": "Croquet",
+      "Descripcion": "Pizza artesana elaborada con Mozzarella, croquetas caseras de jamon, jamón serrano y más ingredientes.",
+      "IngredientesTexto": [
+        "Mozzarella",
+        "croquetas caseras de jamon",
+        "jamón serrano",
+        "crema de queso burrata"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3423992025.jpg",
+      "Disponible": true,
+      "Precio": 18.0,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "e3161991-ec6a-59d3-ad5a-da5ccafc41cd",
+          "Nombre": "croquetas caseras de jamon"
+        },
+        {
+          "IdIngrediente": "59b85775-b47d-57b1-b1bd-3ee468c6465f",
+          "Nombre": "jamón serrano"
+        },
+        {
+          "IdIngrediente": "82a2fff1-338b-5d65-8dd6-4207e7b4a46e",
+          "Nombre": "crema de queso burrata"
+        }
+      ],
+      "SourceExternalId": 562,
+      "SourceSerial": "P0000562",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "26f1308c-1e11-5b9f-8325-52690686b96b",
+      "Nombre": "De pizzeo",
+      "Descripcion": "Pizza artesana elaborada con salsa boloñesa casera, mozzarella de búfala, bacon pimiento rojo asado y más ingredientes.",
+      "IngredientesTexto": [
+        "salsa boloñesa casera",
+        "mozzarella de búfala",
+        "bacon pimiento rojo asado",
+        "patatas fritas"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/762946872.jpg",
+      "Disponible": true,
+      "Precio": 15.0,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "58e7425e-a414-5855-8b7c-6d00c2a1a0b5",
+          "Nombre": "salsa boloñesa casera"
+        },
+        {
+          "IdIngrediente": "76d65f8f-2f49-5516-9d58-cb97f9f40bc4",
+          "Nombre": "mozzarella de búfala"
+        },
+        {
+          "IdIngrediente": "3399ba71-3c40-5a0b-9602-65ae282043e3",
+          "Nombre": "bacon pimiento rojo asado"
+        },
+        {
+          "IdIngrediente": "e294b112-1e47-551f-a6e0-3d870d0f9129",
+          "Nombre": "patatas fritas"
+        }
+      ],
+      "SourceExternalId": 101,
+      "SourceSerial": "P0000200",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "06f87de7-beb1-5657-ac30-c06de1a20df9",
+      "Nombre": "Española",
+      "Descripcion": "Pizza artesana elaborada con mozzarella, jamón serrano, rucula y más ingredientes.",
+      "IngredientesTexto": [
+        "mozzarella",
+        "jamón serrano",
+        "rucula",
+        "grana padano",
+        "tomates cherry"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/493007539.jpg",
+      "Disponible": true,
+      "Precio": 14.5,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "59b85775-b47d-57b1-b1bd-3ee468c6465f",
+          "Nombre": "jamón serrano"
+        },
+        {
+          "IdIngrediente": "779cc5e1-1995-5d45-b851-537d252f6e72",
+          "Nombre": "rucula"
+        },
+        {
+          "IdIngrediente": "3212b626-26ae-580a-bddb-ce12c3dfec22",
+          "Nombre": "grana padano"
+        },
+        {
+          "IdIngrediente": "f3d574a9-3919-5d0d-b3e2-d569af6f7cee",
+          "Nombre": "tomates cherry"
+        }
+      ],
+      "SourceExternalId": 103,
+      "SourceSerial": "P0000202",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "05d3d247-ea7a-5a52-a060-a700f71dd41f",
+      "Nombre": "Mortadella.",
+      "Descripcion": "Pizza artesana elaborada con Mozzarella, mortadela con pistachos, queso burrata y más ingredientes.",
+      "IngredientesTexto": [
+        "Mozzarella",
+        "mortadela con pistachos",
+        "queso burrata",
+        "pesto de pistachos"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1071004874.jpeg",
+      "Disponible": true,
+      "Precio": 15.0,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "1f521de1-ea46-5660-92c5-e7e847df145c",
+          "Nombre": "mortadela con pistachos"
+        },
+        {
+          "IdIngrediente": "4a73ae4b-4f2d-5c16-a279-b6c0c7939035",
+          "Nombre": "queso burrata"
+        },
+        {
+          "IdIngrediente": "1c25d9bd-49b5-51ea-b6e0-4f8061b6361c",
+          "Nombre": "pesto de pistachos"
+        }
+      ],
+      "SourceExternalId": 566,
+      "SourceSerial": "P0000566",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        6,
+        7,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "84a31bf5-0a63-5843-a2a2-e782a9679c81",
+      "Nombre": "Nduja.",
+      "Descripcion": "Pizza artesana elaborada con Tomate, Mozzarella de búfala, nduja picante y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "Mozzarella de búfala",
+        "nduja picante",
+        "miel"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2428815802.jpg",
+      "Disponible": true,
+      "Precio": 14.0,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "76d65f8f-2f49-5516-9d58-cb97f9f40bc4",
+          "Nombre": "mozzarella de búfala"
+        },
+        {
+          "IdIngrediente": "5d4f6252-d8b0-59d5-81cb-2d36d530ef43",
+          "Nombre": "nduja picante"
+        },
+        {
+          "IdIngrediente": "b4ada057-3983-5921-a205-c9646d2e85b9",
+          "Nombre": "miel"
+        }
+      ],
+      "SourceExternalId": 568,
+      "SourceSerial": "P0000568",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "87072fe7-8653-5638-9fcb-d609069e754e",
+      "Nombre": "Philadelphia.",
+      "Descripcion": "Pizza artesana elaborada con Crema de espinacas, mozzarella, salmón ahumado y más ingredientes.",
+      "IngredientesTexto": [
+        "Crema de espinacas",
+        "mozzarella",
+        "salmón ahumado",
+        "queso philadelphia",
+        "granelas de almendras"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2281233989.jpg",
+      "Disponible": true,
+      "Precio": 14.5,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "a9bc8fe7-adaf-5911-8761-f1071a620a3e",
+          "Nombre": "Crema de espinacas"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "8ba7f4f0-f123-5542-865a-c2089575dec1",
+          "Nombre": "salmón ahumado"
+        },
+        {
+          "IdIngrediente": "c597407c-0ebf-5e2f-98fa-d298e4318987",
+          "Nombre": "queso philadelphia"
+        },
+        {
+          "IdIngrediente": "054c59ba-50ba-5f6a-8b3b-269f5a9d9755",
+          "Nombre": "granelas de almendras"
+        }
+      ],
+      "SourceExternalId": 570,
+      "SourceSerial": "P0000570",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        4,
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "9e2b1a7c-9c9a-5337-8692-dadf8016b6a2",
+      "Nombre": "San Vicentina",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, salmón ahumado gambas.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "salmón ahumado gambas"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1518021231.jpg",
+      "Disponible": true,
+      "Precio": 14.0,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "262f5ac5-9c45-5627-be1c-dbcabbdc4f8b",
+          "Nombre": "salmón ahumado gambas"
+        }
+      ],
+      "SourceExternalId": 106,
+      "SourceSerial": "P0000205",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        3,
+        4,
+        5,
+        7,
+        9,
+        14
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "fdc1c34d-5bb5-5746-bc16-e00e782c2016",
+      "Nombre": "Suprema",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, carne picada y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "carne picada",
+        "huevo",
+        "jamón serrano",
+        "aceite de trufa"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1697854910.jpeg",
+      "Disponible": true,
+      "Precio": 14.0,
+      "IdCategoria": "c7c70fe8-982d-572d-9eed-c3494ae0c72f",
+      "CategoriaDescripcion": "Pizzas Especiales",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "daccac0e-0412-5c56-9ce6-4200010656af",
+          "Nombre": "carne picada"
+        },
+        {
+          "IdIngrediente": "bdfd3a19-10d6-57df-99cb-fef0f61c8ff2",
+          "Nombre": "huevo"
+        },
+        {
+          "IdIngrediente": "59b85775-b47d-57b1-b1bd-3ee468c6465f",
+          "Nombre": "jamón serrano"
+        },
+        {
+          "IdIngrediente": "1831176c-fd4b-5627-8932-c8f9bd4fb394",
+          "Nombre": "aceite de trufa"
+        }
+      ],
+      "SourceExternalId": 109,
+      "SourceSerial": "P0000208",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        2,
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "be607e42-dfcf-52e3-bf43-d7a56ed45d88",
+      "Nombre": "4 Formaggi",
+      "Descripcion": "Pizza artesana elaborada con mozzarella, provolone, grana padano y más ingredientes.",
+      "IngredientesTexto": [
+        "mozzarella",
+        "provolone",
+        "grana padano",
+        "gorgonzola"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3024324186.jpg",
+      "Disponible": true,
+      "Precio": 13.0,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "322fd257-41ce-58ba-a575-9ee56b0f369f",
+          "Nombre": "provolone"
+        },
+        {
+          "IdIngrediente": "3212b626-26ae-580a-bddb-ce12c3dfec22",
+          "Nombre": "grana padano"
+        },
+        {
+          "IdIngrediente": "d2ccfd6b-82e3-5a52-aae9-d94e25c856ea",
+          "Nombre": "gorgonzola"
+        }
+      ],
+      "SourceExternalId": 731,
+      "SourceSerial": "P0000731",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "b44b06d0-5e60-569a-b76a-2a66c1390c11",
+      "Nombre": "4 Stagioni",
+      "Descripcion": "Pizza artesana elaborada con tomate, mozzarella, jamón york y más ingredientes.",
+      "IngredientesTexto": [
+        "tomate",
+        "mozzarella",
+        "jamón york",
+        "champiñones",
+        "aceitunas",
+        "alcachofas"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3736408035.jpg",
+      "Disponible": true,
+      "Precio": 13.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "4a3e0f43-3e69-5104-9298-8475310fb8cc",
+          "Nombre": "jamón york"
+        },
+        {
+          "IdIngrediente": "bfbae520-c7d8-5c50-a37e-17b6568a2870",
+          "Nombre": "champiñones"
+        },
+        {
+          "IdIngrediente": "3c3908d1-35ca-5984-9d18-b6e585541351",
+          "Nombre": "aceitunas"
+        },
+        {
+          "IdIngrediente": "b118be9a-fdb0-57d3-a305-a678ac8ac197",
+          "Nombre": "alcachofas"
+        }
+      ],
+      "SourceExternalId": 732,
+      "SourceSerial": "P0000732",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9,
+        10
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "537fff09-ea37-5e9d-8a4a-e31929ebe507",
+      "Nombre": "Alemana",
+      "Descripcion": "Pizza artesana elaborada con tomate, mozzarella, jamón york y más ingredientes.",
+      "IngredientesTexto": [
+        "tomate",
+        "mozzarella",
+        "jamón york",
+        "huevo"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/884173987.jpg",
+      "Disponible": true,
+      "Precio": 12.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "4a3e0f43-3e69-5104-9298-8475310fb8cc",
+          "Nombre": "jamón york"
+        },
+        {
+          "IdIngrediente": "bdfd3a19-10d6-57df-99cb-fef0f61c8ff2",
+          "Nombre": "huevo"
+        }
+      ],
+      "SourceExternalId": 733,
+      "SourceSerial": "P0000733",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        2,
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "fe63ade1-cfd6-559e-9c0b-7314db5775c8",
+      "Nombre": "Americana",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, frankfurt y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "frankfurt",
+        "patatas fritas"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/272714633.jpg",
+      "Disponible": true,
+      "Precio": 12.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "f8453599-8928-5b86-92af-4f0cab898b32",
+          "Nombre": "frankfurt"
+        },
+        {
+          "IdIngrediente": "e294b112-1e47-551f-a6e0-3d870d0f9129",
+          "Nombre": "patatas fritas"
+        }
+      ],
+      "SourceExternalId": 734,
+      "SourceSerial": "P0000734",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "693a29bd-b7c7-51bf-bb4c-1e2e49619897",
+      "Nombre": "B&C",
+      "Descripcion": "Pizza artesana elaborada con tomate, mozzarella, bacon y más ingredientes.",
+      "IngredientesTexto": [
+        "tomate",
+        "mozzarella",
+        "bacon",
+        "cebolla roja"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3804012123.jpg",
+      "Disponible": true,
+      "Precio": 12.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "02bd4ade-38da-5b6e-b426-b2dc2fcb26d6",
+          "Nombre": "bacon"
+        },
+        {
+          "IdIngrediente": "9651ea69-ec14-5bd5-816e-a0dc3c8f6133",
+          "Nombre": "cebolla roja"
+        }
+      ],
+      "SourceExternalId": 77,
+      "SourceSerial": "P0000176",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "f5af148e-976e-55d8-810d-0c080955c44c",
+      "Nombre": "Bolognese",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, salsa boloñesa casera.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "salsa boloñesa casera"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2419430576.jpg",
+      "Disponible": true,
+      "Precio": 13.0,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "58e7425e-a414-5855-8b7c-6d00c2a1a0b5",
+          "Nombre": "salsa boloñesa casera"
+        }
+      ],
+      "SourceExternalId": 736,
+      "SourceSerial": "P0000736",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9,
+        12
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "b90e888a-7d0e-56dc-a4f4-011135d47b98",
+      "Nombre": "Calzone",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, jamón york y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "jamón york",
+        "champiñones"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/912774779.jpg",
+      "Disponible": true,
+      "Precio": 13.0,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "4a3e0f43-3e69-5104-9298-8475310fb8cc",
+          "Nombre": "jamón york"
+        },
+        {
+          "IdIngrediente": "bfbae520-c7d8-5c50-a37e-17b6568a2870",
+          "Nombre": "champiñones"
+        }
+      ],
+      "SourceExternalId": 738,
+      "SourceSerial": "P0000738",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "c8301c3b-9d61-540f-a1a2-313254515351",
+      "Nombre": "Calzone bomba",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, pollo y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "pollo",
+        "chorizo",
+        "jamon york",
+        "bacon",
+        "gorgonzola"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2985929173.jpg",
+      "Disponible": true,
+      "Precio": 15.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "f5a74fc3-03eb-5eea-a892-1157af2dd048",
+          "Nombre": "pollo"
+        },
+        {
+          "IdIngrediente": "23a4cdb0-cab7-59b0-96f3-ac471bccbc55",
+          "Nombre": "chorizo"
+        },
+        {
+          "IdIngrediente": "442b56a7-c681-50ae-b747-6af05138fd91",
+          "Nombre": "jamon york"
+        },
+        {
+          "IdIngrediente": "02bd4ade-38da-5b6e-b426-b2dc2fcb26d6",
+          "Nombre": "bacon"
+        },
+        {
+          "IdIngrediente": "d2ccfd6b-82e3-5a52-aae9-d94e25c856ea",
+          "Nombre": "gorgonzola"
+        }
+      ],
+      "SourceExternalId": 739,
+      "SourceSerial": "P0000739",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "81a89653-5f20-596e-a779-d5625def44dd",
+      "Nombre": "Calzone speciale",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, chorizo picante y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "chorizo picante",
+        "bacon",
+        "cebolla roja"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1949041543.jpg",
+      "Disponible": true,
+      "Precio": 13.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "000c183e-f0d4-50b9-bb16-7388321c9204",
+          "Nombre": "chorizo picante"
+        },
+        {
+          "IdIngrediente": "02bd4ade-38da-5b6e-b426-b2dc2fcb26d6",
+          "Nombre": "bacon"
+        },
+        {
+          "IdIngrediente": "9651ea69-ec14-5bd5-816e-a0dc3c8f6133",
+          "Nombre": "cebolla roja"
+        }
+      ],
+      "SourceExternalId": 740,
+      "SourceSerial": "P0000740",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "27dfc9c7-b899-53ce-9655-d18383e03642",
+      "Nombre": "Carbonara",
+      "Descripcion": "Pizza artesana elaborada con Nata, mozzarella, bacon y más ingredientes.",
+      "IngredientesTexto": [
+        "Nata",
+        "mozzarella",
+        "bacon",
+        "cebolla roja",
+        "grana padano"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2505635021.jpg",
+      "Disponible": true,
+      "Precio": 13.0,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "156d4f94-6e28-54d9-badd-61aff0c0e29d",
+          "Nombre": "nata"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "02bd4ade-38da-5b6e-b426-b2dc2fcb26d6",
+          "Nombre": "bacon"
+        },
+        {
+          "IdIngrediente": "9651ea69-ec14-5bd5-816e-a0dc3c8f6133",
+          "Nombre": "cebolla roja"
+        },
+        {
+          "IdIngrediente": "3212b626-26ae-580a-bddb-ce12c3dfec22",
+          "Nombre": "grana padano"
+        }
+      ],
+      "SourceExternalId": 742,
+      "SourceSerial": "P0000742",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "e14d6d14-4ad1-56e0-b915-13a73aed83b8",
+      "Nombre": "Carbonara de tierra",
+      "Descripcion": "Pizza artesana elaborada con Nata, mozzarella, champiñones y más ingredientes.",
+      "IngredientesTexto": [
+        "Nata",
+        "mozzarella",
+        "champiñones",
+        "cebolla roja",
+        "grana padano"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2697636256.jpg",
+      "Disponible": true,
+      "Precio": 13.0,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "156d4f94-6e28-54d9-badd-61aff0c0e29d",
+          "Nombre": "nata"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "bfbae520-c7d8-5c50-a37e-17b6568a2870",
+          "Nombre": "champiñones"
+        },
+        {
+          "IdIngrediente": "9651ea69-ec14-5bd5-816e-a0dc3c8f6133",
+          "Nombre": "cebolla roja"
+        },
+        {
+          "IdIngrediente": "3212b626-26ae-580a-bddb-ce12c3dfec22",
+          "Nombre": "grana padano"
+        }
+      ],
+      "SourceExternalId": 743,
+      "SourceSerial": "P0000743",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "8e446da3-e4cc-5975-9ec4-10cf44276bd0",
+      "Nombre": "Crujiente.",
+      "Descripcion": "Pizza artesana elaborada con Crema de espinacas, mozzarella, queso de cabra y más ingredientes.",
+      "IngredientesTexto": [
+        "Crema de espinacas",
+        "mozzarella",
+        "queso de cabra",
+        "bacon crujiente"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/196111375.jpg",
+      "Disponible": true,
+      "Precio": 13.0,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "a9bc8fe7-adaf-5911-8761-f1071a620a3e",
+          "Nombre": "Crema de espinacas"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "74ed9a45-b9ba-54c1-b227-47091c1d469e",
+          "Nombre": "queso de cabra"
+        },
+        {
+          "IdIngrediente": "70f75027-26ad-5e2c-a2ec-13bfd0c095e1",
+          "Nombre": "bacon crujiente"
+        }
+      ],
+      "SourceExternalId": 744,
+      "SourceSerial": "P0000744",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "f3c23db0-95db-568d-aa2c-51a153ed8f05",
+      "Nombre": "Del norte",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, jamón york y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "jamón york",
+        "provolone"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1055295008.jpg",
+      "Disponible": true,
+      "Precio": 12.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "4a3e0f43-3e69-5104-9298-8475310fb8cc",
+          "Nombre": "jamón york"
+        },
+        {
+          "IdIngrediente": "322fd257-41ce-58ba-a575-9ee56b0f369f",
+          "Nombre": "provolone"
+        }
+      ],
+      "SourceExternalId": 745,
+      "SourceSerial": "P0000745",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "64a40d1b-830d-5ea5-918b-f1b717884fd5",
+      "Nombre": "Diavola",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, chorizo picante.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "chorizo picante"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/773305975.jpg",
+      "Disponible": true,
+      "Precio": 11.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "000c183e-f0d4-50b9-bb16-7388321c9204",
+          "Nombre": "chorizo picante"
+        }
+      ],
+      "SourceExternalId": 746,
+      "SourceSerial": "P0000746",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "a081cc5f-6822-5f95-b814-10aec243b820",
+      "Nombre": "Estrella",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, atún y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "atún",
+        "alcachofas",
+        "aceitunas"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1166121511.jpg",
+      "Disponible": true,
+      "Precio": 13.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "783710e1-5d47-5212-8964-dc7a66b27182",
+          "Nombre": "atún"
+        },
+        {
+          "IdIngrediente": "b118be9a-fdb0-57d3-a305-a678ac8ac197",
+          "Nombre": "alcachofas"
+        },
+        {
+          "IdIngrediente": "3c3908d1-35ca-5984-9d18-b6e585541351",
+          "Nombre": "aceitunas"
+        }
+      ],
+      "SourceExternalId": 747,
+      "SourceSerial": "P0000747",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        4,
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "df2fe3d6-309d-595d-ba0a-24c747121fcd",
+      "Nombre": "Favorita",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, carne picada y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "carne picada",
+        "gorgonzola",
+        "rucula"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1839822515.jpg",
+      "Disponible": true,
+      "Precio": 13.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "daccac0e-0412-5c56-9ce6-4200010656af",
+          "Nombre": "carne picada"
+        },
+        {
+          "IdIngrediente": "d2ccfd6b-82e3-5a52-aae9-d94e25c856ea",
+          "Nombre": "gorgonzola"
+        },
+        {
+          "IdIngrediente": "779cc5e1-1995-5d45-b851-537d252f6e72",
+          "Nombre": "rucula"
+        }
+      ],
+      "SourceExternalId": 748,
+      "SourceSerial": "P0000748",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "56ecab98-2c40-5ce6-9aeb-0e343f830f16",
+      "Nombre": "FOCACCIA.",
+      "Descripcion": "Pizza artesana elaborada al momento.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 6.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [],
+      "SourceExternalId": 749,
+      "SourceSerial": "P0000749",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "a7fd531b-f343-51e5-8581-d5d25574fe2f",
+      "Nombre": "Gianky e bruno.",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, bacon y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "bacon",
+        "chorizo picante",
+        "cebolla roja",
+        "gorgonzola"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2393041311.jpg",
+      "Disponible": true,
+      "Precio": 13.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "02bd4ade-38da-5b6e-b426-b2dc2fcb26d6",
+          "Nombre": "bacon"
+        },
+        {
+          "IdIngrediente": "000c183e-f0d4-50b9-bb16-7388321c9204",
+          "Nombre": "chorizo picante"
+        },
+        {
+          "IdIngrediente": "9651ea69-ec14-5bd5-816e-a0dc3c8f6133",
+          "Nombre": "cebolla roja"
+        },
+        {
+          "IdIngrediente": "d2ccfd6b-82e3-5a52-aae9-d94e25c856ea",
+          "Nombre": "gorgonzola"
+        }
+      ],
+      "SourceExternalId": 750,
+      "SourceSerial": "P0000750",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "830de6c3-ada4-59ad-abf8-840ee0e27ab8",
+      "Nombre": "Hawaiana",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, jamón york y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "jamón york",
+        "piña"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/591268419.jpg",
+      "Disponible": true,
+      "Precio": 13.0,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "4a3e0f43-3e69-5104-9298-8475310fb8cc",
+          "Nombre": "jamón york"
+        },
+        {
+          "IdIngrediente": "f0eed174-800a-5f0e-860d-e8a4aed74c6a",
+          "Nombre": "piña"
+        }
+      ],
+      "SourceExternalId": 752,
+      "SourceSerial": "P0000752",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "692bc990-51c6-5239-8a01-f08acaf7df72",
+      "Nombre": "Jb.",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, jamón york y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "jamón york",
+        "champiñones",
+        "bacon",
+        "carne picada"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1389972488.jpg",
+      "Disponible": true,
+      "Precio": 14.0,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "4a3e0f43-3e69-5104-9298-8475310fb8cc",
+          "Nombre": "jamón york"
+        },
+        {
+          "IdIngrediente": "bfbae520-c7d8-5c50-a37e-17b6568a2870",
+          "Nombre": "champiñones"
+        },
+        {
+          "IdIngrediente": "02bd4ade-38da-5b6e-b426-b2dc2fcb26d6",
+          "Nombre": "bacon"
+        },
+        {
+          "IdIngrediente": "daccac0e-0412-5c56-9ce6-4200010656af",
+          "Nombre": "carne picada"
+        }
+      ],
+      "SourceExternalId": 754,
+      "SourceSerial": "P0000754",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "34a8413c-ac90-5b94-8429-acbbb4be653e",
+      "Nombre": "Ligure",
+      "Descripcion": "Pizza artesana elaborada con Pesto genovese, mozzarella, bacon y más ingredientes.",
+      "IngredientesTexto": [
+        "Pesto genovese",
+        "mozzarella",
+        "bacon",
+        "jamón york"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1812124469.jpg",
+      "Disponible": true,
+      "Precio": 12.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "e3b0bb8b-c695-5c88-b42b-9c5fd9d4fbf3",
+          "Nombre": "Pesto genovese"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "02bd4ade-38da-5b6e-b426-b2dc2fcb26d6",
+          "Nombre": "bacon"
+        },
+        {
+          "IdIngrediente": "4a3e0f43-3e69-5104-9298-8475310fb8cc",
+          "Nombre": "jamón york"
+        }
+      ],
+      "SourceExternalId": 755,
+      "SourceSerial": "P0000755",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "f8314c06-9736-50e0-b047-1bdeea265408",
+      "Nombre": "Luca F.",
+      "Descripcion": "Pizza artesana elaborada con La clásica 4 quesos mas el toque de la carne picada.",
+      "IngredientesTexto": [
+        "La clásica 4 quesos mas el toque de la carne picada"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/294148098.jpg",
+      "Disponible": true,
+      "Precio": 13.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "11ae4b46-1d3d-5218-a68e-08da65ca9384",
+          "Nombre": "La clásica 4 quesos mas el toque de la carne picada"
+        }
+      ],
+      "SourceExternalId": 756,
+      "SourceSerial": "P0000756",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "244e71ad-13be-539a-9f5c-878785be0300",
+      "Nombre": "Margherita",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, albahaca.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "albahaca"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2590870825.jpg",
+      "Disponible": true,
+      "Precio": 9.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "8c08b121-ef05-5e3f-a2a5-395f13ab4bec",
+          "Nombre": "albahaca"
+        }
+      ],
+      "SourceExternalId": 757,
+      "SourceSerial": "P0000757",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "7ce2e7a8-c19d-5d9e-a233-2760fdf144f5",
+      "Nombre": "Marinara",
+      "Descripcion": "Pizza artesana elaborada con Tomate, salsa de ajo, aceite.",
+      "IngredientesTexto": [
+        "Tomate",
+        "salsa de ajo",
+        "aceite"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/456687169.jpg",
+      "Disponible": true,
+      "Precio": 8.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "09daa3b2-de3b-5d56-8b52-63a0c1084693",
+          "Nombre": "salsa de ajo"
+        },
+        {
+          "IdIngrediente": "95ebca78-ccaf-57d2-bba3-72c0faaec241",
+          "Nombre": "aceite"
+        }
+      ],
+      "SourceExternalId": 758,
+      "SourceSerial": "P0000758",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "57d2ae24-be4b-5d2c-b9e0-1970733b5845",
+      "Nombre": "Napoletana.",
+      "Descripcion": "Pizza artesana elaborada con Tomate, anchoas, aceitunas y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "anchoas",
+        "aceitunas",
+        "alcaparras"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/448215286.jpg",
+      "Disponible": true,
+      "Precio": 12.0,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "7959c837-8116-5282-820c-05bd0dc39443",
+          "Nombre": "anchoas"
+        },
+        {
+          "IdIngrediente": "3c3908d1-35ca-5984-9d18-b6e585541351",
+          "Nombre": "aceitunas"
+        },
+        {
+          "IdIngrediente": "defeac07-ceb5-5008-97d6-8270940e6fd0",
+          "Nombre": "alcaparras"
+        }
+      ],
+      "SourceExternalId": 759,
+      "SourceSerial": "P0000759",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        4,
+        5,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "e0e51e49-a8c6-565f-9554-653704af3599",
+      "Nombre": "Parmigiana.",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, berenjenas fritas y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "berenjenas fritas",
+        "grana padano"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1392724277.jpg",
+      "Disponible": true,
+      "Precio": 12.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "3798b721-99a0-564c-b9fc-9aeb02410215",
+          "Nombre": "berenjenas fritas"
+        },
+        {
+          "IdIngrediente": "3212b626-26ae-580a-bddb-ce12c3dfec22",
+          "Nombre": "grana padano"
+        }
+      ],
+      "SourceExternalId": 760,
+      "SourceSerial": "P0000760",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "55ab4867-be75-5507-a322-b63638f80781",
+      "Nombre": "Prosciutto",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, jamón york.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "jamón york"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1996555747.jpg",
+      "Disponible": true,
+      "Precio": 11.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "4a3e0f43-3e69-5104-9298-8475310fb8cc",
+          "Nombre": "jamón york"
+        }
+      ],
+      "SourceExternalId": 761,
+      "SourceSerial": "P0000761",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "8562e8a3-a5f2-522f-807b-5ca77cf21c7c",
+      "Nombre": "Prosciutto e funghi",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, jamón york y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "jamón york",
+        "champiñones"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2720094138.jpg",
+      "Disponible": true,
+      "Precio": 12.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "4a3e0f43-3e69-5104-9298-8475310fb8cc",
+          "Nombre": "jamón york"
+        },
+        {
+          "IdIngrediente": "bfbae520-c7d8-5c50-a37e-17b6568a2870",
+          "Nombre": "champiñones"
+        }
+      ],
+      "SourceExternalId": 762,
+      "SourceSerial": "P0000762",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "390225a5-5ae4-5c02-b40e-115624ca585e",
+      "Nombre": "Súper bbq",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, pechuga de pollo y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "pechuga de pollo",
+        "bacon",
+        "carne picada",
+        "salsa bbq"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/362632185.jpg",
+      "Disponible": true,
+      "Precio": 13.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "27359117-fb77-5437-816b-035df85b7fd1",
+          "Nombre": "pechuga de pollo"
+        },
+        {
+          "IdIngrediente": "02bd4ade-38da-5b6e-b426-b2dc2fcb26d6",
+          "Nombre": "bacon"
+        },
+        {
+          "IdIngrediente": "daccac0e-0412-5c56-9ce6-4200010656af",
+          "Nombre": "carne picada"
+        },
+        {
+          "IdIngrediente": "b3a0b4aa-9cc6-5531-a151-7534c0e1ae39",
+          "Nombre": "salsa bbq"
+        }
+      ],
+      "SourceExternalId": 763,
+      "SourceSerial": "P0000763",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9,
+        10
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "1d46136f-2c20-52d1-bc5c-a6f226500d00",
+      "Nombre": "Tonno e cipolle.",
+      "Descripcion": "Pizza artesana elaborada con Tomate, mozzarella, atún y más ingredientes.",
+      "IngredientesTexto": [
+        "Tomate",
+        "mozzarella",
+        "atún",
+        "cebolla roja"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/92905939.jpg",
+      "Disponible": true,
+      "Precio": 13.0,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "783710e1-5d47-5212-8964-dc7a66b27182",
+          "Nombre": "atún"
+        },
+        {
+          "IdIngrediente": "9651ea69-ec14-5bd5-816e-a0dc3c8f6133",
+          "Nombre": "cebolla roja"
+        }
+      ],
+      "SourceExternalId": 764,
+      "SourceSerial": "P0000764",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        4,
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "38da4b0b-16dc-51c9-b314-c0d5c889d93b",
+      "Nombre": "Verde.",
+      "Descripcion": "Pizza artesana elaborada con Pesto genovese, mozzarella, calabacín y más ingredientes.",
+      "IngredientesTexto": [
+        "Pesto genovese",
+        "mozzarella",
+        "calabacín",
+        "tomates cherry"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3617246966.jpg",
+      "Disponible": true,
+      "Precio": 12.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "e3b0bb8b-c695-5c88-b42b-9c5fd9d4fbf3",
+          "Nombre": "Pesto genovese"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "437df47e-6718-5724-82f7-0a7b0a6a9755",
+          "Nombre": "calabacín"
+        },
+        {
+          "IdIngrediente": "f3d574a9-3919-5d0d-b3e2-d569af6f7cee",
+          "Nombre": "tomates cherry"
+        }
+      ],
+      "SourceExternalId": 765,
+      "SourceSerial": "P0000765",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "9a90cd09-4923-57ec-83bd-1670b027446f",
+      "Nombre": "Verdure",
+      "Descripcion": "Pizza artesana elaborada con tomate, mozzarella, berenjenas y más ingredientes.",
+      "IngredientesTexto": [
+        "tomate",
+        "mozzarella",
+        "berenjenas",
+        "calabacín",
+        "pimiento rojo asado",
+        "cebolla roja"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/873460710.jpg",
+      "Disponible": true,
+      "Precio": 12.5,
+      "IdCategoria": "6e44bf97-2474-59fb-93dd-bcca0599c59c",
+      "CategoriaDescripcion": "Pizzas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "8d4128e6-7ff2-53b9-9788-df413ee8fbfd",
+          "Nombre": "tomate"
+        },
+        {
+          "IdIngrediente": "3b98616f-22cb-507e-9e1b-eb02124a27c4",
+          "Nombre": "mozzarella"
+        },
+        {
+          "IdIngrediente": "6e4baf9c-6234-5bc4-aeae-1c2d887fcee4",
+          "Nombre": "berenjenas"
+        },
+        {
+          "IdIngrediente": "437df47e-6718-5724-82f7-0a7b0a6a9755",
+          "Nombre": "calabacín"
+        },
+        {
+          "IdIngrediente": "a52df6b4-cc4b-55a8-a60f-6e86b5af3dd4",
+          "Nombre": "pimiento rojo asado"
+        },
+        {
+          "IdIngrediente": "9651ea69-ec14-5bd5-816e-a0dc3c8f6133",
+          "Nombre": "cebolla roja"
+        }
+      ],
+      "SourceExternalId": 766,
+      "SourceSerial": "P0000766",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        7,
+        9
+      ],
+      "HasModifiers": true,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "3afaa363-8a2e-525e-bb91-92c60bc884da",
+      "Nombre": "Cannolo siciliano",
+      "Descripcion": "Postre casero para terminar la comida.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3835972541.jpg",
+      "Disponible": true,
+      "Precio": 6.0,
+      "IdCategoria": "bf7c7454-cbc4-5540-ba8f-cbabf7b2062f",
+      "CategoriaDescripcion": "Postres",
+      "Ingredientes": [],
+      "SourceExternalId": 365,
+      "SourceSerial": "P0000464",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        7,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "a19e2cdb-2564-5601-9359-8b3fe326761e",
+      "Nombre": "Cofre de pistachos",
+      "Descripcion": "Postre dulce con Calzone relleno de crema de pistachos con gránela de almendras y azúcar glas.",
+      "IngredientesTexto": [
+        "Calzone relleno de crema de pistachos con gránela de almendras y azúcar glas"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3590444923.jpg",
+      "Disponible": true,
+      "Precio": 12.0,
+      "IdCategoria": "bf7c7454-cbc4-5540-ba8f-cbabf7b2062f",
+      "CategoriaDescripcion": "Postres",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "41b5d50f-c2a3-58c7-8729-5c591debd549",
+          "Nombre": "Calzone relleno de crema de pistachos con gránela de almendras y azúcar glas"
+        }
+      ],
+      "SourceExternalId": 600,
+      "SourceSerial": "P0000600",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        5,
+        6,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "6ca5e48b-77f5-53e9-9fb8-8b53b107c57b",
+      "Nombre": "Nutellina",
+      "Descripcion": "Postre casero para terminar la comida.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 10.0,
+      "IdCategoria": "bf7c7454-cbc4-5540-ba8f-cbabf7b2062f",
+      "CategoriaDescripcion": "Postres",
+      "Ingredientes": [],
+      "SourceExternalId": 366,
+      "SourceSerial": "P0000465",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        5,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "0fe7b778-7700-5cc7-9476-b0ac41d77f68",
+      "Nombre": "TARTA DE QUESO DE TURRÓN",
+      "Descripcion": "Postre casero para terminar la comida.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 6.0,
+      "IdCategoria": "bf7c7454-cbc4-5540-ba8f-cbabf7b2062f",
+      "CategoriaDescripcion": "Postres",
+      "Ingredientes": [],
+      "SourceExternalId": 656,
+      "SourceSerial": "P0000656",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        2,
+        7
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "a62eb390-22ab-5248-bdf2-72b90599dd7d",
+      "Nombre": "Tiramisu",
+      "Descripcion": "Postre casero para terminar la comida.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3335725802.jpg",
+      "Disponible": true,
+      "Precio": 5.0,
+      "IdCategoria": "bf7c7454-cbc4-5540-ba8f-cbabf7b2062f",
+      "CategoriaDescripcion": "Postres",
+      "Ingredientes": [],
+      "SourceExternalId": 363,
+      "SourceSerial": "P0000462",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        2,
+        7,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "32b2f260-b27f-5418-8e51-2c4d91f100ba",
+      "Nombre": "Tiramisu de Pistacho",
+      "Descripcion": "Postre casero para terminar la comida.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1361551835.jpg",
+      "Disponible": true,
+      "Precio": 6.0,
+      "IdCategoria": "bf7c7454-cbc4-5540-ba8f-cbabf7b2062f",
+      "CategoriaDescripcion": "Postres",
+      "Ingredientes": [],
+      "SourceExternalId": 611,
+      "SourceSerial": "P0000611",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [
+        1,
+        2,
+        7,
+        9
+      ],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "fcf298f4-8b50-5a6e-b30c-c313fdd9f8d5",
+      "Nombre": "Agua 0,5 L",
+      "Descripcion": "Bebida para acompañar la comida: Agua 0,5 L.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3778101326.jpg",
+      "Disponible": true,
+      "Precio": 1.8,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 17,
+      "SourceSerial": "P0000116",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "80770bcf-9975-5306-bf06-4483ab0c3dc5",
+      "Nombre": "Agua con gas",
+      "Descripcion": "Bebida para acompañar la comida: Agua con gas.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/447024676.jpg",
+      "Disponible": true,
+      "Precio": 2.5,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 18,
+      "SourceSerial": "P0000117",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "199a3f83-c6f0-5cb4-9ab5-321ad7721b14",
+      "Nombre": "Aperol  Spritz",
+      "Descripcion": "Bebida para acompañar la comida: Aperol  Spritz.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 6.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 610,
+      "SourceSerial": "P0000610",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "dec71b8a-1b78-57a7-9ab3-d681033a00e9",
+      "Nombre": "Aquarius limón",
+      "Descripcion": "Bebida para acompañar la comida: Aquarius limón.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2016310064.jpg",
+      "Disponible": true,
+      "Precio": 3.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 6,
+      "SourceSerial": "P0000105",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "2a3f753f-5d31-5128-b195-000a23760393",
+      "Nombre": "Caña",
+      "Descripcion": "Bebida para acompañar la comida: Caña.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 3.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 1,
+      "SourceSerial": "P0000100",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "1ff0146f-5a1a-5723-9c92-d9eb790dd072",
+      "Nombre": "Coca Cola",
+      "Descripcion": "Bebida para acompañar la comida: Coca Cola.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3197581866.jpg",
+      "Disponible": true,
+      "Precio": 3.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 325,
+      "SourceSerial": "P0000424",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "eef7155b-4913-5a90-9b88-f451546bad7b",
+      "Nombre": "Coca Cola Zero Zero",
+      "Descripcion": "Bebida para acompañar la comida: Coca Cola Zero Zero.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 3.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 642,
+      "SourceSerial": "P0000642",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "941642c1-9605-5af7-8006-83605e292bf7",
+      "Nombre": "Cola Cola Zero",
+      "Descripcion": "Bebida para acompañar la comida: Cola Cola Zero.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1782193044.jpg",
+      "Disponible": true,
+      "Precio": 3.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 326,
+      "SourceSerial": "P0000425",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "66d67ce4-586d-5606-881c-ff4e018206b3",
+      "Nombre": "Copas",
+      "Descripcion": "Bebida para acompañar la comida: Copas.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 6.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 606,
+      "SourceSerial": "P0000606",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "8ac727f8-cdc8-55dc-8bfe-469fead59d16",
+      "Nombre": "fanta limon",
+      "Descripcion": "Bebida para acompañar la comida: fanta limon.",
+      "IngredientesTexto": [
+        "Fanta de Limon"
+      ],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 3.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "cf89f9d1-2a97-525e-b8d7-6566e6eb514d",
+          "Nombre": "Fanta de Limon"
+        }
+      ],
+      "SourceExternalId": 648,
+      "SourceSerial": "P0000648",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "9130c054-b40c-5694-906c-86f455e37bcd",
+      "Nombre": "Fanta naranja",
+      "Descripcion": "Bebida para acompañar la comida: Fanta naranja.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/2649104555.jpg",
+      "Disponible": true,
+      "Precio": 3.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 327,
+      "SourceSerial": "P0000426",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "cadc4f48-fb0c-5120-88d3-edab86304f09",
+      "Nombre": "Jarra cerveza 1L",
+      "Descripcion": "Bebida para acompañar la comida: Jarra cerveza 1L.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 8.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 3,
+      "SourceSerial": "P0000102",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "2fadcaf4-16b5-5442-94c5-3c6312712e22",
+      "Nombre": "Jarra Tinto De Verano 1L",
+      "Descripcion": "Bebida para acompañar la comida: Jarra Tinto De Verano 1L.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 8.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 624,
+      "SourceSerial": "P0000624",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "d952c9ae-e109-53d9-a069-f7623d81be65",
+      "Nombre": "Nestea",
+      "Descripcion": "Bebida para acompañar la comida: Nestea.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1125245868.jpg",
+      "Disponible": true,
+      "Precio": 3.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 382,
+      "SourceSerial": "P0000481",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "79425a4d-e333-5ba9-8f72-ee0ce48152ad",
+      "Nombre": "Peroni",
+      "Descripcion": "Bebida para acompañar la comida: Peroni.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/781420964.jpg",
+      "Disponible": true,
+      "Precio": 4.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 373,
+      "SourceSerial": "P0000472",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "342b15cc-a8fe-5f56-9b98-cea513ac78aa",
+      "Nombre": "Pinta",
+      "Descripcion": "Bebida para acompañar la comida: Pinta.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 4.5,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 328,
+      "SourceSerial": "P0000427",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "8ac8921f-b6ab-5215-b33d-f2c6c142742b",
+      "Nombre": "Tercio Ambar Especial",
+      "Descripcion": "Bebida para acompañar la comida: Tercio Ambar Especial.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 3.3,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 608,
+      "SourceSerial": "P0000608",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "b6c24094-f0df-552e-aea6-536e0332fa24",
+      "Nombre": "Tercio Ambar Export",
+      "Descripcion": "Bebida para acompañar la comida: Tercio Ambar Export.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 4.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 629,
+      "SourceSerial": "P0000629",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "d2889130-8250-51a5-a37d-1425fbcb5a4f",
+      "Nombre": "Tercio Ambar Ipa",
+      "Descripcion": "Bebida para acompañar la comida: Tercio Ambar Ipa.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 4.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 616,
+      "SourceSerial": "P0000616",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "ffd263ef-01d9-5de0-a503-377266abbef9",
+      "Nombre": "Tercio Ambar Morena",
+      "Descripcion": "Bebida para acompañar la comida: Tercio Ambar Morena.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 3.3,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 614,
+      "SourceSerial": "P0000614",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "c4b89357-9f1e-59ff-b9c9-7b6e66562730",
+      "Nombre": "Tercio Ambar Radler",
+      "Descripcion": "Bebida para acompañar la comida: Tercio Ambar Radler.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 3.3,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 330,
+      "SourceSerial": "P0000429",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "40f7a2d4-ec10-5f80-ad0f-6d327ad9ed21",
+      "Nombre": "Tercio Ambar Sin Alcohol",
+      "Descripcion": "Bebida para acompañar la comida: Tercio Ambar Sin Alcohol.",
+      "IngredientesTexto": [
+        "Tercio Ambar Sin Alchool"
+      ],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 3.3,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "1f99c4ba-60eb-5673-9d0a-21b70b5adfeb",
+          "Nombre": "Tercio Ambar Sin Alchool"
+        }
+      ],
+      "SourceExternalId": 663,
+      "SourceSerial": "P0000663",
+      "SourceVat": 0.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "da981685-1b3e-5df1-ae15-7a844a7173c5",
+      "Nombre": "Tercio Ambar Sin Alcohol Tostada",
+      "Descripcion": "Bebida para acompañar la comida: Tercio Ambar Sin Alcohol Tostada.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 3.3,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 654,
+      "SourceSerial": "P0000654",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "554c7173-d375-5522-ba3b-e39d10035187",
+      "Nombre": "Tercio Ambar Sin Filtrar",
+      "Descripcion": "Bebida para acompañar la comida: Tercio Ambar Sin Filtrar.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 4.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 329,
+      "SourceSerial": "P0000428",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "6f0ddd6b-9238-54d5-8f8f-48ea5c4a6c36",
+      "Nombre": "Tercio Ambar Sin Gluten",
+      "Descripcion": "Bebida para acompañar la comida: Tercio Ambar Sin Gluten.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 3.3,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 620,
+      "SourceSerial": "P0000620",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "3cd47781-8fdb-568d-b8b3-af47044d6a91",
+      "Nombre": "Tinto verano copa",
+      "Descripcion": "Bebida para acompañar la comida: Tinto verano copa.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3134409675.jpg",
+      "Disponible": true,
+      "Precio": 3.0,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 39,
+      "SourceSerial": "P0000138",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "01f51575-f01f-568b-a6c2-94135926bd2f",
+      "Nombre": "Tonica",
+      "Descripcion": "Bebida para acompañar la comida: Tonica.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/338027153.jpg",
+      "Disponible": true,
+      "Precio": 2.5,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 415,
+      "SourceSerial": "P0000514",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "94260d8f-4eff-529b-9711-8c404ea49192",
+      "Nombre": "Vermout",
+      "Descripcion": "Bebida para acompañar la comida: Vermout.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 3.5,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 598,
+      "SourceSerial": "P0000598",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "4635194b-d37d-5778-97e4-4e32163256c2",
+      "Nombre": "Vino blanco copa",
+      "Descripcion": "Bebida para acompañar la comida: Vino blanco copa.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 3.5,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 35,
+      "SourceSerial": "P0000134",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "d6e2b929-c75f-5213-8dc5-8aefdba45943",
+      "Nombre": "Vino tinto copa",
+      "Descripcion": "Bebida para acompañar la comida: Vino tinto copa.",
+      "IngredientesTexto": [
+        "Italiano o rioja"
+      ],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 3.5,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "2d7863c4-f91d-5ccd-904c-4d3f22c54d05",
+          "Nombre": "Italiano o rioja"
+        }
+      ],
+      "SourceExternalId": 33,
+      "SourceSerial": "P0000132",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "4353d45a-6bc6-5819-8ff9-13343ffd2120",
+      "Nombre": "Zumo Melocoton",
+      "Descripcion": "Bebida para acompañar la comida: Zumo Melocoton.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 2.5,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 626,
+      "SourceSerial": "P0000626",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "35011ab0-1ad0-5c75-94e4-f9ab6d68cabf",
+      "Nombre": "Zumo Piña",
+      "Descripcion": "Bebida para acompañar la comida: Zumo Piña.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1550936493.jpg",
+      "Disponible": true,
+      "Precio": 2.5,
+      "IdCategoria": "86ba286e-f043-5fc0-b594-463f26ecd59d",
+      "CategoriaDescripcion": "Bebidas",
+      "Ingredientes": [],
+      "SourceExternalId": 369,
+      "SourceSerial": "P0000468",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "e6c46081-4a6b-55ae-bf9e-16f0e8bb102a",
+      "Nombre": "Finca Resalso",
+      "Descripcion": "Vino para maridar tu pedido: Finca Resalso.",
+      "IngredientesTexto": [
+        "RIVERA FINCA RESALSO",
+        "BODEGAS EMILIO MORO"
+      ],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3339673027.jpg",
+      "Disponible": true,
+      "Precio": 19.0,
+      "IdCategoria": "cc7eb684-90fa-5d65-b006-a4d5dadd5b87",
+      "CategoriaDescripcion": "Vinos",
+      "Ingredientes": [
+        {
+          "IdIngrediente": "1ec0a02d-4a47-5a75-a4c7-b559c3410e05",
+          "Nombre": "RIVERA FINCA RESALSO"
+        },
+        {
+          "IdIngrediente": "6b7b78ac-32c2-5815-9e1f-b2529a93aacf",
+          "Nombre": "BODEGAS EMILIO MORO"
+        }
+      ],
+      "SourceExternalId": 596,
+      "SourceSerial": "P0000596",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "4e6277eb-cce7-536c-b99a-d92187e8bb3b",
+      "Nombre": "Lambrusco rosado Brighi",
+      "Descripcion": "Vino para maridar tu pedido: Lambrusco rosado Brighi.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3052730531.jpg",
+      "Disponible": true,
+      "Precio": 17.0,
+      "IdCategoria": "cc7eb684-90fa-5d65-b006-a4d5dadd5b87",
+      "CategoriaDescripcion": "Vinos",
+      "Ingredientes": [],
+      "SourceExternalId": 414,
+      "SourceSerial": "P0000513",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "6c2ce6f2-b877-5699-9553-047d08d24502",
+      "Nombre": "Lambrusco tinto",
+      "Descripcion": "Vino para maridar tu pedido: Lambrusco tinto.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 17.0,
+      "IdCategoria": "cc7eb684-90fa-5d65-b006-a4d5dadd5b87",
+      "CategoriaDescripcion": "Vinos",
+      "Ingredientes": [],
+      "SourceExternalId": 675,
+      "SourceSerial": "P0000675",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "9ca2602c-e355-5f84-992a-0f8b7a7be152",
+      "Nombre": "Marina alta",
+      "Descripcion": "Vino para maridar tu pedido: Marina alta.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1082881387.jpg",
+      "Disponible": true,
+      "Precio": 17.0,
+      "IdCategoria": "cc7eb684-90fa-5d65-b006-a4d5dadd5b87",
+      "CategoriaDescripcion": "Vinos",
+      "Ingredientes": [],
+      "SourceExternalId": 430,
+      "SourceSerial": "P0000529",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "6435c39f-d30c-5ebe-b8cb-83523483ccdf",
+      "Nombre": "murviedro cepas viejas",
+      "Descripcion": "Vino para maridar tu pedido: murviedro cepas viejas.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 21.0,
+      "IdCategoria": "cc7eb684-90fa-5d65-b006-a4d5dadd5b87",
+      "CategoriaDescripcion": "Vinos",
+      "Ingredientes": [],
+      "SourceExternalId": 523,
+      "SourceSerial": "P0000622",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "60271c2f-150d-5494-85e0-060db571b54d",
+      "Nombre": "Passion de Bobal",
+      "Descripcion": "Vino para maridar tu pedido: Passion de Bobal.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 19.0,
+      "IdCategoria": "cc7eb684-90fa-5d65-b006-a4d5dadd5b87",
+      "CategoriaDescripcion": "Vinos",
+      "Ingredientes": [],
+      "SourceExternalId": 576,
+      "SourceSerial": "P0000576",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "cea637a6-163b-580b-a5cd-d52bcb237aeb",
+      "Nombre": "Prosecco",
+      "Descripcion": "Vino para maridar tu pedido: Prosecco.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 18.0,
+      "IdCategoria": "cc7eb684-90fa-5d65-b006-a4d5dadd5b87",
+      "CategoriaDescripcion": "Vinos",
+      "Ingredientes": [],
+      "SourceExternalId": 676,
+      "SourceSerial": "P0000676",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "6b4c8490-b34a-5580-9df1-e8dc2ddc1d5f",
+      "Nombre": "Sanz verdejo de Rueda",
+      "Descripcion": "Vino para maridar tu pedido: Sanz verdejo de Rueda.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 17.0,
+      "IdCategoria": "cc7eb684-90fa-5d65-b006-a4d5dadd5b87",
+      "CategoriaDescripcion": "Vinos",
+      "Ingredientes": [],
+      "SourceExternalId": 590,
+      "SourceSerial": "P0000590",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "c7dde2ff-43e8-51fc-8718-220a556a6551",
+      "Nombre": "Villa Adami   Montepulciano",
+      "Descripcion": "Vino para maridar tu pedido: Villa Adami   Montepulciano.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 17.0,
+      "IdCategoria": "cc7eb684-90fa-5d65-b006-a4d5dadd5b87",
+      "CategoriaDescripcion": "Vinos",
+      "Ingredientes": [],
+      "SourceExternalId": 403,
+      "SourceSerial": "P0000502",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "a1f83a5b-7d6b-5979-a861-9eae214be861",
+      "Nombre": "Villa Adami  Pecorino",
+      "Descripcion": "Vino para maridar tu pedido: Villa Adami  Pecorino.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 19.0,
+      "IdCategoria": "cc7eb684-90fa-5d65-b006-a4d5dadd5b87",
+      "CategoriaDescripcion": "Vinos",
+      "Ingredientes": [],
+      "SourceExternalId": 665,
+      "SourceSerial": "P0000665",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "42a120c8-221a-50c2-ba3a-a5b69609f540",
+      "Nombre": "Bombón",
+      "Descripcion": "Café o infusión para cerrar la comida: Bombón.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3674229773.jpg",
+      "Disponible": true,
+      "Precio": 1.5,
+      "IdCategoria": "7871aad0-9304-5459-b455-79025f9b8c1b",
+      "CategoriaDescripcion": "Cafes",
+      "Ingredientes": [],
+      "SourceExternalId": 23,
+      "SourceSerial": "P0000122",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "d279ef5e-ca9c-54f3-afb8-d37049fd8ee1",
+      "Nombre": "Café con leche",
+      "Descripcion": "Café o infusión para cerrar la comida: Café con leche.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/3300661673.jpg",
+      "Disponible": true,
+      "Precio": 1.5,
+      "IdCategoria": "7871aad0-9304-5459-b455-79025f9b8c1b",
+      "CategoriaDescripcion": "Cafes",
+      "Ingredientes": [],
+      "SourceExternalId": 22,
+      "SourceSerial": "P0000121",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "d5b7310f-7d7d-5a68-af8d-1ef13c67a268",
+      "Nombre": "Café solo",
+      "Descripcion": "Café o infusión para cerrar la comida: Café solo.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/1175748219.jpg",
+      "Disponible": true,
+      "Precio": 1.3,
+      "IdCategoria": "7871aad0-9304-5459-b455-79025f9b8c1b",
+      "CategoriaDescripcion": "Cafes",
+      "Ingredientes": [],
+      "SourceExternalId": 324,
+      "SourceSerial": "P0000423",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "4dfeaadb-6014-53b6-adfd-8dcef231f20b",
+      "Nombre": "Carajillo",
+      "Descripcion": "Café o infusión para cerrar la comida: Carajillo.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/935946979.jpg",
+      "Disponible": true,
+      "Precio": 2.0,
+      "IdCategoria": "7871aad0-9304-5459-b455-79025f9b8c1b",
+      "CategoriaDescripcion": "Cafes",
+      "Ingredientes": [],
+      "SourceExternalId": 500,
+      "SourceSerial": "P0000599",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "3b6a6031-9923-5770-a345-b8d61122fc44",
+      "Nombre": "Chupitos",
+      "Descripcion": "Café o infusión para cerrar la comida: Chupitos.",
+      "IngredientesTexto": [],
+      "Imagen": "",
+      "Disponible": true,
+      "Precio": 2.5,
+      "IdCategoria": "7871aad0-9304-5459-b455-79025f9b8c1b",
+      "CategoriaDescripcion": "Cafes",
+      "Ingredientes": [],
+      "SourceExternalId": 595,
+      "SourceSerial": "P0000595",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "51947f7f-0596-5c37-98f8-a7276ba1a67e",
+      "Nombre": "Cortado",
+      "Descripcion": "Café o infusión para cerrar la comida: Cortado.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/885972336.jpg",
+      "Disponible": true,
+      "Precio": 1.4,
+      "IdCategoria": "7871aad0-9304-5459-b455-79025f9b8c1b",
+      "CategoriaDescripcion": "Cafes",
+      "Ingredientes": [],
+      "SourceExternalId": 21,
+      "SourceSerial": "P0000120",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    },
+    {
+      "IdPlato": "65858e0f-a28b-53f4-aacf-751b5abeb133",
+      "Nombre": "Infusion",
+      "Descripcion": "Café o infusión para cerrar la comida: Infusion.",
+      "IngredientesTexto": [],
+      "Imagen": "https://sfo3.digitaloceanspaces.com/foodeo-space/media/depizzeo/products/105601110.jpg",
+      "Disponible": true,
+      "Precio": 1.5,
+      "IdCategoria": "7871aad0-9304-5459-b455-79025f9b8c1b",
+      "CategoriaDescripcion": "Cafes",
+      "Ingredientes": [],
+      "SourceExternalId": 24,
+      "SourceSerial": "P0000123",
+      "SourceVat": 10.0,
+      "SourceAllergenIds": [],
+      "HasModifiers": false,
+      "RequiredModifiers": false
+    }
+  ]
+}
