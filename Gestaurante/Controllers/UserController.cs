@@ -50,10 +50,10 @@ namespace Gestaurante.Controllers
         {
             try
             {
-                var empleado = await Task.Run(() => _loginService.Login(dto));
+                var empleado = await _loginService.Login(dto);
 
                 if (empleado == null)
-                    return Unauthorized(new
+                    return ResponseHelper.NotAuthorized(new
                     {
                         mensaje = "Credenciales inválidas",
                         codigo = "INVALID_CREDENTIALS"
@@ -66,13 +66,9 @@ namespace Gestaurante.Controllers
 
                 return ResponseHelper.SendResponse(response, 201);
             }
-            catch (Exception ex)
+            catch
             {
-                return ResponseHelper.SendError(new
-                {
-                    message = ex.Message,
-                    detail = ex.InnerException?.Message
-                }, 500);
+                return ResponseHelper.ServerError("No se ha podido completar el inicio de sesión.");
             }
         }
     }
