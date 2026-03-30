@@ -114,6 +114,29 @@ namespace Gestaurante.Models.Services
             return user == null ? null : MapProfile(user);
         }
 
+        public async Task<List<ClienteProfileDTO>> GetInternalClientesAsync(string? query, CancellationToken cancellationToken = default)
+        {
+            var clientesQuery = _db.UsuariosCliente.AsNoTracking();
+            var term = query?.Trim().ToLower();
+
+            if (!string.IsNullOrWhiteSpace(term))
+                clientesQuery = clientesQuery.Where(user =>
+                    user.Email.ToLower().Contains(term)
+                    || user.FirstName.ToLower().Contains(term)
+                    || user.LastName.ToLower().Contains(term)
+                    || user.FiscalName.ToLower().Contains(term)
+                    || user.Dni.ToLower().Contains(term)
+                    || user.Cif.ToLower().Contains(term));
+
+            var users = await clientesQuery
+                .OrderByDescending(user => user.CreatedAt)
+                .ThenBy(user => user.LastName)
+                .ThenBy(user => user.FirstName)
+                .ToListAsync(cancellationToken);
+
+            return users.Select(MapProfile).ToList();
+        }
+
         public async Task<ClienteProfileDTO?> UpdateProfileAsync(Guid clienteId, UpdateClienteProfileDTO dto, CancellationToken cancellationToken = default)
         {
             var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.IdUsuarioCliente == clienteId, cancellationToken);

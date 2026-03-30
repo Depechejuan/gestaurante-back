@@ -94,6 +94,24 @@ namespace Gestaurante.Controllers
             }
         }
 
+        [HttpPost("{id:guid}/send-email")]
+        public async Task<IActionResult> SendEmail(Guid id, [FromBody] SendFacturaEmailDTO? dto, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var sentTo = await _facturaService.SendFacturaEmailAsync(id, dto?.Email, cancellationToken);
+                return ResponseHelper.SendResponse(new { sent = true, sentTo });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return ResponseHelper.NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ResponseHelper.ValidationError(ex.Message);
+            }
+        }
+
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {

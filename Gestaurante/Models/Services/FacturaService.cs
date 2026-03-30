@@ -9,11 +9,13 @@ namespace Gestaurante.Models.Services
     {
         private readonly AppDbContext _db;
         private readonly MesaPublicSessionService _mesaPublicSessionService;
+        private readonly IEmailService _emailService;
 
-        public FacturaService(AppDbContext db, MesaPublicSessionService mesaPublicSessionService)
+        public FacturaService(AppDbContext db, MesaPublicSessionService mesaPublicSessionService, IEmailService emailService)
         {
             _db = db;
             _mesaPublicSessionService = mesaPublicSessionService;
+            _emailService = emailService;
         }
 
         public async Task<List<FacturaDTO>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -193,6 +195,19 @@ namespace Gestaurante.Models.Services
 
             await _db.SaveChangesAsync(cancellationToken);
             return await BuildFacturaDtoAsync(factura, cancellationToken);
+        }
+
+        public async Task<string> SendFacturaEmailAsync(Guid numeroFactura, string? requestedEmail, CancellationToken cancellationToken = default)
+        {
+            var factura = await GetByIdAsync(numeroFactura, cancellationToken)
+                ?? throw new KeyNotFoundException("Factura no encontrada.");
+
+            var email = ResolveFacturaEmailTarget(factura, requestedEmail);
+            var subject = $"Factura {factura.NumeroFactura}";
+            var body = BuildFacturaEmailBody(factura);
+
+            await _emailService.SendAsync(email, subject, body, cancellationToken);
+            return email;
         }
 
         public async Task<bool> DeleteAsync(Guid numeroFactura, CancellationToken cancellationToken = default)
@@ -542,6 +557,46 @@ namespace Gestaurante.Models.Services
         private static string FirstNonEmpty(params string[] values)
         {
             return values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value))?.Trim() ?? string.Empty;
+        }
+
+        private static string ResolveFacturaEmailTarget(FacturaDTO factura, string? requestedEmail)
+        {
+            var providedEmail = requestedEmail?.Trim() ?? string.Empty;
+            if (!string.IsNullOrWhiteSpace(providedEmail))
+                return providedEmail;
+
+            if (factura.ClienteFactura.EsAnonima)
+                throw new InvalidOperationException("Debes indicar un email para enviar una factura anónima.");
+
+            if (string.IsNullOrWhiteSpace(factura.ClienteFactura.BillingEmail))
+                throw new InvalidOperationException("La factura no tiene un email de destino disponible.");
+
+            return factura.ClienteFactura.BillingEmail.Trim();
+        }
+
+        private static string BuildFacturaEmailBody(FacturaDTO factura)
+        {
+            var lineas = factura.Lineas.Count == 0
+                ? "No hay líneas disponibles en esta factura."
+                : string.Join(Environment.NewLine, factura.Lineas.Select(linea =>
+                    $"- Pedido {linea.IdPedido.ToString()[..8]} · {linea.Cantidad} x {linea.PlatoNombre} · {linea.PrecioUnitario:0.00} EUR · Total {linea.TotalLinea:0.00} EUR"));
+
+            return string.Join(
+                Environment.NewLine,
+                [
+                    "Gestaurante",
+                    $"Factura: {factura.NumeroFactura}",
+                    $"Fecha: {factura.FechaFactura:dd/MM/yyyy HH:mm}",
+                    $"Cliente: {factura.ClienteFactura.BillingName}",
+                    $"Canal: {factura.CanalPedido?.ToString() ?? "SALA"}",
+                    string.Empty,
+                    "Detalle:",
+                    lineas,
+                    string.Empty,
+                    $"Total bruto: {factura.PrecioTotal:0.00} EUR",
+                    $"Descuento: {factura.Descuento:0.00} EUR",
+                    $"Total final: {factura.TotalConDescuento:0.00} EUR"
+                ]);
         }
     }
 }
