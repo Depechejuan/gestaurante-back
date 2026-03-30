@@ -34,6 +34,12 @@ namespace Gestaurante.Controllers
                 : ResponseHelper.SendResponse(factura);
         }
 
+        [HttpGet("clientes/search")]
+        public async Task<IActionResult> SearchClientes([FromQuery] string query, CancellationToken cancellationToken)
+        {
+            return ResponseHelper.SendResponse(await _facturaService.SearchClientesAsync(query, cancellationToken));
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CrearFacturaDTO dto, CancellationToken cancellationToken)
         {
@@ -69,6 +75,22 @@ namespace Gestaurante.Controllers
             catch (InvalidOperationException ex)
             {
                 return ResponseHelper.Conflict(ex.Message);
+            }
+        }
+
+        [HttpPut("{id:guid}/cliente")]
+        public async Task<IActionResult> AssignCliente(Guid id, [FromBody] AsignarFacturaClienteDTO dto, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var factura = await _facturaService.AssignClienteAsync(id, dto, cancellationToken);
+                return factura == null
+                    ? ResponseHelper.NotFound("Factura no encontrada.")
+                    : ResponseHelper.SendResponse(factura);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ResponseHelper.ValidationError(ex.Message);
             }
         }
 

@@ -7,12 +7,15 @@ namespace Gestaurante.Models.DTO
         public Guid NumeroFactura { get; set; }
         public Guid? IdMesa { get; set; }
         public Guid? IdPedido { get; set; }
+        public Guid? IdUsuarioCliente { get; set; }
         public CanalPedido? CanalPedido { get; set; }
         public double PrecioTotal { get; set; }
         public double Descuento { get; set; }
         public double TotalConDescuento { get; set; }
         public EstadoFactura Estado { get; set; }
         public DateTime FechaFactura { get; set; }
+        public FacturaClienteDTO ClienteFactura { get; set; } = new();
+        public List<FacturaLineaDTO> Lineas { get; set; } = new();
         public List<Guid> PedidoIds { get; set; } = new();
     }
 }

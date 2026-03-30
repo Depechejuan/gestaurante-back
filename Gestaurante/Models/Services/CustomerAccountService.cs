@@ -123,6 +123,13 @@ namespace Gestaurante.Models.Services
             user.FirstName = dto.FirstName.Trim();
             user.LastName = dto.LastName.Trim();
             user.Phone = dto.Phone.Trim();
+            user.FiscalName = dto.FiscalName.Trim();
+            user.Dni = dto.Dni.Trim().ToUpperInvariant();
+            user.Cif = dto.Cif.Trim().ToUpperInvariant();
+            user.BillingStreet = dto.BillingStreet.Trim();
+            user.BillingCity = dto.BillingCity.Trim();
+            user.BillingProvince = dto.BillingProvince.Trim();
+            user.BillingPostalCode = dto.BillingPostalCode.Trim();
             user.UpdatedAt = DateTime.UtcNow;
 
             await _db.SaveChangesAsync(cancellationToken);
@@ -277,6 +284,13 @@ namespace Gestaurante.Models.Services
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Phone = user.Phone,
+                FiscalName = user.FiscalName,
+                Dni = user.Dni,
+                Cif = user.Cif,
+                BillingStreet = user.BillingStreet,
+                BillingCity = user.BillingCity,
+                BillingProvince = user.BillingProvince,
+                BillingPostalCode = user.BillingPostalCode,
                 Activo = user.Activo,
                 EmailVerificado = user.EmailVerificado
             };

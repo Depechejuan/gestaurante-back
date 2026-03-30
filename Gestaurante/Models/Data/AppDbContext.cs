@@ -107,6 +107,41 @@ namespace Gestaurante.Models.Data
                     .IsRequired()
                     .HasMaxLength(25);
 
+                entity.Property(u => u.FiscalName)
+                    .IsRequired(false)
+                    .HasMaxLength(160)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(u => u.Dni)
+                    .IsRequired(false)
+                    .HasMaxLength(15)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(u => u.Cif)
+                    .IsRequired(false)
+                    .HasMaxLength(20)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(u => u.BillingStreet)
+                    .IsRequired(false)
+                    .HasMaxLength(200)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(u => u.BillingCity)
+                    .IsRequired(false)
+                    .HasMaxLength(120)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(u => u.BillingProvince)
+                    .IsRequired(false)
+                    .HasMaxLength(120)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(u => u.BillingPostalCode)
+                    .IsRequired(false)
+                    .HasMaxLength(20)
+                    .HasDefaultValue(string.Empty);
+
                 entity.Property(u => u.Activo)
                     .IsRequired()
                     .HasDefaultValue(true);
@@ -450,6 +485,46 @@ namespace Gestaurante.Models.Data
                 entity.Property(f => f.CanalPedido)
                     .IsRequired(false);
 
+                entity.Property(f => f.BillingName)
+                    .IsRequired()
+                    .HasMaxLength(160)
+                    .HasDefaultValue("Cliente anónimo");
+
+                entity.Property(f => f.BillingDocument)
+                    .IsRequired(false)
+                    .HasMaxLength(20)
+                    .HasDefaultValue("00000000X");
+
+                entity.Property(f => f.BillingStreet)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasDefaultValue("Calle Falsa 123");
+
+                entity.Property(f => f.BillingCity)
+                    .IsRequired()
+                    .HasMaxLength(120)
+                    .HasDefaultValue("Madrid");
+
+                entity.Property(f => f.BillingProvince)
+                    .IsRequired()
+                    .HasMaxLength(120)
+                    .HasDefaultValue("Madrid");
+
+                entity.Property(f => f.BillingPostalCode)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasDefaultValue("28000");
+
+                entity.Property(f => f.BillingEmail)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasDefaultValue("anonimo@gestaurante.local");
+
+                entity.Property(f => f.BillingPhone)
+                    .IsRequired()
+                    .HasMaxLength(25)
+                    .HasDefaultValue("600000000");
+
                 entity.HasOne<Mesa>()
                     .WithMany()
                     .HasForeignKey(f => f.IdMesa)
@@ -459,6 +534,11 @@ namespace Gestaurante.Models.Data
                     .WithMany()
                     .HasForeignKey(f => f.IdPedido)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<UsuarioCliente>()
+                    .WithMany()
+                    .HasForeignKey(f => f.IdUsuarioCliente)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             //modelBuilder de Pedido
