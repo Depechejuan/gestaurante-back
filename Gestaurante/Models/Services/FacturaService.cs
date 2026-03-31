@@ -337,10 +337,18 @@ namespace Gestaurante.Models.Services
 
         private async Task<double> ResolvePedidoTotalAsync(Guid pedidoId, CancellationToken cancellationToken)
         {
-            return await _db.DetallesPedido
+            var subtotal = await _db.DetallesPedido
                 .AsNoTracking()
                 .Where(d => d.IdPedido == pedidoId && d.Estado == EstadoDetallePedido.ACTIVA)
                 .SumAsync(d => d.Cantidad * d.PrecioUnitario, cancellationToken);
+
+            var gastosEnvio = await _db.Pedidos
+                .AsNoTracking()
+                .Where(p => p.IdPedido == pedidoId)
+                .Select(p => p.GastosEnvio)
+                .FirstOrDefaultAsync(cancellationToken);
+
+            return subtotal + gastosEnvio;
         }
 
         private async Task<List<FacturaDTO>> BuildFacturaListAsync(List<Factura> facturas, CancellationToken cancellationToken)

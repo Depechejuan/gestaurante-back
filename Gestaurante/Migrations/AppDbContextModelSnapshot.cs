@@ -590,6 +590,11 @@ namespace Gestaurante.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
 
+                    b.Property<double>("GastosEnvio")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(10,2)")
+                        .HasDefaultValue(0.0);
+
                     b.Property<Guid?>("IdFactura")
                         .HasColumnType("uuid");
 

@@ -92,6 +92,7 @@ namespace Gestaurante.Models.Services
                 ClienteEmail = dto.ClienteEmail?.Trim() ?? string.Empty,
                 ClienteTelefono = dto.ClienteTelefono?.Trim() ?? string.Empty,
                 ClienteDireccionSnapshot = dto.ClienteDireccionSnapshot?.Trim() ?? string.Empty,
+                GastosEnvio = dto.GastosEnvio,
                 Notas = dto.Notas?.Trim() ?? string.Empty
             };
 
@@ -359,9 +360,10 @@ namespace Gestaurante.Models.Services
 
         private static PedidoDTO MapPedido(Pedido pedido, List<DetallePedidoDTO> detallesDto)
         {
-            var total = detallesDto
+            var subtotalProductos = detallesDto
                 .Where(d => d.SeTieneEnCuentaEnFactura)
                 .Sum(d => d.Subtotal);
+            var total = subtotalProductos + pedido.GastosEnvio;
 
             return new PedidoDTO
             {
@@ -380,6 +382,8 @@ namespace Gestaurante.Models.Services
                 ClienteTelefono = pedido.ClienteTelefono,
                 ClienteDireccionSnapshot = pedido.ClienteDireccionSnapshot,
                 Notas = pedido.Notas,
+                SubtotalProductos = subtotalProductos,
+                GastosEnvio = pedido.GastosEnvio,
                 Total = total,
                 EstaFacturado = pedido.IdFactura.HasValue,
                 TieneLineasActivas = detallesDto.Any(d => d.SeTieneEnCuentaEnFactura),

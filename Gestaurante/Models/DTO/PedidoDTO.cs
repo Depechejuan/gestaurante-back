@@ -19,6 +19,8 @@ namespace Gestaurante.Models.DTO
         public string ClienteTelefono { get; set; } = string.Empty;
         public string ClienteDireccionSnapshot { get; set; } = string.Empty;
         public string Notas { get; set; } = string.Empty;
+        public double SubtotalProductos { get; set; }
+        public double GastosEnvio { get; set; }
         public double Total { get; set; }
         public bool EstaFacturado { get; set; }
         public bool TieneLineasActivas { get; set; }

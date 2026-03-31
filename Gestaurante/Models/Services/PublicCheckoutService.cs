@@ -73,6 +73,9 @@ namespace Gestaurante.Models.Services
             if (dto.TipoEntrega == TipoEntrega.DOMICILIO && !dto.PagarOnline)
                 throw new InvalidOperationException("Los pedidos a domicilio requieren pago online.");
 
+            var subtotalProductos = await ResolveSubtotalProductosAsync(dto.Detalles, cancellationToken);
+            var gastosEnvio = ResolveGastosEnvio(dto.TipoEntrega, subtotalProductos);
+
             var direccionSnapshot = string.Empty;
             if (dto.TipoEntrega == TipoEntrega.DOMICILIO)
             {
@@ -108,6 +111,7 @@ namespace Gestaurante.Models.Services
                 ClienteEmail = cliente.Email,
                 ClienteTelefono = cliente.Phone,
                 ClienteDireccionSnapshot = direccionSnapshot,
+                GastosEnvio = gastosEnvio,
                 Notas = dto.Notas,
                 Detalles = dto.Detalles
             }, cancellationToken);
@@ -132,6 +136,46 @@ namespace Gestaurante.Models.Services
             }
 
             return pedido;
+        }
+
+        private async Task<double> ResolveSubtotalProductosAsync(List<CrearDetallePedidoDTO> detalles, CancellationToken cancellationToken)
+        {
+            var detallesValidos = detalles.Where(detalle => detalle.Cantidad > 0).ToList();
+            if (detallesValidos.Count == 0)
+                return 0;
+
+            var platos = await _db.Platos
+                .AsNoTracking()
+                .Where(plato => detallesValidos.Select(detalle => detalle.IdPlato).Contains(plato.IdPlato))
+                .ToDictionaryAsync(plato => plato.IdPlato, cancellationToken);
+
+            var subtotal = 0d;
+            foreach (var detalle in detallesValidos)
+            {
+                if (!platos.TryGetValue(detalle.IdPlato, out var plato))
+                    throw new KeyNotFoundException("Uno de los platos del pedido no existe.");
+
+                if (!plato.Disponible)
+                    throw new InvalidOperationException($"El plato {plato.Nombre} no está disponible.");
+
+                subtotal += detalle.Cantidad * Convert.ToDouble(plato.Precio);
+            }
+
+            return subtotal;
+        }
+
+        private static double ResolveGastosEnvio(TipoEntrega tipoEntrega, double subtotalProductos)
+        {
+            if (tipoEntrega != TipoEntrega.DOMICILIO)
+                return 0;
+
+            if (subtotalProductos < 20)
+                return 5;
+
+            if (subtotalProductos < 30)
+                return 2;
+
+            return 0;
         }
     }
 }

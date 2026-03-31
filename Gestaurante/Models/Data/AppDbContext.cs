@@ -585,6 +585,10 @@ namespace Gestaurante.Models.Data
                     .IsRequired(false)
                     .HasMaxLength(400)
                     .HasDefaultValue(string.Empty);
+                entity.Property(p => p.GastosEnvio)
+                    .IsRequired()
+                    .HasColumnType("decimal(10,2)")
+                    .HasDefaultValue(0);
                 entity.Property(p => p.Notas)
                     .IsRequired(false)
                     .HasMaxLength(500)

@@ -37,9 +37,9 @@ namespace Gestaurante.Models.Services
                 IdUsuarioCliente = Guid.NewGuid(),
                 Email = dto.Email.Trim(),
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
-                FirstName = dto.FirstName.Trim(),
-                LastName = dto.LastName.Trim(),
-                Phone = dto.Phone.Trim(),
+                FirstName = ResolveDefaultCustomerName(dto.Email),
+                LastName = string.Empty,
+                Phone = string.Empty,
                 Activo = true,
                 EmailVerificado = false
             };
@@ -296,6 +296,16 @@ namespace Gestaurante.Models.Services
             using var sha = SHA256.Create();
             var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(code));
             return Convert.ToHexString(bytes);
+        }
+
+        private static string ResolveDefaultCustomerName(string email)
+        {
+            var localPart = email.Split('@', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.Trim();
+            if (string.IsNullOrWhiteSpace(localPart))
+                return "Cliente";
+
+            var sanitized = localPart.Replace('.', ' ').Replace('_', ' ').Replace('-', ' ').Trim();
+            return string.IsNullOrWhiteSpace(sanitized) ? "Cliente" : sanitized;
         }
 
         private static ClienteProfileDTO MapProfile(UsuarioCliente user)

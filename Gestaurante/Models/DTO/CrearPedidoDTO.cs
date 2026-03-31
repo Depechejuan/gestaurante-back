@@ -16,6 +16,7 @@ namespace Gestaurante.Models.DTO
         public string ClienteEmail { get; set; } = string.Empty;
         public string ClienteTelefono { get; set; } = string.Empty;
         public string ClienteDireccionSnapshot { get; set; } = string.Empty;
+        public double GastosEnvio { get; set; } = 0;
         public string Notas { get; set; } = string.Empty;
         public List<CrearDetallePedidoDTO> Detalles { get; set; } = new();
     }

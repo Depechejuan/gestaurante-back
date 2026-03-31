@@ -36,6 +36,8 @@ namespace Gestaurante.Models.Entities
         public string ClienteTelefono { get; set; } = string.Empty;
         [MaxLength(400)]
         public string ClienteDireccionSnapshot { get; set; } = string.Empty;
+        [Required]
+        public double GastosEnvio { get; set; } = 0;
         [MaxLength(500)]
         public string Notas { get; set; } = string.Empty;
 
