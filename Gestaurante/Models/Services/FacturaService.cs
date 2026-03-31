@@ -285,9 +285,7 @@ namespace Gestaurante.Models.Services
             await _db.Facturas.AddAsync(factura, cancellationToken);
 
             foreach (var pedido in pedidosFacturables)
-            {
                 pedido.IdFactura = factura.NumeroFactura;
-            }
 
             mesa.Estado = true;
 

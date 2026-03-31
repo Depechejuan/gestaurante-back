@@ -286,9 +286,7 @@ namespace Gestaurante.Models.Services
                 .ToListAsync(cancellationToken);
 
             foreach (var address in defaults)
-            {
                 address.IsDefault = false;
-            }
         }
 
         private static string HashCode(string code)

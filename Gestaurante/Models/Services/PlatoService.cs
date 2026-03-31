@@ -65,9 +65,7 @@ namespace Gestaurante.Models.Services
             );
 
             foreach (var ingrediente in ingredientes)
-            {
                 plato.PlatoIngredientes.Add(new PlatoIngrediente(plato.IdPlato, ingrediente.IdIngrediente));
-            }
 
             await _db.Platos.AddAsync(plato, cancellationToken);
             await _db.SaveChangesAsync(cancellationToken);

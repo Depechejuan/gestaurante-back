@@ -106,9 +106,7 @@ namespace Gestaurante.Models.Services
                 .ToListAsync(cancellationToken);
 
             foreach (var method in defaults)
-            {
                 method.IsDefault = false;
-            }
         }
 
         private static void ValidateCardData(string cardNumber, int expMonth, int expYear, string holderName)
