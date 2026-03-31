@@ -26,25 +26,6 @@ namespace Gestaurante.Controllers
 
         }
 
-        // UNSAFE!!!
-        //[HttpPost("register")]
-        //public async Task<IActionResult> Register([FromBody] RegistroDTO dto)
-        //{
-        //    try
-        //    {
-        //        var empleado = await _registerService.CrearEmpleado(dto);
-        //        return ResponseHelper.SendResponse(new { id = empleado.Id });
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        return ResponseHelper.SendError(new
-        //        {
-        //            message = ex.Message,
-        //            detail = ex.InnerException?.Message
-        //        }, 500);
-        //    }
-        //}
-
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO dto)
         {

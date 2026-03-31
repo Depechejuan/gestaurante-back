@@ -146,9 +146,7 @@ namespace Gestaurante.Models.Services
                 && dto.Estado.Value == EstadoPedido.ENTREGADO
                 && pedido.EstadoPago == EstadoPago.PENDIENTE_LOCAL
                 && !pedido.IdFactura.HasValue)
-            {
                 await CreateLocalPickupFacturaAsync(pedido, cancellationToken);
-            }
 
             await _db.SaveChangesAsync(cancellationToken);
             await SendPedidoStatusEmailsAsync(pedido, cancellationToken);
@@ -292,9 +290,7 @@ namespace Gestaurante.Models.Services
                 throw new KeyNotFoundException("Plato no encontrado.");
 
             if (!plato.Disponible)
-            {
                 throw new InvalidOperationException($"El plato {plato.Nombre} no está disponible.");
-            }
 
             return new DetallePedido(Guid.NewGuid(), plato.IdPlato, pedidoId, dto.Cantidad, Convert.ToDouble(plato.Precio));
         }
@@ -427,9 +423,7 @@ namespace Gestaurante.Models.Services
             };
 
             if (!allowedTransitions.TryGetValue(current, out var nextStates) || !nextStates.Contains(next))
-            {
                 throw new InvalidOperationException($"Transición de estado no válida: {current} -> {next}.");
-            }
         }
 
         private async Task UpdateMesaAvailabilityAsync(Guid? mesaId, CancellationToken cancellationToken)
@@ -486,22 +480,18 @@ namespace Gestaurante.Models.Services
                 return;
 
             if (pedido.TipoEntrega == TipoEntrega.RECOGIDA && pedido.Estado == EstadoPedido.LISTO)
-            {
                 await _emailService.SendAsync(
                     pedido.ClienteEmail,
                     "Tu pedido está listo para recoger",
                     $"Hola {pedido.ClienteNombre}, tu pedido {pedido.IdPedido} ya está listo para recoger en el restaurante.",
                     cancellationToken);
-            }
 
             if (pedido.TipoEntrega == TipoEntrega.DOMICILIO && pedido.Estado == EstadoPedido.EN_CAMINO)
-            {
                 await _emailService.SendAsync(
                     pedido.ClienteEmail,
                     "Tu pedido ya está en camino",
                     $"Hola {pedido.ClienteNombre}, tu pedido {pedido.IdPedido} ya está en camino.",
                     cancellationToken);
-            }
         }
 
         private static void SetFechaModificacion(Pedido pedido)

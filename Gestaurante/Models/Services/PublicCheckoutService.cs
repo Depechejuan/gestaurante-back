@@ -92,12 +92,10 @@ namespace Gestaurante.Models.Services
 
             ClienteMetodoPago? metodoPago = null;
             if (dto.PagarOnline)
-            {
                 metodoPago = await _mockPaymentService.ResolvePaymentMethodAsync(
                     clienteId,
                     dto.PaymentMethod ?? new CheckoutPaymentMethodDTO(),
                     cancellationToken);
-            }
 
             var pedido = await _pedidoService.CreateAsync(new CrearPedidoDTO
             {

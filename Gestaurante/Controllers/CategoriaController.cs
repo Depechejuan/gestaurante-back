@@ -30,9 +30,7 @@ namespace Gestaurante.Controllers
         {
             var categoria = await _service.GetByIdAsync(id, cancellationToken);
             if (categoria == null)
-            {
                 return ResponseHelper.NotFound("Categoria no encontrada.");
-            }
 
             return ResponseHelper.SendResponse(categoria);
         }
@@ -60,9 +58,7 @@ namespace Gestaurante.Controllers
             {
                 var categoria = await _service.UpdateAsync(id, dto, cancellationToken);
                 if (categoria == null)
-                {
                     return ResponseHelper.NotFound("Categoria no encontrada.");
-                }
 
                 return ResponseHelper.SendResponse(categoria);
             }
@@ -80,9 +76,7 @@ namespace Gestaurante.Controllers
             {
                 var deleted = await _service.DeleteAsync(id, cancellationToken);
                 if (!deleted)
-                {
                     return ResponseHelper.NotFound("Categoria no encontrada.");
-                }
 
                 return ResponseHelper.SendResponse(new { deleted = true });
             }

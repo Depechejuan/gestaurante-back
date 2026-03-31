@@ -34,9 +34,7 @@ namespace Gestaurante.Models.Services
                 .FirstOrDefaultAsync(m => m.IdMesa == idMesa, cancellationToken);
 
             if (mesa == null)
-            {
                 return null;
-            }
 
             var pedidos = await _db.Pedidos
                 .AsNoTracking()
@@ -77,9 +75,8 @@ namespace Gestaurante.Models.Services
         public async Task<MesaDTO> CreateAsync(CrearMesaDTO dto, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(dto.Ubicacion))
-            {
                 throw new InvalidOperationException("La ubicación de la mesa es obligatoria.");
-            }
+
 
             var mesa = new Mesa(Guid.NewGuid(), dto.Capacidad, dto.Estado, dto.Ubicacion.Trim());
             await _db.Mesas.AddAsync(mesa, cancellationToken);
@@ -92,26 +89,18 @@ namespace Gestaurante.Models.Services
         {
             var mesa = await _db.Mesas.FirstOrDefaultAsync(m => m.IdMesa == idMesa, cancellationToken);
             if (mesa == null)
-            {
                 return null;
-            }
 
             if (dto.Capacidad.HasValue)
-            {
                 mesa.Capacidad = dto.Capacidad.Value;
-            }
 
             if (!string.IsNullOrWhiteSpace(dto.Ubicacion))
-            {
                 mesa.Ubicacion = dto.Ubicacion.Trim();
-            }
 
             if (dto.Estado.HasValue)
             {
                 if (dto.Estado.Value && await TienePedidosActivosAsync(idMesa, cancellationToken))
-                {
                     throw new InvalidOperationException("No se puede marcar la mesa como disponible mientras tenga pedidos activos pendientes de facturar.");
-                }
 
                 mesa.Estado = dto.Estado.Value;
             }
@@ -125,15 +114,11 @@ namespace Gestaurante.Models.Services
         {
             var mesa = await _db.Mesas.FirstOrDefaultAsync(m => m.IdMesa == idMesa, cancellationToken);
             if (mesa == null)
-            {
                 return false;
-            }
 
             var hasPedidos = await _db.Pedidos.AnyAsync(p => p.IdMesa == idMesa, cancellationToken);
             if (hasPedidos)
-            {
                 throw new InvalidOperationException("No se puede eliminar una mesa con pedidos asociados.");
-            }
 
             _db.Mesas.Remove(mesa);
             await _db.SaveChangesAsync(cancellationToken);
@@ -148,9 +133,7 @@ namespace Gestaurante.Models.Services
                 .ToListAsync(cancellationToken);
 
             if (pedidos.Count == 0)
-            {
                 return mesaIds.ToDictionary(id => id, _ => new MesaResumen());
-            }
 
             var pedidoIds = pedidos.Select(p => p.IdPedido).ToList();
             var detalles = await _db.DetallesPedido
@@ -227,9 +210,7 @@ namespace Gestaurante.Models.Services
         {
             var platoIds = detalles.Select(d => d.IdPlato).Distinct().ToList();
             if (platoIds.Count == 0)
-            {
                 return new Dictionary<Guid, string>();
-            }
 
             return await _db.Platos
                 .AsNoTracking()

@@ -199,7 +199,6 @@ namespace Gestaurante.Controllers
             if (!clienteId.HasValue)
                 return ResponseHelper.NotAuthorized("Token de cliente inválido.");
             
-
             try
             {
                 await _customerAccountService.DeleteMetodoPagoAsync(clienteId.Value, id, cancellationToken);

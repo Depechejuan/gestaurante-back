@@ -86,9 +86,7 @@ namespace Gestaurante.Models.Services
 
             if (Uri.TryCreate(imageUrl, UriKind.Absolute, out var uri) &&
                 (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
-            {
                 return imageUrl;
-            }
 
             var cloudName = Environment.GetEnvironmentVariable("CLOUDINARY_CLOUD_NAME")
                 ?? Environment.GetEnvironmentVariable("CLOUDINARY_CLOUDNAME");

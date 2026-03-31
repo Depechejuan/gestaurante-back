@@ -60,9 +60,7 @@ namespace Gestaurante.Controllers
             {
                 var plato = await _service.UpdateAsync(id, dto, cancellationToken);
                 if (plato == null)
-                {
                     return ResponseHelper.NotFound("Plato no encontrado.");
-                }
 
                 return ResponseHelper.SendResponse(plato);
             }
@@ -80,9 +78,7 @@ namespace Gestaurante.Controllers
             {
                 var deleted = await _service.DeleteAsync(id, cancellationToken);
                 if (!deleted)
-                {
                     return ResponseHelper.NotFound("Plato no encontrado.");
-                }
 
                 return ResponseHelper.SendResponse(new { deleted = true });
             }

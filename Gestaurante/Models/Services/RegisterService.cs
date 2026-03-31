@@ -132,17 +132,13 @@ namespace Gestaurante.Models.Services
             var nextPasswordHash = oldEmpleado.Password;
 
             if (!string.IsNullOrWhiteSpace(dto.Password))
-            {
                 nextPasswordHash = BCrypt.Net.BCrypt.HashPassword(
                     dto.Password,
                     BCrypt.Net.BCrypt.GenerateSalt(12)
                 );
-            }
 
             if (dto.Photo is { Length: > 0 })
-            {
                 nextImageUrl = await _employeeImageService.UploadOrReplaceEmployeeImageAsync(id, dto.Photo, cancellationToken);
-            }
 
             await _db.Database.ExecuteSqlInterpolatedAsync($@"
                 UPDATE ""Empleados""

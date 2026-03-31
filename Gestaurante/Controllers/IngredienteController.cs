@@ -30,9 +30,7 @@ namespace Gestaurante.Controllers
         {
             var ingrediente = await _service.GetByIdAsync(id, cancellationToken);
             if (ingrediente == null)
-            {
                 return ResponseHelper.NotFound("Ingrediente no encontrado.");
-            }
 
             return ResponseHelper.SendResponse(ingrediente);
         }
@@ -60,9 +58,7 @@ namespace Gestaurante.Controllers
             {
                 var ingrediente = await _service.UpdateAsync(id, dto, cancellationToken);
                 if (ingrediente == null)
-                {
                     return ResponseHelper.NotFound("Ingrediente no encontrado.");
-                }
 
                 return ResponseHelper.SendResponse(ingrediente);
             }
@@ -78,9 +74,7 @@ namespace Gestaurante.Controllers
         {
             var deleted = await _service.DeleteAsync(id, cancellationToken);
             if (!deleted)
-            {
                 return ResponseHelper.NotFound("Ingrediente no encontrado.");
-            }
 
             return ResponseHelper.SendResponse(new { deleted = true });
         }

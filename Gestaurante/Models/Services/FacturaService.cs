@@ -35,9 +35,7 @@ namespace Gestaurante.Models.Services
                 .FirstOrDefaultAsync(f => f.NumeroFactura == numeroFactura, cancellationToken);
 
             if (factura == null)
-            {
                 return null;
-            }
 
             return await BuildFacturaDtoAsync(factura, cancellationToken);
         }
@@ -45,19 +43,16 @@ namespace Gestaurante.Models.Services
         public async Task<FacturaDTO> CreateAsync(CrearFacturaDTO dto, CancellationToken cancellationToken = default)
         {
             if (dto.IdMesa.HasValue)
-            {
                 return await CreateFromMesaAsync(dto.IdMesa.Value, dto.Descuento, dto.Estado, dto.FechaFactura, cancellationToken);
-            }
+
 
             if (dto.IdPedido.HasValue)
-            {
                 return await CreateFromPedidoAsync(dto.IdPedido.Value, dto.Descuento, dto.Estado, dto.FechaFactura, cancellationToken);
-            }
+
 
             if (!dto.PrecioTotal.HasValue)
-            {
                 throw new InvalidOperationException("Debes indicar una mesa, un pedido o un precio total para la factura.");
-            }
+
 
             var factura = new Factura(
                 Guid.NewGuid(),
@@ -86,9 +81,7 @@ namespace Gestaurante.Models.Services
         {
             var factura = await _db.Facturas.FirstOrDefaultAsync(f => f.NumeroFactura == numeroFactura, cancellationToken);
             if (factura == null)
-            {
                 return null;
-            }
 
             var linkedPedidoIds = await _db.Pedidos
                 .AsNoTracking()
@@ -97,34 +90,26 @@ namespace Gestaurante.Models.Services
                 .ToListAsync(cancellationToken);
 
             if ((dto.IdMesa.HasValue && dto.IdMesa != factura.IdMesa) || (dto.IdPedido.HasValue && dto.IdPedido != factura.IdPedido))
-            {
                 throw new InvalidOperationException("No se puede reasignar una factura ya creada a otra mesa o pedido.");
-            }
+
 
             if (dto.PrecioTotal.HasValue && linkedPedidoIds.Count > 0)
-            {
                 throw new InvalidOperationException("No se puede sobrescribir manualmente el importe de una factura vinculada a pedidos.");
-            }
+
 
             if (dto.PrecioTotal.HasValue)
-            {
                 factura.PrecioTotal = dto.PrecioTotal.Value;
-            }
+
 
             if (dto.Descuento.HasValue)
-            {
                 factura.Descuento = dto.Descuento.Value;
-            }
+
 
             if (dto.Estado.HasValue)
-            {
                 factura.Estado = dto.Estado.Value;
-            }
 
             if (dto.FechaFactura.HasValue)
-            {
                 factura.FechaFactura = dto.FechaFactura.Value;
-            }
 
             await _db.SaveChangesAsync(cancellationToken);
             return await BuildFacturaDtoAsync(factura, cancellationToken);
@@ -134,9 +119,7 @@ namespace Gestaurante.Models.Services
         {
             var term = query.Trim();
             if (string.IsNullOrWhiteSpace(term))
-            {
                 return new List<FacturaClienteLookupDTO>();
-            }
 
             var lowered = term.ToLower();
             return await _db.UsuariosCliente
@@ -173,9 +156,7 @@ namespace Gestaurante.Models.Services
         {
             var factura = await _db.Facturas.FirstOrDefaultAsync(f => f.NumeroFactura == numeroFactura, cancellationToken);
             if (factura == null)
-            {
                 return null;
-            }
 
             var cliente = await ResolveClienteForFacturaAsync(dto, cancellationToken);
             if (cliente != null)
@@ -214,15 +195,11 @@ namespace Gestaurante.Models.Services
         {
             var factura = await _db.Facturas.FirstOrDefaultAsync(f => f.NumeroFactura == numeroFactura, cancellationToken);
             if (factura == null)
-            {
                 return false;
-            }
 
             var hasPedidos = await _db.Pedidos.AnyAsync(p => p.IdFactura == numeroFactura, cancellationToken);
             if (hasPedidos)
-            {
                 throw new InvalidOperationException("No se puede eliminar una factura con pedidos asociados.");
-            }
 
             _db.Facturas.Remove(factura);
             await _db.SaveChangesAsync(cancellationToken);
@@ -233,25 +210,17 @@ namespace Gestaurante.Models.Services
         {
             var pedido = await _db.Pedidos.FirstOrDefaultAsync(p => p.IdPedido == pedidoId, cancellationToken);
             if (pedido == null)
-            {
                 throw new KeyNotFoundException("Pedido no encontrado.");
-            }
 
             if (pedido.IdFactura.HasValue)
-            {
                 throw new InvalidOperationException("El pedido ya está facturado.");
-            }
 
             if (pedido.Estado == EstadoPedido.CANCELADO)
-            {
                 throw new InvalidOperationException("No se puede facturar un pedido cancelado.");
-            }
 
             var total = await ResolvePedidoTotalAsync(pedidoId, cancellationToken);
             if (total <= 0)
-            {
                 throw new InvalidOperationException("El pedido no tiene líneas activas para facturar.");
-            }
 
             var factura = new Factura(
                 Guid.NewGuid(),
@@ -277,9 +246,7 @@ namespace Gestaurante.Models.Services
         {
             var mesa = await _db.Mesas.FirstOrDefaultAsync(m => m.IdMesa == mesaId, cancellationToken);
             if (mesa == null)
-            {
                 throw new KeyNotFoundException("Mesa no encontrada.");
-            }
 
             var pedidos = await _db.Pedidos
                 .Where(p => p.IdMesa == mesaId && !p.IdFactura.HasValue && p.Estado != EstadoPedido.CANCELADO)
@@ -287,9 +254,7 @@ namespace Gestaurante.Models.Services
                 .ToListAsync(cancellationToken);
 
             if (pedidos.Count == 0)
-            {
                 throw new InvalidOperationException("La mesa no tiene pedidos pendientes de facturar.");
-            }
 
             var pedidoIds = pedidos.Select(p => p.IdPedido).ToList();
             var detalles = await _db.DetallesPedido
@@ -301,9 +266,7 @@ namespace Gestaurante.Models.Services
                 .ToList();
 
             if (pedidosFacturables.Count == 0)
-            {
                 throw new InvalidOperationException("La mesa no tiene líneas activas pendientes de facturar.");
-            }
 
             var total = detalles.Sum(d => d.Cantidad * d.PrecioUnitario);
             var factura = new Factura(
@@ -408,15 +371,11 @@ namespace Gestaurante.Models.Services
         private async Task UpdateMesaAvailabilityAsync(Guid? mesaId, CancellationToken cancellationToken)
         {
             if (!mesaId.HasValue)
-            {
                 return;
-            }
 
             var mesa = await _db.Mesas.FirstOrDefaultAsync(m => m.IdMesa == mesaId.Value, cancellationToken);
             if (mesa == null)
-            {
                 return;
-            }
 
             var pedidoIds = await _db.Pedidos
                 .AsNoTracking()
@@ -467,9 +426,8 @@ namespace Gestaurante.Models.Services
         private async Task<UsuarioCliente?> ResolveClienteForFacturaAsync(AsignarFacturaClienteDTO dto, CancellationToken cancellationToken)
         {
             if (dto.IdUsuarioCliente.HasValue)
-            {
                 return await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.IdUsuarioCliente == dto.IdUsuarioCliente.Value, cancellationToken);
-            }
+
 
             if (!string.IsNullOrWhiteSpace(dto.Dni))
             {

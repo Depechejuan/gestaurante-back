@@ -35,16 +35,14 @@ namespace Gestaurante.Models.Services
         public async Task<IngredienteDTO> CreateAsync(IngredienteDTO dto, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(dto.Nombre))
-            {
                 throw new InvalidOperationException("El nombre del ingrediente es obligatorio.");
-            }
+
 
             var nombre = dto.Nombre.Trim();
             var exists = await _db.Ingredientes.AnyAsync(i => i.Nombre.ToLower() == nombre.ToLower(), cancellationToken);
             if (exists)
-            {
                 throw new InvalidOperationException("Ya existe un ingrediente con ese nombre.");
-            }
+
 
             var ingrediente = new Ingrediente(Guid.NewGuid(), nombre, dto.Alergenico, dto.Disponible, dto.Imagen?.Trim() ?? string.Empty);
             await _db.Ingredientes.AddAsync(ingrediente, cancellationToken);
@@ -57,23 +55,20 @@ namespace Gestaurante.Models.Services
         {
             var ingrediente = await _db.Ingredientes.FirstOrDefaultAsync(i => i.IdIngrediente == id, cancellationToken);
             if (ingrediente == null)
-            {
                 return null;
-            }
+
 
             if (string.IsNullOrWhiteSpace(dto.Nombre))
-            {
                 throw new InvalidOperationException("El nombre del ingrediente es obligatorio.");
-            }
+
 
             var nombre = dto.Nombre.Trim();
             var duplicate = await _db.Ingredientes.AnyAsync(
                 i => i.IdIngrediente != id && i.Nombre.ToLower() == nombre.ToLower(),
                 cancellationToken);
             if (duplicate)
-            {
                 throw new InvalidOperationException("Ya existe otro ingrediente con ese nombre.");
-            }
+
 
             ingrediente.Nombre = nombre;
             ingrediente.Alergenico = dto.Alergenico;
@@ -89,9 +84,7 @@ namespace Gestaurante.Models.Services
         {
             var ingrediente = await _db.Ingredientes.FirstOrDefaultAsync(i => i.IdIngrediente == id, cancellationToken);
             if (ingrediente == null)
-            {
                 return false;
-            }
 
             _db.Ingredientes.Remove(ingrediente);
             await _db.SaveChangesAsync(cancellationToken);

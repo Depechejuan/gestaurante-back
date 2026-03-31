@@ -28,9 +28,8 @@ namespace Gestaurante.Models.Services
         public async Task<string> UploadOrReplaceEmployeeImageAsync(Guid employeeId, IFormFile photo, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(_cloudName) || string.IsNullOrWhiteSpace(_apiKey) || string.IsNullOrWhiteSpace(_apiSecret))
-            {
                 throw new InvalidOperationException("Cloudinary no está configurado. Revisa CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY y CLOUDINARY_API_SECRET.");
-            }
+
 
             var timestamp = DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString();
             var publicId = $"{_employeeFolder.TrimEnd('/')}/{employeeId}";
@@ -59,15 +58,11 @@ namespace Gestaurante.Models.Services
             var payload = await response.Content.ReadAsStringAsync(cancellationToken);
 
             if (!response.IsSuccessStatusCode)
-            {
                 throw new InvalidOperationException($"Error subiendo imagen a Cloudinary: {payload}");
-            }
 
             using var document = JsonDocument.Parse(payload);
             if (!document.RootElement.TryGetProperty("secure_url", out var secureUrl))
-            {
                 throw new InvalidOperationException("Cloudinary no devolvió secure_url para la imagen subida.");
-            }
 
             return secureUrl.GetString() ?? throw new InvalidOperationException("La URL de Cloudinary llegó vacía.");
         }

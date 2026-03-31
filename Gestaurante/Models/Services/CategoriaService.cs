@@ -43,16 +43,12 @@ namespace Gestaurante.Models.Services
         public async Task<CategoriaDTO> CreateAsync(CategoriaDTO dto, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(dto.Descripcion))
-            {
                 throw new InvalidOperationException("La descripcion de la categoria es obligatoria.");
-            }
 
             var descripcion = dto.Descripcion.Trim();
             var exists = await _db.Categorias.AnyAsync(c => c.Descripcion.ToLower() == descripcion.ToLower(), cancellationToken);
             if (exists)
-            {
                 throw new InvalidOperationException("Ya existe una categoria con esa descripcion.");
-            }
 
             var categoria = new Categoria(Guid.NewGuid(), descripcion);
             await _db.Categorias.AddAsync(categoria, cancellationToken);
@@ -69,23 +65,17 @@ namespace Gestaurante.Models.Services
         {
             var categoria = await _db.Categorias.FirstOrDefaultAsync(c => c.IdCategoria == id, cancellationToken);
             if (categoria == null)
-            {
                 return null;
-            }
 
             if (string.IsNullOrWhiteSpace(dto.Descripcion))
-            {
                 throw new InvalidOperationException("La descripcion de la categoria es obligatoria.");
-            }
 
             var descripcion = dto.Descripcion.Trim();
             var duplicate = await _db.Categorias.AnyAsync(
                 c => c.IdCategoria != id && c.Descripcion.ToLower() == descripcion.ToLower(),
                 cancellationToken);
             if (duplicate)
-            {
                 throw new InvalidOperationException("Ya existe otra categoria con esa descripcion.");
-            }
 
             categoria.Descripcion = descripcion;
             await _db.SaveChangesAsync(cancellationToken);
@@ -101,15 +91,11 @@ namespace Gestaurante.Models.Services
         {
             var categoria = await _db.Categorias.FirstOrDefaultAsync(c => c.IdCategoria == id, cancellationToken);
             if (categoria == null)
-            {
                 return false;
-            }
 
             var hasPlatos = await _db.Platos.AnyAsync(p => p.IdCategoria == id, cancellationToken);
             if (hasPlatos)
-            {
                 throw new InvalidOperationException("No puedes borrar una categoria con platos asociados.");
-            }
 
             _db.Categorias.Remove(categoria);
             await _db.SaveChangesAsync(cancellationToken);
