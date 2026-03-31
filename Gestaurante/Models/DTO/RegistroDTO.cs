@@ -21,7 +21,6 @@ namespace Gestaurante.Models.DTO
         [Required]
         [MaxLength(100)]
         public string FirstLastName { get;  set; } = string.Empty;
-        [Required]
         [MaxLength(100)]
         public string SecondLastName { get;  set; } = string.Empty;
 
@@ -33,10 +32,12 @@ namespace Gestaurante.Models.DTO
         public string NUSS { get;  set; } = string.Empty;
         [Required]
         public TipoEmpleado Tipo { get; set; }
-        public IFormFile Imagen { get; set; } = null!;
+        public IFormFile? Imagen { get; set; }
         public DateTime CreatedAt { get; protected set; } = DateTime.UtcNow;
 
-        public RegistroDTO(string email, string password, string firstname, string firstlastname, string secondlastname, string dni, string nuss, TipoEmpleado tipo, IFormFile Imagen)
+        public RegistroDTO() { }
+
+        public RegistroDTO(string email, string password, string firstname, string firstlastname, string secondlastname, string dni, string nuss, TipoEmpleado tipo, IFormFile? imagen)
         {
             this.Email = email;
             this.Password = password;
@@ -46,7 +47,7 @@ namespace Gestaurante.Models.DTO
             this.DNI = dni;
             this.NUSS = nuss;
             this.Tipo = tipo;
-            this.Imagen = Imagen;
+            this.Imagen = imagen;
         }
     }
 }
