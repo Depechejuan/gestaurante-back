@@ -8,5 +8,7 @@ namespace Gestaurante.Models.DTO
 
         [Range(1, int.MaxValue)]
         public int? Cantidad { get; set; }
+
+        public EstadoDetallePedido? Estado { get; set; }
     }
 }

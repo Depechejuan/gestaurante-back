@@ -7,8 +7,8 @@
         public string Apellido1 { get; set; } = string.Empty;
         public string Apellido2 { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
-        public string DNI { get; set; }
-        public string NUSS { get; set; }
+        public string DNI { get; set; } = string.Empty;
+        public string NUSS { get; set; } = string.Empty;
         public string ImageURL { get; set; } = string.Empty;
         public string Password { get; set; } = string.Empty;
         public TipoEmpleado Tipo { get; set; }

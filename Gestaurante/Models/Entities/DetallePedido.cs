@@ -17,6 +17,9 @@ namespace Gestaurante.Models.Entities
         [Required]
         [Range(0, double.MaxValue, ErrorMessage = "El precio no puede ser negativo")]
         public double PrecioUnitario { get; set; }
+        [Required]
+        public EstadoDetallePedido Estado { get; set; } = EstadoDetallePedido.ACTIVA;
+        public DateTime? FechaCancelacion { get; set; }
         public DetallePedido() { }
         public DetallePedido(Guid idDetallePedido, Guid idPlato, Guid idPedido, int cantidad, double precioUnitario)
         {
@@ -26,7 +29,5 @@ namespace Gestaurante.Models.Entities
             Cantidad = cantidad;
             PrecioUnitario = precioUnitario;
         }
-
-
     }
 }

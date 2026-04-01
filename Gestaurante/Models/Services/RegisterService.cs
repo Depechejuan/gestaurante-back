@@ -75,6 +75,15 @@ namespace Gestaurante.Models.Services
                     dto.DNI,
                     dto.NUSS
                 ),
+                TipoEmpleado.Repartidor => new Repartidor(
+                    dto.Email,
+                    hashedPassword,
+                    dto.FirstName,
+                    dto.FirstLastName,
+                    dto.SecondLastName,
+                    dto.DNI,
+                    dto.NUSS
+                ),
                 _ => throw new ValidationException("Tipo de empleado no válido")
             };
 
@@ -123,17 +132,13 @@ namespace Gestaurante.Models.Services
             var nextPasswordHash = oldEmpleado.Password;
 
             if (!string.IsNullOrWhiteSpace(dto.Password))
-            {
                 nextPasswordHash = BCrypt.Net.BCrypt.HashPassword(
                     dto.Password,
                     BCrypt.Net.BCrypt.GenerateSalt(12)
                 );
-            }
 
             if (dto.Photo is { Length: > 0 })
-            {
                 nextImageUrl = await _employeeImageService.UploadOrReplaceEmployeeImageAsync(id, dto.Photo, cancellationToken);
-            }
 
             await _db.Database.ExecuteSqlInterpolatedAsync($@"
                 UPDATE ""Empleados""
@@ -164,6 +169,7 @@ namespace Gestaurante.Models.Services
         {
             if (empleado is Administrador) return TipoEmpleado.Administrador;
             if (empleado is Camarero) return TipoEmpleado.Camarero;
+            if (empleado is Repartidor) return TipoEmpleado.Repartidor;
             return TipoEmpleado.Cocinero;
         }
     }

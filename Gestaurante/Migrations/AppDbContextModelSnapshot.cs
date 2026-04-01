@@ -41,6 +41,156 @@ namespace Gestaurante.Migrations
                     b.ToTable("Categorias");
                 });
 
+            modelBuilder.Entity("Gestaurante.Models.Entities.ClienteDireccion", b =>
+                {
+                    b.Property<Guid>("IdClienteDireccion")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Alias")
+                        .IsRequired()
+                        .HasMaxLength(80)
+                        .HasColumnType("character varying(80)");
+
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                    b.Property<Guid>("IdUsuarioCliente")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDefault")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Notes")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasDefaultValue("");
+
+                    b.Property<string>("PostalCode")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)");
+
+                    b.Property<string>("Province")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<string>("Street")
+                        .IsRequired()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("IdClienteDireccion")
+                        .HasName("PK_ClienteDirecciones");
+
+                    b.HasIndex("IdUsuarioCliente");
+
+                    b.ToTable("ClienteDirecciones");
+                });
+
+            modelBuilder.Entity("Gestaurante.Models.Entities.ClienteEmailVerification", b =>
+                {
+                    b.Property<Guid>("IdClienteEmailVerification")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("AttemptCount")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("CodeHash")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.Property<DateTime?>("ConsumedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("IdUsuarioCliente")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("IdClienteEmailVerification")
+                        .HasName("PK_ClienteEmailVerifications");
+
+                    b.HasIndex("IdUsuarioCliente", "ExpiresAt");
+
+                    b.ToTable("ClienteEmailVerifications");
+                });
+
+            modelBuilder.Entity("Gestaurante.Models.Entities.ClienteMetodoPago", b =>
+                {
+                    b.Property<Guid>("IdClienteMetodoPago")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasMaxLength(40)
+                        .HasColumnType("character varying(40)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                    b.Property<int>("ExpMonth")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ExpYear")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("HolderName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<Guid>("IdUsuarioCliente")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsDefault")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("Last4")
+                        .IsRequired()
+                        .HasMaxLength(4)
+                        .HasColumnType("character varying(4)");
+
+                    b.Property<string>("MockPaymentToken")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.HasKey("IdClienteMetodoPago")
+                        .HasName("PK_ClienteMetodosPago");
+
+                    b.HasIndex("IdUsuarioCliente");
+
+                    b.ToTable("ClienteMetodosPago");
+                });
+
             modelBuilder.Entity("Gestaurante.Models.Entities.DetallePedido", b =>
                 {
                     b.Property<Guid>("IdDetallePedido")
@@ -52,6 +202,14 @@ namespace Gestaurante.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasDefaultValue(1);
+
+                    b.Property<int>("Estado")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<DateTime?>("FechaCancelacion")
+                        .HasColumnType("timestamp with time zone");
 
                     b.Property<Guid>("IdPedido")
                         .HasColumnType("uuid");
@@ -159,6 +317,67 @@ namespace Gestaurante.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("uuid");
 
+                    b.Property<string>("BillingCity")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasDefaultValue("Madrid");
+
+                    b.Property<string>("BillingDocument")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("00000000X");
+
+                    b.Property<string>("BillingEmail")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("anonimo@gestaurante.local");
+
+                    b.Property<string>("BillingName")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)")
+                        .HasDefaultValue("Cliente anónimo");
+
+                    b.Property<string>("BillingPhone")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)")
+                        .HasDefaultValue("600000000");
+
+                    b.Property<string>("BillingPostalCode")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("28000");
+
+                    b.Property<string>("BillingProvince")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasDefaultValue("Madrid");
+
+                    b.Property<string>("BillingStreet")
+                        .IsRequired()
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasDefaultValue("Calle Falsa 123");
+
+                    b.Property<double?>("CambioEntregado")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int?>("CanalPedido")
+                        .HasColumnType("integer");
+
                     b.Property<double>("Descuento")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("decimal(5,2)")
@@ -169,15 +388,46 @@ namespace Gestaurante.Migrations
                         .HasColumnType("integer")
                         .HasDefaultValue(0);
 
+                    b.Property<DateTime?>("FechaCobro")
+                        .HasColumnType("timestamp with time zone");
+
                     b.Property<DateTime>("FechaFactura")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
 
+                    b.Property<Guid?>("IdMesa")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid?>("IdPedido")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("IdUsuarioCliente")
+                        .HasColumnType("uuid");
+
+                    b.Property<double?>("ImporteEntregado")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int?>("MetodoCobro")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("MotivoDescuento")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(250)
+                        .HasColumnType("character varying(250)")
+                        .HasDefaultValue("");
+
                     b.Property<double>("PrecioTotal")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(10,2)")
+                        .HasDefaultValue(0.0);
+
+                    b.Property<int>("TipoDescuento")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<double>("ValorDescuento")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("decimal(10,2)")
                         .HasDefaultValue(0.0);
@@ -185,7 +435,11 @@ namespace Gestaurante.Migrations
                     b.HasKey("NumeroFactura")
                         .HasName("PK_Facturas");
 
+                    b.HasIndex("IdMesa");
+
                     b.HasIndex("IdPedido");
+
+                    b.HasIndex("IdUsuarioCliente");
 
                     b.ToTable("Facturas");
                 });
@@ -268,6 +522,47 @@ namespace Gestaurante.Migrations
                     b.ToTable("Mesas");
                 });
 
+            modelBuilder.Entity("Gestaurante.Models.Entities.MesaPublicSession", b =>
+                {
+                    b.Property<Guid>("IdMesaPublicSession")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime?>("ClosedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                    b.Property<DateTime>("ExpiresAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("IdMesa")
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("IsActive")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<DateTime?>("LastSeenAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("TokenHash")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("character varying(128)");
+
+                    b.HasKey("IdMesaPublicSession")
+                        .HasName("PK_MesaPublicSessions");
+
+                    b.HasIndex("IdMesa", "IsActive", "ExpiresAt");
+
+                    b.ToTable("MesaPublicSessions");
+                });
+
             modelBuilder.Entity("Gestaurante.Models.Entities.Pedido", b =>
                 {
                     b.Property<Guid>("IdPedido")
@@ -275,7 +570,41 @@ namespace Gestaurante.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("uuid");
 
+                    b.Property<int>("CanalPedido")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<string>("ClienteDireccionSnapshot")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(400)
+                        .HasColumnType("character varying(400)")
+                        .HasDefaultValue("");
+
+                    b.Property<string>("ClienteEmail")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)")
+                        .HasDefaultValue("");
+
+                    b.Property<string>("ClienteNombre")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)")
+                        .HasDefaultValue("");
+
+                    b.Property<string>("ClienteTelefono")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)")
+                        .HasDefaultValue("");
+
                     b.Property<int>("Estado")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
+                    b.Property<int>("EstadoPago")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("integer")
                         .HasDefaultValue(0);
@@ -289,8 +618,44 @@ namespace Gestaurante.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
 
+                    b.Property<double>("GastosEnvio")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("decimal(10,2)")
+                        .HasDefaultValue(0.0);
+
+                    b.Property<Guid?>("IdFactura")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("IdMesa")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("IdMesaPublicSession")
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid?>("IdUsuarioCliente")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Notas")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(500)
+                        .HasColumnType("character varying(500)")
+                        .HasDefaultValue("");
+
+                    b.Property<int>("TipoEntrega")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer")
+                        .HasDefaultValue(0);
+
                     b.HasKey("IdPedido")
                         .HasName("PK_Pedidos");
+
+                    b.HasIndex("IdFactura");
+
+                    b.HasIndex("IdMesa");
+
+                    b.HasIndex("IdMesaPublicSession");
+
+                    b.HasIndex("IdUsuarioCliente");
 
                     b.ToTable("Pedidos");
                 });
@@ -374,6 +739,106 @@ namespace Gestaurante.Migrations
                     b.ToTable("PlatoIngrediente");
                 });
 
+            modelBuilder.Entity("Gestaurante.Models.Entities.UsuarioCliente", b =>
+                {
+                    b.Property<Guid>("IdUsuarioCliente")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<bool>("Activo")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(true);
+
+                    b.Property<string>("BillingCity")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasDefaultValue("");
+
+                    b.Property<string>("BillingPostalCode")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("");
+
+                    b.Property<string>("BillingProvince")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)")
+                        .HasDefaultValue("");
+
+                    b.Property<string>("BillingStreet")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(200)
+                        .HasColumnType("character varying(200)")
+                        .HasDefaultValue("");
+
+                    b.Property<string>("Cif")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(20)
+                        .HasColumnType("character varying(20)")
+                        .HasDefaultValue("");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("timestamp with time zone")
+                        .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                    b.Property<string>("Dni")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(15)
+                        .HasColumnType("character varying(15)")
+                        .HasDefaultValue("");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("character varying(100)");
+
+                    b.Property<bool>("EmailVerificado")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("boolean")
+                        .HasDefaultValue(false);
+
+                    b.Property<string>("FirstName")
+                        .IsRequired()
+                        .HasMaxLength(120)
+                        .HasColumnType("character varying(120)");
+
+                    b.Property<string>("FiscalName")
+                        .ValueGeneratedOnAdd()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)")
+                        .HasDefaultValue("");
+
+                    b.Property<string>("LastName")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)");
+
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("character varying(255)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(25)
+                        .HasColumnType("character varying(25)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("IdUsuarioCliente")
+                        .HasName("PK_UsuariosCliente");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("UsuariosCliente");
+                });
+
             modelBuilder.Entity("Gestaurante.Models.Entities.Administrador", b =>
                 {
                     b.HasBaseType("Gestaurante.Models.Entities.Empleado");
@@ -398,6 +863,40 @@ namespace Gestaurante.Migrations
                     b.HasDiscriminator().HasValue(2);
                 });
 
+            modelBuilder.Entity("Gestaurante.Models.Entities.Repartidor", b =>
+                {
+                    b.HasBaseType("Gestaurante.Models.Entities.Empleado");
+
+                    b.HasDiscriminator().HasValue(3);
+                });
+
+            modelBuilder.Entity("Gestaurante.Models.Entities.ClienteDireccion", b =>
+                {
+                    b.HasOne("Gestaurante.Models.Entities.UsuarioCliente", null)
+                        .WithMany("Direcciones")
+                        .HasForeignKey("IdUsuarioCliente")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gestaurante.Models.Entities.ClienteEmailVerification", b =>
+                {
+                    b.HasOne("Gestaurante.Models.Entities.UsuarioCliente", null)
+                        .WithMany()
+                        .HasForeignKey("IdUsuarioCliente")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gestaurante.Models.Entities.ClienteMetodoPago", b =>
+                {
+                    b.HasOne("Gestaurante.Models.Entities.UsuarioCliente", null)
+                        .WithMany("MetodosPago")
+                        .HasForeignKey("IdUsuarioCliente")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("Gestaurante.Models.Entities.DetallePedido", b =>
                 {
                     b.HasOne("Gestaurante.Models.Entities.Pedido", null)
@@ -415,9 +914,51 @@ namespace Gestaurante.Migrations
 
             modelBuilder.Entity("Gestaurante.Models.Entities.Factura", b =>
                 {
+                    b.HasOne("Gestaurante.Models.Entities.Mesa", null)
+                        .WithMany()
+                        .HasForeignKey("IdMesa")
+                        .OnDelete(DeleteBehavior.Restrict);
+
                     b.HasOne("Gestaurante.Models.Entities.Pedido", null)
                         .WithMany()
                         .HasForeignKey("IdPedido")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Gestaurante.Models.Entities.UsuarioCliente", null)
+                        .WithMany()
+                        .HasForeignKey("IdUsuarioCliente")
+                        .OnDelete(DeleteBehavior.SetNull);
+                });
+
+            modelBuilder.Entity("Gestaurante.Models.Entities.MesaPublicSession", b =>
+                {
+                    b.HasOne("Gestaurante.Models.Entities.Mesa", null)
+                        .WithMany()
+                        .HasForeignKey("IdMesa")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Gestaurante.Models.Entities.Pedido", b =>
+                {
+                    b.HasOne("Gestaurante.Models.Entities.Factura", null)
+                        .WithMany()
+                        .HasForeignKey("IdFactura")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Gestaurante.Models.Entities.Mesa", null)
+                        .WithMany()
+                        .HasForeignKey("IdMesa")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Gestaurante.Models.Entities.MesaPublicSession", null)
+                        .WithMany()
+                        .HasForeignKey("IdMesaPublicSession")
+                        .OnDelete(DeleteBehavior.Restrict);
+
+                    b.HasOne("Gestaurante.Models.Entities.UsuarioCliente", null)
+                        .WithMany()
+                        .HasForeignKey("IdUsuarioCliente")
                         .OnDelete(DeleteBehavior.Restrict);
                 });
 
@@ -476,6 +1017,13 @@ namespace Gestaurante.Migrations
                     b.Navigation("PlatoIngredientes");
 
                     b.Navigation("Platos");
+                });
+
+            modelBuilder.Entity("Gestaurante.Models.Entities.UsuarioCliente", b =>
+                {
+                    b.Navigation("Direcciones");
+
+                    b.Navigation("MetodosPago");
                 });
 #pragma warning restore 612, 618
         }

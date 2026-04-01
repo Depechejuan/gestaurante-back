@@ -33,13 +33,17 @@ namespace Gestaurante.Controllers
                 var empleado = await _registerService.CrearEmpleado(dto);
                 return ResponseHelper.SendResponse(new { id = empleado.Id, foto = empleado.ImageURL });
             }
-            catch (Exception ex)
+            catch (ValidationException ex)
             {
-                return ResponseHelper.SendError(new
-                {
-                    message = ex.Message,
-                    detail = ex.InnerException?.Message
-                }, 500);
+                return ResponseHelper.ValidationError(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ResponseHelper.Conflict(ex.Message);
+            }
+            catch
+            {
+                return ResponseHelper.ServerError("No se ha podido registrar el empleado.");
             }
         }
 
@@ -50,16 +54,13 @@ namespace Gestaurante.Controllers
             {
                 var empleado = await _staffService.GetBasicStaff(user.Id);
                 if (empleado == null)
-                    throw new Exception("Empleado no encontrado");
+                    return ResponseHelper.NotFound("Empleado no encontrado.");
+
                 return ResponseHelper.SendResponse(empleado);
             }
-            catch (Exception ex)
+            catch
             {
-                return ResponseHelper.SendError(new
-                {
-                    message = ex.Message,
-                    detail = ex.InnerException?.Message
-                }, 500);
+                return ResponseHelper.ServerError("No se ha podido recuperar el usuario solicitado.");
             }
         }
 
@@ -71,13 +72,9 @@ namespace Gestaurante.Controllers
                 var empleados = await _staffService.GetAllUsers();
                 return ResponseHelper.SendResponse(empleados);
             }
-            catch (Exception ex)
+            catch
             {
-                return ResponseHelper.SendError(new
-                {
-                    message = ex.Message,
-                    detail = ex.InnerException?.Message
-                }, 500);
+                return ResponseHelper.ServerError("No se ha podido cargar la lista de empleados.");
             }
         }
 
@@ -87,15 +84,18 @@ namespace Gestaurante.Controllers
             try
             {
                 var empleado = await _staffService.GetFullUser(id);
+                if (empleado == null)
+                    return ResponseHelper.NotFound("Empleado no encontrado.");
+
                 return ResponseHelper.SendResponse(empleado);
             }
-            catch (Exception ex)
+            catch (KeyNotFoundException ex)
             {
-                return ResponseHelper.SendError(new
-                {
-                    message = ex.Message,
-                    detail = ex.InnerException?.Message
-                }, 500);
+                return ResponseHelper.NotFound(ex.Message);
+            }
+            catch
+            {
+                return ResponseHelper.ServerError("No se ha podido recuperar el detalle del empleado.");
             }
         }
 
@@ -106,20 +106,20 @@ namespace Gestaurante.Controllers
             {
                 EmpleadoFullDTO empleado = await _staffService.GetFullUser(id);
                 if (empleado == null)
-                    throw new Exception("Empleado no encontrado");
+                    return ResponseHelper.NotFound("Empleado no encontrado.");
 
                 Empleado empleadoEdit = await _registerService.UploadPhoto(empleado, file, "empleados");
                 // actualizar empleadoEdit
 
                 return ResponseHelper.SendResponse(new { foto = empleadoEdit.ImageURL });
             }
-            catch (Exception ex)
+            catch (KeyNotFoundException ex)
             {
-                return ResponseHelper.SendError(new
-                {
-                    message = ex.Message,
-                    detail = ex.InnerException?.Message
-                }, 500);
+                return ResponseHelper.NotFound(ex.Message);
+            }
+            catch
+            {
+                return ResponseHelper.ServerError("No se ha podido actualizar la foto del empleado.");
             }
         }
 
@@ -131,18 +131,28 @@ namespace Gestaurante.Controllers
             {
                 var newEmpleado = await _registerService.EditarEmpleado(id, dto, cancellationToken);
                 if (newEmpleado == null)
-                    throw new Exception("Empleado no encontrado");
-                var tipo = dto.Tipo ?? (newEmpleado is Administrador ? TipoEmpleado.Administrador : newEmpleado is Camarero ? TipoEmpleado.Camarero : TipoEmpleado.Cocinero);
+                    return ResponseHelper.NotFound("Empleado no encontrado.");
+
+                var tipo = dto.Tipo
+                    ?? (newEmpleado is Administrador ? TipoEmpleado.Administrador
+                    : newEmpleado is Camarero ? TipoEmpleado.Camarero
+                    : newEmpleado is Repartidor ? TipoEmpleado.Repartidor
+                    : TipoEmpleado.Cocinero);
                 var empleado = ToDTO.EmpleadoToEmpleadoFullDTO(newEmpleado, tipo);
 
                 return ResponseHelper.SendResponse(empleado);
-            } catch (Exception ex)
+            }
+            catch (KeyNotFoundException ex)
             {
-                return ResponseHelper.SendError(new
-                {
-                    message = ex.Message,
-                    detail = ex.InnerException?.Message
-                }, 500);
+                return ResponseHelper.NotFound(ex.Message);
+            }
+            catch (ValidationException ex)
+            {
+                return ResponseHelper.ValidationError(ex.Message);
+            }
+            catch
+            {
+                return ResponseHelper.ServerError("No se ha podido actualizar el empleado.");
             }
         }
 

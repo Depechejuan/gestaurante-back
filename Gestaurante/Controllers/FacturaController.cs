@@ -8,7 +8,7 @@ namespace Gestaurante.Controllers
 {
     [ApiController]
     [Route("[controller]")]
-    [Authorize]
+    [Authorize(Roles = "Administrador,Camarero")]
     public class FacturaController : ControllerBase
     {
         private readonly FacturaService _facturaService;
@@ -32,6 +32,12 @@ namespace Gestaurante.Controllers
             return factura == null
                 ? ResponseHelper.NotFound("Factura no encontrada.")
                 : ResponseHelper.SendResponse(factura);
+        }
+
+        [HttpGet("clientes/search")]
+        public async Task<IActionResult> SearchClientes([FromQuery] string? query, CancellationToken cancellationToken)
+        {
+            return ResponseHelper.SendResponse(await _facturaService.SearchClientesAsync(query, cancellationToken));
         }
 
         [HttpPost]
@@ -66,15 +72,76 @@ namespace Gestaurante.Controllers
             {
                 return ResponseHelper.NotFound(ex.Message);
             }
+            catch (InvalidOperationException ex)
+            {
+                return ResponseHelper.Conflict(ex.Message);
+            }
+        }
+
+        [HttpPut("{id:guid}/cliente")]
+        public async Task<IActionResult> AssignCliente(Guid id, [FromBody] AsignarFacturaClienteDTO dto, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var factura = await _facturaService.AssignClienteAsync(id, dto, cancellationToken);
+                return factura == null
+                    ? ResponseHelper.NotFound("Factura no encontrada.")
+                    : ResponseHelper.SendResponse(factura);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ResponseHelper.ValidationError(ex.Message);
+            }
+        }
+
+        [HttpPost("{id:guid}/cobrar")]
+        public async Task<IActionResult> Charge(Guid id, [FromBody] CobrarFacturaDTO dto, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var factura = await _facturaService.ChargeAsync(id, dto, cancellationToken);
+                return factura == null
+                    ? ResponseHelper.NotFound("Factura no encontrada.")
+                    : ResponseHelper.SendResponse(factura);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ResponseHelper.ValidationError(ex.Message);
+            }
+        }
+
+        [HttpPost("{id:guid}/send-email")]
+        public async Task<IActionResult> SendEmail(Guid id, [FromBody] SendFacturaEmailDTO? dto, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var sentTo = await _facturaService.SendFacturaEmailAsync(id, dto?.Email, cancellationToken);
+                return ResponseHelper.SendResponse(new { sent = true, sentTo });
+            }
+            catch (KeyNotFoundException ex)
+            {
+                return ResponseHelper.NotFound(ex.Message);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ResponseHelper.ValidationError(ex.Message);
+            }
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            var deleted = await _facturaService.DeleteAsync(id, cancellationToken);
-            return deleted
-                ? ResponseHelper.SendResponse(new { id, deleted = true })
-                : ResponseHelper.NotFound("Factura no encontrada.");
+            try
+            {
+                var deleted = await _facturaService.DeleteAsync(id, cancellationToken);
+                return deleted
+                    ? ResponseHelper.SendResponse(new { id, deleted = true })
+                    : ResponseHelper.NotFound("Factura no encontrada.");
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ResponseHelper.Conflict(ex.Message);
+            }
         }
     }
 }

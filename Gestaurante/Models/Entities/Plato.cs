@@ -23,17 +23,16 @@ namespace Gestaurante.Models.Entities
         public decimal Precio { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? UpdatedAt { get; protected set; }
+        public DateTime? UpdatedAt { get; set; }
 
         [Required]
         public Guid IdCategoria { get; set; } // Clave foránea
 
         public virtual Categoria Categoria { get; set; } = null!; // Propiedad de navegación
-
         public virtual ICollection<Plato> Platos { get; set; } = new List<Plato>();
 
         public Plato() { }
-        public Plato(Guid idPlato, string nombre, string descripcion, string imagen, bool disponibilidad, decimal precio)
+        public Plato(Guid idPlato, string nombre, string descripcion, string imagen, bool disponibilidad, decimal precio, Guid idCategoria)
         {
             IdPlato = idPlato;
             Nombre = nombre;
@@ -41,6 +40,7 @@ namespace Gestaurante.Models.Entities
             Imagen = imagen;
             Disponible = disponibilidad;
             Precio = precio;
+            IdCategoria = idCategoria;
 
             CreatedAt = DateTime.UtcNow;
         }

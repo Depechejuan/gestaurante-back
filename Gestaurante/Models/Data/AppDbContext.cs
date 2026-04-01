@@ -19,7 +19,12 @@ namespace Gestaurante.Models.Data
         public DbSet<Pedido> Pedidos => Set<Pedido>();
         public DbSet<Factura> Facturas => Set<Factura>();
         public DbSet<DetallePedido> DetallesPedido => Set<DetallePedido>();
-        public DbSet<Categoria> Categorias => Set<Categoria>(); 
+        public DbSet<MesaPublicSession> MesaPublicSessions => Set<MesaPublicSession>();
+        public DbSet<Categoria> Categorias => Set<Categoria>();
+        public DbSet<UsuarioCliente> UsuariosCliente => Set<UsuarioCliente>();
+        public DbSet<ClienteEmailVerification> ClienteEmailVerifications => Set<ClienteEmailVerification>();
+        public DbSet<ClienteDireccion> ClienteDirecciones => Set<ClienteDireccion>();
+        public DbSet<ClienteMetodoPago> ClienteMetodosPago => Set<ClienteMetodoPago>();
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -33,7 +38,8 @@ namespace Gestaurante.Models.Data
                     .HasDiscriminator<TipoEmpleado>("Tipo")
                     .HasValue<Administrador>(TipoEmpleado.Administrador)
                     .HasValue<Camarero>(TipoEmpleado.Camarero)
-                    .HasValue<Cocinero>(TipoEmpleado.Cocinero);
+                    .HasValue<Cocinero>(TipoEmpleado.Cocinero)
+                    .HasValue<Repartidor>(TipoEmpleado.Repartidor);
 
                 entity.HasKey(e => e.Id)
                     .HasName("PK_Empleados");
@@ -67,6 +73,204 @@ namespace Gestaurante.Models.Data
 
                 entity.HasIndex(e => e.NUSS)
                     .IsUnique();
+            });
+
+            modelBuilder.Entity<UsuarioCliente>(entity =>
+            {
+                entity.HasKey(u => u.IdUsuarioCliente)
+                    .HasName("PK_UsuariosCliente");
+
+                entity.Property(u => u.IdUsuarioCliente)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(u => u.Email)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.HasIndex(u => u.Email)
+                    .IsUnique();
+
+                entity.Property(u => u.PasswordHash)
+                    .IsRequired()
+                    .HasMaxLength(255);
+
+                entity.Property(u => u.FirstName)
+                    .IsRequired()
+                    .HasMaxLength(120);
+
+                entity.Property(u => u.LastName)
+                    .IsRequired()
+                    .HasMaxLength(160);
+
+                entity.Property(u => u.Phone)
+                    .IsRequired()
+                    .HasMaxLength(25);
+
+                entity.Property(u => u.FiscalName)
+                    .IsRequired(false)
+                    .HasMaxLength(160)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(u => u.Dni)
+                    .IsRequired(false)
+                    .HasMaxLength(15)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(u => u.Cif)
+                    .IsRequired(false)
+                    .HasMaxLength(20)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(u => u.BillingStreet)
+                    .IsRequired(false)
+                    .HasMaxLength(200)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(u => u.BillingCity)
+                    .IsRequired(false)
+                    .HasMaxLength(120)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(u => u.BillingProvince)
+                    .IsRequired(false)
+                    .HasMaxLength(120)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(u => u.BillingPostalCode)
+                    .IsRequired(false)
+                    .HasMaxLength(20)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(u => u.Activo)
+                    .IsRequired()
+                    .HasDefaultValue(true);
+
+                entity.Property(u => u.EmailVerificado)
+                    .IsRequired()
+                    .HasDefaultValue(false);
+
+                entity.Property(u => u.CreatedAt)
+                    .IsRequired()
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                entity.Property(u => u.UpdatedAt)
+                    .IsRequired(false);
+            });
+
+            modelBuilder.Entity<ClienteEmailVerification>(entity =>
+            {
+                entity.HasKey(v => v.IdClienteEmailVerification)
+                    .HasName("PK_ClienteEmailVerifications");
+
+                entity.Property(v => v.IdClienteEmailVerification)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(v => v.CodeHash)
+                    .IsRequired()
+                    .HasMaxLength(128);
+
+                entity.Property(v => v.CreatedAt)
+                    .IsRequired()
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                entity.HasIndex(v => new { v.IdUsuarioCliente, v.ExpiresAt });
+
+                entity.HasOne<UsuarioCliente>()
+                    .WithMany()
+                    .HasForeignKey(v => v.IdUsuarioCliente)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ClienteDireccion>(entity =>
+            {
+                entity.HasKey(d => d.IdClienteDireccion)
+                    .HasName("PK_ClienteDirecciones");
+
+                entity.Property(d => d.IdClienteDireccion)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(d => d.Alias)
+                    .IsRequired()
+                    .HasMaxLength(80);
+
+                entity.Property(d => d.Street)
+                    .IsRequired()
+                    .HasMaxLength(200);
+
+                entity.Property(d => d.City)
+                    .IsRequired()
+                    .HasMaxLength(120);
+
+                entity.Property(d => d.Province)
+                    .IsRequired()
+                    .HasMaxLength(120);
+
+                entity.Property(d => d.PostalCode)
+                    .IsRequired()
+                    .HasMaxLength(20);
+
+                entity.Property(d => d.Notes)
+                    .IsRequired(false)
+                    .HasMaxLength(200)
+                    .HasDefaultValue(string.Empty);
+
+                entity.Property(d => d.IsDefault)
+                    .IsRequired()
+                    .HasDefaultValue(false);
+
+                entity.Property(d => d.CreatedAt)
+                    .IsRequired()
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                entity.Property(d => d.UpdatedAt)
+                    .IsRequired(false);
+
+                entity.HasOne<UsuarioCliente>()
+                    .WithMany(u => u.Direcciones)
+                    .HasForeignKey(d => d.IdUsuarioCliente)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<ClienteMetodoPago>(entity =>
+            {
+                entity.HasKey(m => m.IdClienteMetodoPago)
+                    .HasName("PK_ClienteMetodosPago");
+
+                entity.Property(m => m.IdClienteMetodoPago)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(m => m.MockPaymentToken)
+                    .IsRequired()
+                    .HasMaxLength(120);
+
+                entity.Property(m => m.Brand)
+                    .IsRequired()
+                    .HasMaxLength(40);
+
+                entity.Property(m => m.Last4)
+                    .IsRequired()
+                    .HasMaxLength(4);
+
+                entity.Property(m => m.HolderName)
+                    .IsRequired()
+                    .HasMaxLength(120);
+
+                entity.Property(m => m.IsDefault)
+                    .IsRequired()
+                    .HasDefaultValue(false);
+
+                entity.Property(m => m.CreatedAt)
+                    .IsRequired()
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                entity.HasOne<UsuarioCliente>()
+                    .WithMany(u => u.MetodosPago)
+                    .HasForeignKey(m => m.IdUsuarioCliente)
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             //modelBuilder de Platos
@@ -210,6 +414,44 @@ namespace Gestaurante.Models.Data
                     .HasComment("Ubicación física de la mesa en el restaurante");
             });
 
+            modelBuilder.Entity<MesaPublicSession>(entity =>
+            {
+                entity.HasKey(s => s.IdMesaPublicSession)
+                    .HasName("PK_MesaPublicSessions");
+
+                entity.Property(s => s.IdMesaPublicSession)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(s => s.TokenHash)
+                    .IsRequired()
+                    .HasMaxLength(128);
+
+                entity.Property(s => s.IsActive)
+                    .IsRequired()
+                    .HasDefaultValue(true);
+
+                entity.Property(s => s.CreatedAt)
+                    .IsRequired()
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                entity.Property(s => s.ExpiresAt)
+                    .IsRequired();
+
+                entity.Property(s => s.LastSeenAt)
+                    .IsRequired(false);
+
+                entity.Property(s => s.ClosedAt)
+                    .IsRequired(false);
+
+                entity.HasIndex(s => new { s.IdMesa, s.IsActive, s.ExpiresAt });
+
+                entity.HasOne<Mesa>()
+                    .WithMany()
+                    .HasForeignKey(s => s.IdMesa)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
+
             //modelBuilder de Factura   
 
             modelBuilder.Entity<Factura>(entity =>
@@ -236,14 +478,95 @@ namespace Gestaurante.Models.Data
                     .HasColumnType("decimal(5,2)")
                     .HasDefaultValue(0);
 
+                entity.Property(f => f.TipoDescuento)
+                    .IsRequired()
+                    .HasDefaultValue(TipoDescuentoFactura.FIJO);
+
+                entity.Property(f => f.ValorDescuento)
+                    .IsRequired()
+                    .HasColumnType("decimal(10,2)")
+                    .HasDefaultValue(0);
+
+                entity.Property(f => f.MotivoDescuento)
+                    .IsRequired(false)
+                    .HasMaxLength(250)
+                    .HasDefaultValue(string.Empty);
+
                 entity.Property(f => f.Estado)
                     .IsRequired()
                     .HasDefaultValue(EstadoFactura.PENDIENTE);
+
+                entity.Property(f => f.CanalPedido)
+                    .IsRequired(false);
+
+                entity.Property(f => f.MetodoCobro)
+                    .IsRequired(false);
+
+                entity.Property(f => f.ImporteEntregado)
+                    .IsRequired(false)
+                    .HasColumnType("decimal(10,2)");
+
+                entity.Property(f => f.CambioEntregado)
+                    .IsRequired(false)
+                    .HasColumnType("decimal(10,2)");
+
+                entity.Property(f => f.FechaCobro)
+                    .IsRequired(false);
+
+                entity.Property(f => f.BillingName)
+                    .IsRequired()
+                    .HasMaxLength(160)
+                    .HasDefaultValue("Cliente anónimo");
+
+                entity.Property(f => f.BillingDocument)
+                    .IsRequired(false)
+                    .HasMaxLength(20)
+                    .HasDefaultValue("00000000X");
+
+                entity.Property(f => f.BillingStreet)
+                    .IsRequired()
+                    .HasMaxLength(200)
+                    .HasDefaultValue("Calle Falsa 123");
+
+                entity.Property(f => f.BillingCity)
+                    .IsRequired()
+                    .HasMaxLength(120)
+                    .HasDefaultValue("Madrid");
+
+                entity.Property(f => f.BillingProvince)
+                    .IsRequired()
+                    .HasMaxLength(120)
+                    .HasDefaultValue("Madrid");
+
+                entity.Property(f => f.BillingPostalCode)
+                    .IsRequired()
+                    .HasMaxLength(20)
+                    .HasDefaultValue("28000");
+
+                entity.Property(f => f.BillingEmail)
+                    .IsRequired()
+                    .HasMaxLength(100)
+                    .HasDefaultValue("anonimo@gestaurante.local");
+
+                entity.Property(f => f.BillingPhone)
+                    .IsRequired()
+                    .HasMaxLength(25)
+                    .HasDefaultValue("600000000");
+
+                entity.HasOne<Mesa>()
+                    .WithMany()
+                    .HasForeignKey(f => f.IdMesa)
+                    .OnDelete(DeleteBehavior.Restrict);
 
                 entity.HasOne<Pedido>()
                     .WithMany()
                     .HasForeignKey(f => f.IdPedido)
                     .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<UsuarioCliente>()
+                    .WithMany()
+                    .HasForeignKey(f => f.IdUsuarioCliente)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
 
             //modelBuilder de Pedido
@@ -265,6 +588,59 @@ namespace Gestaurante.Models.Data
                 entity.Property(p => p.Estado)
                     .IsRequired()
                     .HasDefaultValue(EstadoPedido.PENDIENTE);
+                entity.Property(p => p.CanalPedido)
+                    .IsRequired()
+                    .HasDefaultValue(CanalPedido.SALA);
+                entity.Property(p => p.TipoEntrega)
+                    .IsRequired()
+                    .HasDefaultValue(TipoEntrega.MESA);
+                entity.Property(p => p.EstadoPago)
+                    .IsRequired()
+                    .HasDefaultValue(EstadoPago.NO_APLICA);
+                entity.Property(p => p.ClienteNombre)
+                    .IsRequired(false)
+                    .HasMaxLength(160)
+                    .HasDefaultValue(string.Empty);
+                entity.Property(p => p.ClienteEmail)
+                    .IsRequired(false)
+                    .HasMaxLength(100)
+                    .HasDefaultValue(string.Empty);
+                entity.Property(p => p.ClienteTelefono)
+                    .IsRequired(false)
+                    .HasMaxLength(25)
+                    .HasDefaultValue(string.Empty);
+                entity.Property(p => p.ClienteDireccionSnapshot)
+                    .IsRequired(false)
+                    .HasMaxLength(400)
+                    .HasDefaultValue(string.Empty);
+                entity.Property(p => p.GastosEnvio)
+                    .IsRequired()
+                    .HasColumnType("decimal(10,2)")
+                    .HasDefaultValue(0);
+                entity.Property(p => p.Notas)
+                    .IsRequired(false)
+                    .HasMaxLength(500)
+                    .HasDefaultValue(string.Empty);
+
+                entity.HasOne<Mesa>()
+                    .WithMany()
+                    .HasForeignKey(p => p.IdMesa)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<Factura>()
+                    .WithMany()
+                    .HasForeignKey(p => p.IdFactura)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<MesaPublicSession>()
+                    .WithMany()
+                    .HasForeignKey(p => p.IdMesaPublicSession)
+                    .OnDelete(DeleteBehavior.Restrict);
+
+                entity.HasOne<UsuarioCliente>()
+                    .WithMany()
+                    .HasForeignKey(p => p.IdUsuarioCliente)
+                    .OnDelete(DeleteBehavior.Restrict);
             });
 
             //modelBuilder de DetallePedido
@@ -281,6 +657,11 @@ namespace Gestaurante.Models.Data
                 entity.Property(dp => dp.PrecioUnitario)
                     .IsRequired()
                     .HasColumnType("decimal(10,2)");
+                entity.Property(dp => dp.Estado)
+                    .IsRequired()
+                    .HasDefaultValue(EstadoDetallePedido.ACTIVA);
+                entity.Property(dp => dp.FechaCancelacion)
+                    .IsRequired(false);
                 entity.HasOne<Plato>()
                     .WithMany()
                     .HasForeignKey(dp => dp.IdPlato)
