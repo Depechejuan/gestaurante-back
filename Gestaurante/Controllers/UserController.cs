@@ -4,8 +4,11 @@ using Gestaurante.Models.Entities;
 //using Gestaurante.Models.Seed;
 using Gestaurante.Models.Services;
 using Gestaurante.Utils;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
 
 namespace Gestaurante.Controllers
 {
@@ -15,13 +18,15 @@ namespace Gestaurante.Controllers
     {
         private readonly LoginService _loginService;
         private readonly IJwtService _jwtService;
+        private readonly StaffService _staffService;
         //private readonly RegisterService _registerService;
 
 
-        public UserController(LoginService loginService, IJwtService jwtService, RegisterService registerService)
+        public UserController(LoginService loginService, IJwtService jwtService, RegisterService registerService, StaffService staffService)
         {
             _loginService = loginService;
             _jwtService = jwtService;
+            _staffService = staffService;
             //_registerService = registerService;
 
         }
@@ -51,6 +56,29 @@ namespace Gestaurante.Controllers
             {
                 return ResponseHelper.ServerError("No se ha podido completar el inicio de sesión.");
             }
+        }
+
+        [Authorize]
+        [HttpGet("me")]
+        public async Task<IActionResult> GetMe()
+        {
+            var employeeId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue(JwtRegisteredClaimNames.Sub);
+            if (!Guid.TryParse(employeeId, out var id))
+                return ResponseHelper.NotAuthorized(new
+                {
+                    mensaje = "No se ha podido validar la sesión.",
+                    codigo = "INVALID_SESSION"
+                });
+
+            var empleado = await _staffService.GetBasicStaff(id);
+            if (empleado == null)
+                return ResponseHelper.NotAuthorized(new
+                {
+                    mensaje = "La sesión ya no es válida.",
+                    codigo = "SESSION_NOT_FOUND"
+                });
+
+            return ResponseHelper.SendResponse(empleado);
         }
     }
 }

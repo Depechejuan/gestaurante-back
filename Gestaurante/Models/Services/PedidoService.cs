@@ -190,12 +190,13 @@ namespace Gestaurante.Models.Services
             if (pedido.Estado != EstadoPedido.CANCELADO)
             {
                 pedido.Estado = EstadoPedido.CANCELADO;
-                foreach (var detalle in pedido.DetallesPedido.Where(d => d.Estado == EstadoDetallePedido.ACTIVA))
+                foreach (var detalle in pedido.DetallesPedido.Where(d => d.Estado != EstadoDetallePedido.CANCELADA))
                 {
                     detalle.Estado = EstadoDetallePedido.CANCELADA;
                     detalle.FechaCancelacion = DateTime.UtcNow;
                 }
 
+                SyncPedidoEstadoFromDetalles(pedido);
                 SetFechaModificacion(pedido);
                 await _db.SaveChangesAsync(cancellationToken);
                 await UpdateMesaAvailabilityAsync(pedido.IdMesa, cancellationToken);
@@ -221,14 +222,37 @@ namespace Gestaurante.Models.Services
 
         public async Task<DetallePedidoDTO?> UpdateDetalleAsync(Guid pedidoId, Guid detalleId, EditarDetallePedidoDTO dto, CancellationToken cancellationToken = default)
         {
-            var detalle = await _db.DetallesPedido
-                .AsNoTracking()
-                .FirstOrDefaultAsync(d => d.IdPedido == pedidoId && d.IdDetallePedido == detalleId, cancellationToken);
+            var pedido = await _db.Pedidos
+                .Include(p => p.DetallesPedido)
+                .FirstOrDefaultAsync(p => p.IdPedido == pedidoId, cancellationToken);
+            if (pedido == null)
+                return null;
 
+            var detalle = pedido.DetallesPedido.FirstOrDefault(d => d.IdDetallePedido == detalleId);
             if (detalle == null)
                 return null;
 
-            throw new InvalidOperationException(PedidoBloqueadoMessage);
+            if (pedido.IdFactura.HasValue)
+                throw new InvalidOperationException("No se puede cambiar una línea de un pedido ya facturado.");
+
+            if (dto.IdPlato.HasValue || dto.Cantidad.HasValue)
+                throw new InvalidOperationException(PedidoBloqueadoMessage);
+
+            if (!dto.Estado.HasValue || dto.Estado.Value == detalle.Estado)
+                return await BuildDetalleDtoAsync(detalle, cancellationToken);
+
+            ValidateDetalleTransition(detalle.Estado, dto.Estado.Value);
+
+            detalle.Estado = dto.Estado.Value;
+            detalle.FechaCancelacion = dto.Estado.Value == EstadoDetallePedido.CANCELADA ? DateTime.UtcNow : null;
+
+            SyncPedidoEstadoFromDetalles(pedido);
+            SetFechaModificacion(pedido);
+
+            await _db.SaveChangesAsync(cancellationToken);
+            await UpdateMesaAvailabilityAsync(pedido.IdMesa, cancellationToken);
+
+            return await BuildDetalleDtoAsync(detalle, cancellationToken);
         }
 
         public async Task<bool> DeleteDetalleAsync(Guid pedidoId, Guid detalleId, CancellationToken cancellationToken = default)
@@ -260,14 +284,12 @@ namespace Gestaurante.Models.Services
             if (detalle == null)
                 return null;
 
-            if (detalle.Estado == EstadoDetallePedido.ACTIVA)
+            if (detalle.Estado != EstadoDetallePedido.CANCELADA)
             {
                 detalle.Estado = EstadoDetallePedido.CANCELADA;
                 detalle.FechaCancelacion = DateTime.UtcNow;
+                SyncPedidoEstadoFromDetalles(pedido);
                 SetFechaModificacion(pedido);
-
-                if (!pedido.DetallesPedido.Any(d => d.Estado == EstadoDetallePedido.ACTIVA))
-                    pedido.Estado = EstadoPedido.CANCELADO;
 
                 await _db.SaveChangesAsync(cancellationToken);
                 await UpdateMesaAvailabilityAsync(pedido.IdMesa, cancellationToken);
@@ -389,7 +411,7 @@ namespace Gestaurante.Models.Services
 
         private static DetallePedidoDTO MapDetalle(DetallePedido detalle, string platoNombre)
         {
-            var subtotal = detalle.Estado == EstadoDetallePedido.ACTIVA
+            var subtotal = detalle.Estado != EstadoDetallePedido.CANCELADA
                 ? detalle.Cantidad * detalle.PrecioUnitario
                 : 0;
 
@@ -404,7 +426,7 @@ namespace Gestaurante.Models.Services
                 Subtotal = subtotal,
                 Estado = detalle.Estado,
                 FechaCancelacion = detalle.FechaCancelacion,
-                SeTieneEnCuentaEnFactura = detalle.Estado == EstadoDetallePedido.ACTIVA
+                SeTieneEnCuentaEnFactura = detalle.Estado != EstadoDetallePedido.CANCELADA
             };
         }
 
@@ -426,6 +448,60 @@ namespace Gestaurante.Models.Services
                 throw new InvalidOperationException($"Transición de estado no válida: {current} -> {next}.");
         }
 
+        private static void ValidateDetalleTransition(EstadoDetallePedido current, EstadoDetallePedido next)
+        {
+            if (current == EstadoDetallePedido.CANCELADA || current == EstadoDetallePedido.ENTREGADA)
+                throw new InvalidOperationException("La línea ya está cerrada y no admite más cambios.");
+
+            var allowedTransitions = new Dictionary<EstadoDetallePedido, EstadoDetallePedido[]>
+            {
+                [EstadoDetallePedido.ACTIVA] = new[] { EstadoDetallePedido.EN_COCINA, EstadoDetallePedido.ENTREGADA, EstadoDetallePedido.CANCELADA },
+                [EstadoDetallePedido.EN_COCINA] = new[] { EstadoDetallePedido.PREPARADO, EstadoDetallePedido.CANCELADA },
+                [EstadoDetallePedido.PREPARADO] = new[] { EstadoDetallePedido.ENTREGADA, EstadoDetallePedido.CANCELADA }
+            };
+
+            if (!allowedTransitions.TryGetValue(current, out var nextStates) || !nextStates.Contains(next))
+                throw new InvalidOperationException($"Transición de línea no válida: {current} -> {next}.");
+        }
+
+        private static void SyncPedidoEstadoFromDetalles(Pedido pedido)
+        {
+            var detallesVivos = pedido.DetallesPedido
+                .Where(d => d.Estado != EstadoDetallePedido.CANCELADA)
+                .ToList();
+
+            if (detallesVivos.Count == 0)
+            {
+                pedido.Estado = EstadoPedido.CANCELADO;
+                return;
+            }
+
+            if (detallesVivos.All(d => d.Estado == EstadoDetallePedido.ENTREGADA))
+            {
+                pedido.Estado = EstadoPedido.ENTREGADO;
+                return;
+            }
+
+            if (pedido.Estado == EstadoPedido.EN_CAMINO)
+                return;
+
+            if (detallesVivos.Any(d => d.Estado == EstadoDetallePedido.PREPARADO))
+            {
+                pedido.Estado = EstadoPedido.LISTO;
+                return;
+            }
+
+            if (detallesVivos.Any(d => d.Estado == EstadoDetallePedido.EN_COCINA))
+            {
+                pedido.Estado = EstadoPedido.PREPARACION;
+                return;
+            }
+
+            pedido.Estado = detallesVivos.Any(d => d.Estado == EstadoDetallePedido.ENTREGADA)
+                ? EstadoPedido.CONFIRMADO
+                : EstadoPedido.PENDIENTE;
+        }
+
         private async Task UpdateMesaAvailabilityAsync(Guid? mesaId, CancellationToken cancellationToken)
         {
             if (!mesaId.HasValue)
@@ -443,7 +519,7 @@ namespace Gestaurante.Models.Services
 
             var tieneLineasActivas = pedidosMesa.Count > 0 && await _db.DetallesPedido
                 .AsNoTracking()
-                .AnyAsync(d => pedidosMesa.Contains(d.IdPedido) && d.Estado == EstadoDetallePedido.ACTIVA, cancellationToken);
+                .AnyAsync(d => pedidosMesa.Contains(d.IdPedido) && d.Estado != EstadoDetallePedido.CANCELADA, cancellationToken);
 
             mesa.Estado = !tieneLineasActivas;
             await _db.SaveChangesAsync(cancellationToken);
@@ -452,7 +528,7 @@ namespace Gestaurante.Models.Services
         private async Task CreateLocalPickupFacturaAsync(Pedido pedido, CancellationToken cancellationToken)
         {
             var total = await _db.DetallesPedido
-                .Where(d => d.IdPedido == pedido.IdPedido && d.Estado == EstadoDetallePedido.ACTIVA)
+                .Where(d => d.IdPedido == pedido.IdPedido && d.Estado != EstadoDetallePedido.CANCELADA)
                 .SumAsync(d => d.Cantidad * d.PrecioUnitario, cancellationToken);
 
             if (total <= 0)
@@ -484,14 +560,14 @@ namespace Gestaurante.Models.Services
                     pedido.ClienteEmail,
                     "Tu pedido está listo para recoger",
                     $"Hola {pedido.ClienteNombre}, tu pedido {pedido.IdPedido} ya está listo para recoger en el restaurante.",
-                    cancellationToken);
+                    cancellationToken: cancellationToken);
 
             if (pedido.TipoEntrega == TipoEntrega.DOMICILIO && pedido.Estado == EstadoPedido.EN_CAMINO)
                 await _emailService.SendAsync(
                     pedido.ClienteEmail,
                     "Tu pedido ya está en camino",
                     $"Hola {pedido.ClienteNombre}, tu pedido {pedido.IdPedido} ya está en camino.",
-                    cancellationToken);
+                    cancellationToken: cancellationToken);
         }
 
         private static void SetFechaModificacion(Pedido pedido)

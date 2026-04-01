@@ -127,7 +127,7 @@ namespace Gestaurante.Models.Services
                     cliente.Email,
                     "Factura de tu pedido online",
                     $"Tu pedido online {pedido.IdPedido} ha sido pagado correctamente. Factura: {factura.NumeroFactura}. Total: {factura.TotalConDescuento:0.00} EUR.",
-                    cancellationToken);
+                    cancellationToken: cancellationToken);
 
                 return await _pedidoService.GetByIdAsync(pedido.IdPedido, cancellationToken)
                     ?? pedido;

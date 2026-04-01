@@ -1,3 +1,4 @@
+using Gestaurante.Models.DTO;
 using Gestaurante.Models.Services;
 using Gestaurante.Utils;
 using Microsoft.AspNetCore.Authorization;
@@ -30,6 +31,20 @@ namespace Gestaurante.Controllers
             return cliente == null
                 ? ResponseHelper.NotFound("Cliente no encontrado.")
                 : ResponseHelper.SendResponse(cliente);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateInternalClienteDTO dto, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var cliente = await _customerAccountService.CreateInternalClienteAsync(dto, cancellationToken);
+                return ResponseHelper.SendResponse(cliente, 201);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ResponseHelper.Conflict(ex.Message);
+            }
         }
     }
 }

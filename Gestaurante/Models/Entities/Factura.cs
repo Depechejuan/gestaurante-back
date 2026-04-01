@@ -15,9 +15,17 @@ namespace Gestaurante.Models.Entities
         [Required]
         public double PrecioTotal { get; set; }
         public double Descuento { get; set; }
+        public TipoDescuentoFactura TipoDescuento { get; set; } = TipoDescuentoFactura.FIJO;
+        public double ValorDescuento { get; set; }
+        [MaxLength(250)]
+        public string MotivoDescuento { get; set; } = string.Empty;
         public EstadoFactura Estado { get; set; } = EstadoFactura.PENDIENTE;
         public CanalPedido? CanalPedido { get; set; }
         public DateTime FechaFactura { get; set; } = DateTime.UtcNow;
+        public MetodoPagoFactura? MetodoCobro { get; set; }
+        public double? ImporteEntregado { get; set; }
+        public double? CambioEntregado { get; set; }
+        public DateTime? FechaCobro { get; set; }
 
         [Required]
         [MaxLength(160)]

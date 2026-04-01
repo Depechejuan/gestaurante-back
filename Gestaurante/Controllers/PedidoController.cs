@@ -131,6 +131,9 @@ namespace Gestaurante.Controllers
         [HttpPut("{pedidoId:guid}/linea/{detalleId:guid}")]
         public async Task<IActionResult> UpdateDetalle(Guid pedidoId, Guid detalleId, [FromBody] EditarDetallePedidoDTO dto, CancellationToken cancellationToken)
         {
+            if (dto.Estado.HasValue && !CanManageDetalleEstado(dto.Estado.Value))
+                return ResponseHelper.Forbidden("No tienes permisos para cambiar esta línea a ese estado.");
+
             try
             {
                 var detalle = await _pedidoService.UpdateDetalleAsync(pedidoId, detalleId, dto, cancellationToken);
@@ -179,6 +182,20 @@ namespace Gestaurante.Controllers
             {
                 return ResponseHelper.Conflict(ex.Message);
             }
+        }
+
+        private bool CanManageDetalleEstado(EstadoDetallePedido estado)
+        {
+            if (User.IsInRole("Administrador"))
+                return true;
+
+            return estado switch
+            {
+                EstadoDetallePedido.EN_COCINA => User.IsInRole("Camarero"),
+                EstadoDetallePedido.ENTREGADA => User.IsInRole("Camarero"),
+                EstadoDetallePedido.PREPARADO => User.IsInRole("Cocinero"),
+                _ => false
+            };
         }
     }
 }

@@ -13,5 +13,6 @@ namespace Gestaurante.Models.DTO
         public string BillingProvince { get; set; } = string.Empty;
         public string BillingPostalCode { get; set; } = string.Empty;
         public string Phone { get; set; } = string.Empty;
+        public bool EsAnonimo { get; set; }
     }
 }

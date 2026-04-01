@@ -35,7 +35,7 @@ namespace Gestaurante.Controllers
         }
 
         [HttpGet("clientes/search")]
-        public async Task<IActionResult> SearchClientes([FromQuery] string query, CancellationToken cancellationToken)
+        public async Task<IActionResult> SearchClientes([FromQuery] string? query, CancellationToken cancellationToken)
         {
             return ResponseHelper.SendResponse(await _facturaService.SearchClientesAsync(query, cancellationToken));
         }
@@ -84,6 +84,22 @@ namespace Gestaurante.Controllers
             try
             {
                 var factura = await _facturaService.AssignClienteAsync(id, dto, cancellationToken);
+                return factura == null
+                    ? ResponseHelper.NotFound("Factura no encontrada.")
+                    : ResponseHelper.SendResponse(factura);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ResponseHelper.ValidationError(ex.Message);
+            }
+        }
+
+        [HttpPost("{id:guid}/cobrar")]
+        public async Task<IActionResult> Charge(Guid id, [FromBody] CobrarFacturaDTO dto, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var factura = await _facturaService.ChargeAsync(id, dto, cancellationToken);
                 return factura == null
                     ? ResponseHelper.NotFound("Factura no encontrada.")
                     : ResponseHelper.SendResponse(factura);

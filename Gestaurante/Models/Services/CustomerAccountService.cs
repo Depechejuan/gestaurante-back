@@ -137,6 +137,44 @@ namespace Gestaurante.Models.Services
             return users.Select(MapProfile).ToList();
         }
 
+        public async Task<ClienteProfileDTO> CreateInternalClienteAsync(CreateInternalClienteDTO dto, CancellationToken cancellationToken = default)
+        {
+            var email = dto.Email.Trim();
+            if (await _db.UsuariosCliente.AnyAsync(user => user.Email.ToLower() == email.ToLower(), cancellationToken))
+                throw new InvalidOperationException("Ya existe un cliente con ese email.");
+
+            var firstName = string.IsNullOrWhiteSpace(dto.FirstName)
+                ? ResolveFirstNameFromFiscalName(dto.FiscalName)
+                : dto.FirstName.Trim();
+            var lastName = string.IsNullOrWhiteSpace(dto.LastName)
+                ? ResolveLastNameFromFiscalName(dto.FiscalName)
+                : dto.LastName.Trim();
+
+            var user = new UsuarioCliente
+            {
+                IdUsuarioCliente = Guid.NewGuid(),
+                Email = email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString("N")),
+                FirstName = firstName,
+                LastName = lastName,
+                Phone = dto.Phone.Trim(),
+                FiscalName = dto.FiscalName.Trim(),
+                Dni = dto.Dni.Trim().ToUpperInvariant(),
+                Cif = dto.Cif.Trim().ToUpperInvariant(),
+                BillingStreet = dto.BillingStreet.Trim(),
+                BillingCity = dto.BillingCity.Trim(),
+                BillingProvince = dto.BillingProvince.Trim(),
+                BillingPostalCode = dto.BillingPostalCode.Trim(),
+                Activo = true,
+                EmailVerificado = true,
+                CreatedAt = DateTime.UtcNow
+            };
+
+            await _db.UsuariosCliente.AddAsync(user, cancellationToken);
+            await _db.SaveChangesAsync(cancellationToken);
+            return MapProfile(user);
+        }
+
         public async Task<ClienteProfileDTO?> UpdateProfileAsync(Guid clienteId, UpdateClienteProfileDTO dto, CancellationToken cancellationToken = default)
         {
             var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.IdUsuarioCliente == clienteId, cancellationToken);
@@ -276,7 +314,7 @@ namespace Gestaurante.Models.Services
                 user.Email,
                 "Código de validación de Gestaurante",
                 $"Tu código de validación es {code}. Caduca en 15 minutos.",
-                cancellationToken);
+                cancellationToken: cancellationToken);
         }
 
         private async Task ClearDefaultAddressAsync(Guid clienteId, CancellationToken cancellationToken)
@@ -304,6 +342,25 @@ namespace Gestaurante.Models.Services
 
             var sanitized = localPart.Replace('.', ' ').Replace('_', ' ').Replace('-', ' ').Trim();
             return string.IsNullOrWhiteSpace(sanitized) ? "Cliente" : sanitized;
+        }
+
+        private static string ResolveFirstNameFromFiscalName(string fiscalName)
+        {
+            var sanitized = fiscalName.Trim();
+            if (string.IsNullOrWhiteSpace(sanitized))
+                return "Cliente";
+
+            return sanitized.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "Cliente";
+        }
+
+        private static string ResolveLastNameFromFiscalName(string fiscalName)
+        {
+            var sanitized = fiscalName.Trim();
+            if (string.IsNullOrWhiteSpace(sanitized))
+                return string.Empty;
+
+            var parts = sanitized.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            return parts.Length > 1 ? string.Join(' ', parts.Skip(1)) : string.Empty;
         }
 
         private static ClienteProfileDTO MapProfile(UsuarioCliente user)

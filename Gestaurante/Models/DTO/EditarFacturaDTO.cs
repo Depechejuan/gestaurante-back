@@ -13,6 +13,12 @@ namespace Gestaurante.Models.DTO
 
         [Range(0, double.MaxValue)]
         public double? Descuento { get; set; }
+        public TipoDescuentoFactura? TipoDescuento { get; set; }
+
+        [Range(0, double.MaxValue)]
+        public double? ValorDescuento { get; set; }
+        [MaxLength(250)]
+        public string? MotivoDescuento { get; set; }
 
         public EstadoFactura? Estado { get; set; }
         public DateTime? FechaFactura { get; set; }

@@ -3,6 +3,7 @@ using System;
 using Gestaurante.Models.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Gestaurante.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260401065949_AddFacturaChargeAndDiscountOptions")]
+    partial class AddFacturaChargeAndDiscountOptions
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -410,12 +413,6 @@ namespace Gestaurante.Migrations
 
                     b.Property<int?>("MetodoCobro")
                         .HasColumnType("integer");
-
-                    b.Property<string>("MotivoDescuento")
-                        .ValueGeneratedOnAdd()
-                        .HasMaxLength(250)
-                        .HasColumnType("character varying(250)")
-                        .HasDefaultValue("");
 
                     b.Property<double>("PrecioTotal")
                         .ValueGeneratedOnAdd()

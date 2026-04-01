@@ -14,6 +14,8 @@ namespace Gestaurante.Models.DTO
 
         [Range(0, double.MaxValue)]
         public double Descuento { get; set; } = 0;
+        [MaxLength(250)]
+        public string MotivoDescuento { get; set; } = string.Empty;
 
         public EstadoFactura Estado { get; set; } = EstadoFactura.PENDIENTE;
         public DateTime? FechaFactura { get; set; }

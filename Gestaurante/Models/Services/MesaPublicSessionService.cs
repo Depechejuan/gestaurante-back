@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.RegularExpressions;
 using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
@@ -18,6 +19,34 @@ namespace Gestaurante.Models.Services
         {
             _db = db;
             _pedidoService = pedidoService;
+        }
+
+        public async Task<Guid> ResolveMesaPublicIdAsync(string mesaPublicId, CancellationToken cancellationToken = default)
+        {
+            if (Guid.TryParse(mesaPublicId, out var mesaId))
+            {
+                var exists = await _db.Mesas.AsNoTracking().AnyAsync(m => m.IdMesa == mesaId, cancellationToken);
+                if (exists)
+                    return mesaId;
+            }
+
+            if (!int.TryParse(mesaPublicId, out var numericId) || numericId <= 0)
+                throw new KeyNotFoundException("Mesa no encontrada.");
+
+            var mesas = await _db.Mesas
+                .AsNoTracking()
+                .ToListAsync(cancellationToken);
+
+            if (mesas.Count == 0 || numericId > mesas.Count)
+                throw new KeyNotFoundException("Mesa no encontrada.");
+
+            var orderedMesas = mesas
+                .OrderBy(m => ResolveMesaAliasOrder(m.Ubicacion).LetterOrder)
+                .ThenBy(m => ResolveMesaAliasOrder(m.Ubicacion).NumberOrder)
+                .ThenBy(m => m.Ubicacion)
+                .ToList();
+
+            return orderedMesas[numericId - 1].IdMesa;
         }
 
         public async Task<MesaPublicSessionDTO> OpenOrResumeAsync(Guid mesaId, string? currentSessionToken, CancellationToken cancellationToken = default)
@@ -172,7 +201,7 @@ namespace Gestaurante.Models.Services
 
                 var hasActiveLines = pendingPedidoIds.Count > 0 && await _db.DetallesPedido
                     .AsNoTracking()
-                    .AnyAsync(d => pendingPedidoIds.Contains(d.IdPedido) && d.Estado == EstadoDetallePedido.ACTIVA, cancellationToken);
+                    .AnyAsync(d => pendingPedidoIds.Contains(d.IdPedido) && d.Estado != EstadoDetallePedido.CANCELADA, cancellationToken);
 
                 if (!hasActiveLines)
                     mesa.Estado = true;
@@ -201,6 +230,17 @@ namespace Gestaurante.Models.Services
             using var sha = SHA256.Create();
             var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(token));
             return Convert.ToHexString(bytes);
+        }
+
+        private static (int LetterOrder, int NumberOrder) ResolveMesaAliasOrder(string ubicacion)
+        {
+            var match = Regex.Match(ubicacion ?? string.Empty, @"([A-Z])(\d+)$", RegexOptions.IgnoreCase);
+            if (!match.Success)
+                return (int.MaxValue, int.MaxValue);
+
+            var letter = char.ToUpperInvariant(match.Groups[1].Value[0]);
+            var number = int.TryParse(match.Groups[2].Value, out var parsedNumber) ? parsedNumber : int.MaxValue;
+            return (letter - 'A', number);
         }
     }
 }

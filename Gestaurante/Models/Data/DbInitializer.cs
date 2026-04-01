@@ -6,6 +6,9 @@ namespace Gestaurante.Models.Data
 {
     public static class DbInitializer
     {
+        private const string AnonymousCustomerEmail = "anonimo@gestaurante.local";
+        private const string AnonymousCustomerName = "Cliente anónimo";
+
         public static async Task SeedDefaultEmployeesAsync(AppDbContext context, CancellationToken cancellationToken = default)
         {
             var defaultCredentials = GetDefaultEmployeeCredentials();
@@ -111,6 +114,8 @@ namespace Gestaurante.Models.Data
 
             string clientHash = BCrypt.Net.BCrypt.HashPassword(clientPassword, BCrypt.Net.BCrypt.GenerateSalt(12));
 
+            await EnsureAnonymousCustomerAsync(context, clientHash, cancellationToken);
+
             var defaultCustomers = new List<DefaultCustomerSeed>
             {
                 new("ana.morales@cliente.gestaurante.com", "Ana", "Morales Vega", "600100101", "11111111H", ""),
@@ -165,6 +170,55 @@ namespace Gestaurante.Models.Data
                     CreatedAt = DateTime.UtcNow
                 }, cancellationToken);
             }
+
+            await context.SaveChangesAsync(cancellationToken);
+        }
+
+        private static async Task EnsureAnonymousCustomerAsync(AppDbContext context, string clientHash, CancellationToken cancellationToken)
+        {
+            var anonymousCustomer = await context.UsuariosCliente
+                .FirstOrDefaultAsync(cliente => cliente.Email == AnonymousCustomerEmail, cancellationToken);
+
+            if (anonymousCustomer == null)
+            {
+                await context.UsuariosCliente.AddAsync(new UsuarioCliente
+                {
+                    IdUsuarioCliente = Guid.NewGuid(),
+                    Email = AnonymousCustomerEmail,
+                    PasswordHash = clientHash,
+                    FirstName = "Cliente",
+                    LastName = "anónimo",
+                    Phone = "600000000",
+                    FiscalName = AnonymousCustomerName,
+                    Dni = "00000000X",
+                    Cif = string.Empty,
+                    BillingStreet = "Calle Falsa 123",
+                    BillingCity = "Madrid",
+                    BillingProvince = "Madrid",
+                    BillingPostalCode = "28000",
+                    Activo = false,
+                    EmailVerificado = true,
+                    CreatedAt = DateTime.UtcNow
+                }, cancellationToken);
+
+                await context.SaveChangesAsync(cancellationToken);
+                return;
+            }
+
+            anonymousCustomer.PasswordHash = clientHash;
+            anonymousCustomer.FirstName = "Cliente";
+            anonymousCustomer.LastName = "anónimo";
+            anonymousCustomer.Phone = "600000000";
+            anonymousCustomer.FiscalName = AnonymousCustomerName;
+            anonymousCustomer.Dni = "00000000X";
+            anonymousCustomer.Cif = string.Empty;
+            anonymousCustomer.BillingStreet = "Calle Falsa 123";
+            anonymousCustomer.BillingCity = "Madrid";
+            anonymousCustomer.BillingProvince = "Madrid";
+            anonymousCustomer.BillingPostalCode = "28000";
+            anonymousCustomer.Activo = false;
+            anonymousCustomer.EmailVerificado = true;
+            anonymousCustomer.UpdatedAt = DateTime.UtcNow;
 
             await context.SaveChangesAsync(cancellationToken);
         }

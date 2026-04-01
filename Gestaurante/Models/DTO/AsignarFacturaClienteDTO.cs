@@ -3,6 +3,7 @@ namespace Gestaurante.Models.DTO
     public class AsignarFacturaClienteDTO
     {
         public Guid? IdUsuarioCliente { get; set; }
+        public bool CreateCustomer { get; set; }
         public string FiscalName { get; set; } = string.Empty;
         public string Dni { get; set; } = string.Empty;
         public string Cif { get; set; } = string.Empty;

@@ -5,7 +5,7 @@ namespace Gestaurante.Models.Services
 {
     public interface IEmailService
     {
-        Task SendAsync(string toEmail, string subject, string body, CancellationToken cancellationToken = default);
+        Task SendAsync(string toEmail, string subject, string body, bool isHtml = false, CancellationToken cancellationToken = default);
     }
 
     public class SmtpEmailService : IEmailService
@@ -29,7 +29,7 @@ namespace Gestaurante.Models.Services
             _fromName = Environment.GetEnvironmentVariable("SMTP_FROM_NAME") ?? "Gestaurante";
         }
 
-        public async Task SendAsync(string toEmail, string subject, string body, CancellationToken cancellationToken = default)
+        public async Task SendAsync(string toEmail, string subject, string body, bool isHtml = false, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(_host) || string.IsNullOrWhiteSpace(_port))
             {
@@ -50,7 +50,7 @@ namespace Gestaurante.Models.Services
                 From = new MailAddress(_fromEmail, _fromName),
                 Subject = subject,
                 Body = body,
-                IsBodyHtml = false
+                IsBodyHtml = isHtml
             };
             message.To.Add(toEmail);
 

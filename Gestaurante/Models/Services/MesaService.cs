@@ -175,7 +175,7 @@ namespace Gestaurante.Models.Services
             foreach (var pedido in pedidosActivos)
             {
                 var totalPedido = detalles
-                    .Where(d => d.IdPedido == pedido.IdPedido && d.Estado == EstadoDetallePedido.ACTIVA)
+                    .Where(d => d.IdPedido == pedido.IdPedido && d.Estado != EstadoDetallePedido.CANCELADA)
                     .Sum(d => d.Cantidad * d.PrecioUnitario);
 
                 if (totalPedido > 0)
@@ -203,7 +203,7 @@ namespace Gestaurante.Models.Services
 
             return pedidoIds.Count > 0 && await _db.DetallesPedido
                 .AsNoTracking()
-                .AnyAsync(d => pedidoIds.Contains(d.IdPedido) && d.Estado == EstadoDetallePedido.ACTIVA, cancellationToken);
+                .AnyAsync(d => pedidoIds.Contains(d.IdPedido) && d.Estado != EstadoDetallePedido.CANCELADA, cancellationToken);
         }
 
         private async Task<Dictionary<Guid, string>> ResolvePlatoNamesAsync(List<DetallePedido> detalles, CancellationToken cancellationToken)
@@ -251,7 +251,7 @@ namespace Gestaurante.Models.Services
 
         private static DetallePedidoDTO MapDetalle(DetallePedido detalle, string platoNombre)
         {
-            var subtotal = detalle.Estado == EstadoDetallePedido.ACTIVA
+            var subtotal = detalle.Estado != EstadoDetallePedido.CANCELADA
                 ? detalle.Cantidad * detalle.PrecioUnitario
                 : 0;
 
@@ -266,7 +266,7 @@ namespace Gestaurante.Models.Services
                 Subtotal = subtotal,
                 Estado = detalle.Estado,
                 FechaCancelacion = detalle.FechaCancelacion,
-                SeTieneEnCuentaEnFactura = detalle.Estado == EstadoDetallePedido.ACTIVA
+                SeTieneEnCuentaEnFactura = detalle.Estado != EstadoDetallePedido.CANCELADA
             };
         }
 

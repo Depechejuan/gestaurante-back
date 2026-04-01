@@ -478,11 +478,39 @@ namespace Gestaurante.Models.Data
                     .HasColumnType("decimal(5,2)")
                     .HasDefaultValue(0);
 
+                entity.Property(f => f.TipoDescuento)
+                    .IsRequired()
+                    .HasDefaultValue(TipoDescuentoFactura.FIJO);
+
+                entity.Property(f => f.ValorDescuento)
+                    .IsRequired()
+                    .HasColumnType("decimal(10,2)")
+                    .HasDefaultValue(0);
+
+                entity.Property(f => f.MotivoDescuento)
+                    .IsRequired(false)
+                    .HasMaxLength(250)
+                    .HasDefaultValue(string.Empty);
+
                 entity.Property(f => f.Estado)
                     .IsRequired()
                     .HasDefaultValue(EstadoFactura.PENDIENTE);
 
                 entity.Property(f => f.CanalPedido)
+                    .IsRequired(false);
+
+                entity.Property(f => f.MetodoCobro)
+                    .IsRequired(false);
+
+                entity.Property(f => f.ImporteEntregado)
+                    .IsRequired(false)
+                    .HasColumnType("decimal(10,2)");
+
+                entity.Property(f => f.CambioEntregado)
+                    .IsRequired(false)
+                    .HasColumnType("decimal(10,2)");
+
+                entity.Property(f => f.FechaCobro)
                     .IsRequired(false);
 
                 entity.Property(f => f.BillingName)
