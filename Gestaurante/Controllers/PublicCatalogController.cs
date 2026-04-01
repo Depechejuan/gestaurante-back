@@ -20,5 +20,15 @@ namespace Gestaurante.Controllers
         {
             return ResponseHelper.SendResponse(await _publicCheckoutService.GetCatalogoAsync(cancellationToken));
         }
+
+        [HttpGet("{id:guid}")]
+        public async Task<IActionResult> GetPlato(Guid id, CancellationToken cancellationToken)
+        {
+            var plato = await _publicCheckoutService.GetCatalogoItemAsync(id, cancellationToken);
+            if (plato == null)
+                return NotFound(new { error = "Plato no encontrado." });
+
+            return ResponseHelper.SendResponse(plato);
+        }
     }
 }

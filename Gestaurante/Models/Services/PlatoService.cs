@@ -1,6 +1,7 @@
 using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
+using Gestaurante.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
@@ -174,6 +175,15 @@ namespace Gestaurante.Models.Services
 
         private static PlatoDTO MapPlato(Plato plato)
         {
+            var ingredientes = plato.PlatoIngredientes
+                .Select(pi => new PlatoIngredienteDTO
+                {
+                    IdIngrediente = pi.IdIngrediente,
+                    Nombre = pi.Ingrediente?.Nombre ?? string.Empty
+                })
+                .OrderBy(i => i.Nombre)
+                .ToList();
+
             return new PlatoDTO
             {
                 IdPlato = plato.IdPlato,
@@ -184,14 +194,8 @@ namespace Gestaurante.Models.Services
                 Precio = plato.Precio,
                 IdCategoria = plato.IdCategoria,
                 CategoriaDescripcion = plato.Categoria?.Descripcion ?? string.Empty,
-                Ingredientes = plato.PlatoIngredientes
-                    .Select(pi => new PlatoIngredienteDTO
-                    {
-                        IdIngrediente = pi.IdIngrediente,
-                        Nombre = pi.Ingrediente?.Nombre ?? string.Empty
-                    })
-                    .OrderBy(i => i.Nombre)
-                    .ToList()
+                Ingredientes = ingredientes,
+                Alergenos = AllergenResolver.ResolveFromIngredientes(ingredientes.Select(ingrediente => ingrediente.Nombre))
             };
         }
     }

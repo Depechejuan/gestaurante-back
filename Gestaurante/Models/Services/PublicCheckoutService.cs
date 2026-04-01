@@ -1,6 +1,7 @@
 using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
+using Gestaurante.Utils;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
@@ -29,7 +30,7 @@ namespace Gestaurante.Models.Services
 
         public async Task<List<PlatoDTO>> GetCatalogoAsync(CancellationToken cancellationToken = default)
         {
-            return await _db.Platos
+            var platos = await _db.Platos
                 .AsNoTracking()
                 .Include(p => p.Categoria)
                 .Include(p => p.PlatoIngredientes)
@@ -37,26 +38,21 @@ namespace Gestaurante.Models.Services
                 .Where(p => p.Disponible)
                 .OrderBy(p => p.Categoria!.Descripcion)
                 .ThenBy(p => p.Nombre)
-                .Select(p => new PlatoDTO
-                {
-                    IdPlato = p.IdPlato,
-                    Nombre = p.Nombre,
-                    Descripcion = p.Descripcion,
-                    Imagen = p.Imagen,
-                    Disponible = p.Disponible,
-                    Precio = p.Precio,
-                    IdCategoria = p.IdCategoria,
-                    CategoriaDescripcion = p.Categoria != null ? p.Categoria.Descripcion : string.Empty,
-                    Ingredientes = p.PlatoIngredientes
-                        .OrderBy(pi => pi.Ingrediente != null ? pi.Ingrediente.Nombre : string.Empty)
-                        .Select(pi => new PlatoIngredienteDTO
-                        {
-                            IdIngrediente = pi.IdIngrediente,
-                            Nombre = pi.Ingrediente != null ? pi.Ingrediente.Nombre : string.Empty
-                        })
-                        .ToList()
-                })
                 .ToListAsync(cancellationToken);
+
+            return platos.Select(MapPublicPlato).ToList();
+        }
+
+        public async Task<PlatoDTO?> GetCatalogoItemAsync(Guid platoId, CancellationToken cancellationToken = default)
+        {
+            var plato = await _db.Platos
+                .AsNoTracking()
+                .Include(p => p.Categoria)
+                .Include(p => p.PlatoIngredientes)
+                    .ThenInclude(pi => pi.Ingrediente)
+                .FirstOrDefaultAsync(p => p.IdPlato == platoId && p.Disponible, cancellationToken);
+
+            return plato == null ? null : MapPublicPlato(plato);
         }
 
         public async Task<PedidoDTO> CreateOnlineOrderAsync(Guid clienteId, CreateOnlineOrderDTO dto, CancellationToken cancellationToken = default)
@@ -174,6 +170,34 @@ namespace Gestaurante.Models.Services
                 return 2;
 
             return 0;
+        }
+
+        private static PlatoDTO MapPublicPlato(Plato plato)
+        {
+            var ingredientesRaw = plato.PlatoIngredientes
+                .OrderBy(pi => pi.Ingrediente != null ? pi.Ingrediente.Nombre : string.Empty)
+                .Select(pi => new PlatoIngredienteDTO
+                {
+                    IdIngrediente = pi.IdIngrediente,
+                    Nombre = pi.Ingrediente != null ? pi.Ingrediente.Nombre : string.Empty
+                })
+                .ToList();
+
+            var ingredientes = PublicIngredientResolver.ResolveForPublic(ingredientesRaw);
+
+            return new PlatoDTO
+            {
+                IdPlato = plato.IdPlato,
+                Nombre = plato.Nombre,
+                Descripcion = plato.Descripcion,
+                Imagen = plato.Imagen,
+                Disponible = plato.Disponible,
+                Precio = plato.Precio,
+                IdCategoria = plato.IdCategoria,
+                CategoriaDescripcion = plato.Categoria != null ? plato.Categoria.Descripcion : string.Empty,
+                Ingredientes = ingredientes,
+                Alergenos = AllergenResolver.ResolveFromIngredientes(ingredientes.Select(ingrediente => ingrediente.Nombre))
+            };
         }
     }
 }
