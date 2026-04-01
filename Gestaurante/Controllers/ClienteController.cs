@@ -36,32 +36,18 @@ namespace Gestaurante.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CreateInternalClienteDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var cliente = await _customerAccountService.CreateInternalClienteAsync(dto, cancellationToken);
-                return ResponseHelper.SendResponse(cliente, 201);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.Conflict(ex.Message);
-            }
+            var cliente = await _customerAccountService.CreateInternalClienteAsync(dto, cancellationToken);
+            return ResponseHelper.SendResponse(cliente, 201);
         }
 
         [HttpPut("{id:guid}")]
         [Authorize(Roles = "Administrador")]
         public async Task<IActionResult> Update(Guid id, [FromBody] UpdateInternalClienteDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var cliente = await _customerAccountService.UpdateInternalClienteAsync(id, dto, cancellationToken);
-                return cliente == null
-                    ? ResponseHelper.NotFound("Cliente no encontrado.")
-                    : ResponseHelper.SendResponse(cliente);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.Conflict(ex.Message);
-            }
+            var cliente = await _customerAccountService.UpdateInternalClienteAsync(id, dto, cancellationToken);
+            return cliente == null
+                ? ResponseHelper.NotFound("Cliente no encontrado.")
+                : ResponseHelper.SendResponse(cliente);
         }
 
         [HttpPatch("{id:guid}/estado")]

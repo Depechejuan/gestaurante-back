@@ -1,6 +1,7 @@
 using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
@@ -35,7 +36,7 @@ namespace Gestaurante.Models.Services
         public async Task<IngredienteDTO> CreateAsync(IngredienteDTO dto, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(dto.Nombre))
-                throw new InvalidOperationException("El nombre del ingrediente es obligatorio.");
+                throw new ValidationException("El nombre del ingrediente es obligatorio.");
 
 
             var nombre = dto.Nombre.Trim();
@@ -59,7 +60,7 @@ namespace Gestaurante.Models.Services
 
 
             if (string.IsNullOrWhiteSpace(dto.Nombre))
-                throw new InvalidOperationException("El nombre del ingrediente es obligatorio.");
+                throw new ValidationException("El nombre del ingrediente es obligatorio.");
 
 
             var nombre = dto.Nombre.Trim();

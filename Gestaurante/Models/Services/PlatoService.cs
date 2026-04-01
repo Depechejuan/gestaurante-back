@@ -1,7 +1,7 @@
 using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
-using Gestaurante.Utils;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
@@ -9,10 +9,12 @@ namespace Gestaurante.Models.Services
     public class PlatoService
     {
         private readonly AppDbContext _db;
+        private readonly CatalogProjectionService _catalogProjectionService;
 
-        public PlatoService(AppDbContext db)
+        public PlatoService(AppDbContext db, CatalogProjectionService catalogProjectionService)
         {
             _db = db;
+            _catalogProjectionService = catalogProjectionService;
         }
 
         public async Task<List<PlatoDTO>> GetAllAsync(CancellationToken cancellationToken = default)
@@ -25,7 +27,7 @@ namespace Gestaurante.Models.Services
                 .OrderBy(p => p.Nombre)
                 .ToListAsync(cancellationToken);
 
-            return platos.Select(MapPlato).ToList();
+            return platos.Select(_catalogProjectionService.MapInternal).ToList();
         }
 
         public async Task<PlatoDTO?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
@@ -37,7 +39,7 @@ namespace Gestaurante.Models.Services
                     .ThenInclude(pi => pi.Ingrediente)
                 .FirstOrDefaultAsync(p => p.IdPlato == id, cancellationToken);
 
-            return plato == null ? null : MapPlato(plato);
+            return plato == null ? null : _catalogProjectionService.MapInternal(plato);
         }
 
         public async Task<PlatoDTO> CreateAsync(PlatoDTO dto, CancellationToken cancellationToken = default)
@@ -46,7 +48,7 @@ namespace Gestaurante.Models.Services
 
             var categoria = await _db.Categorias.FirstOrDefaultAsync(c => c.IdCategoria == dto.IdCategoria, cancellationToken);
             if (categoria == null)
-                throw new InvalidOperationException("La categoria indicada no existe.");
+                throw new ValidationException("La categoria indicada no existe.");
 
             var duplicate = await _db.Platos.AnyAsync(p => p.Nombre.ToLower() == dto.Nombre.Trim().ToLower(), cancellationToken);
             if (duplicate)
@@ -87,7 +89,7 @@ namespace Gestaurante.Models.Services
 
             var categoria = await _db.Categorias.FirstOrDefaultAsync(c => c.IdCategoria == dto.IdCategoria, cancellationToken);
             if (categoria == null)
-                throw new InvalidOperationException("La categoria indicada no existe.");
+                throw new ValidationException("La categoria indicada no existe.");
 
             var duplicate = await _db.Platos.AnyAsync(
                 p => p.IdPlato != id && p.Nombre.ToLower() == dto.Nombre.Trim().ToLower(),
@@ -144,7 +146,7 @@ namespace Gestaurante.Models.Services
                 .ToListAsync(cancellationToken);
 
             if (ingredientes.Count != ingredienteIds.Count)
-                throw new InvalidOperationException("Uno o varios ingredientes indicados no existen.");
+                throw new ValidationException("Uno o varios ingredientes indicados no existen.");
 
             return ingredientes;
         }
@@ -161,42 +163,16 @@ namespace Gestaurante.Models.Services
         private static void ValidatePlatoInput(PlatoDTO dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Nombre))
-                throw new InvalidOperationException("El nombre del plato es obligatorio.");
+                throw new ValidationException("El nombre del plato es obligatorio.");
 
             if (string.IsNullOrWhiteSpace(dto.Descripcion))
-                throw new InvalidOperationException("La descripcion del plato es obligatoria.");
+                throw new ValidationException("La descripcion del plato es obligatoria.");
 
             if (dto.IdCategoria == Guid.Empty)
-                throw new InvalidOperationException("Debes indicar una categoria valida.");
+                throw new ValidationException("Debes indicar una categoria valida.");
 
             if (dto.Precio < 0)
-                throw new InvalidOperationException("El precio del plato no puede ser negativo.");
-        }
-
-        private static PlatoDTO MapPlato(Plato plato)
-        {
-            var ingredientes = plato.PlatoIngredientes
-                .Select(pi => new PlatoIngredienteDTO
-                {
-                    IdIngrediente = pi.IdIngrediente,
-                    Nombre = pi.Ingrediente?.Nombre ?? string.Empty
-                })
-                .OrderBy(i => i.Nombre)
-                .ToList();
-
-            return new PlatoDTO
-            {
-                IdPlato = plato.IdPlato,
-                Nombre = plato.Nombre,
-                Descripcion = plato.Descripcion,
-                Imagen = plato.Imagen,
-                Disponible = plato.Disponible,
-                Precio = plato.Precio,
-                IdCategoria = plato.IdCategoria,
-                CategoriaDescripcion = plato.Categoria?.Descripcion ?? string.Empty,
-                Ingredientes = ingredientes,
-                Alergenos = AllergenResolver.ResolveFromIngredientes(ingredientes.Select(ingrediente => ingrediente.Nombre))
-            };
+                throw new ValidationException("El precio del plato no puede ser negativo.");
         }
     }
 }

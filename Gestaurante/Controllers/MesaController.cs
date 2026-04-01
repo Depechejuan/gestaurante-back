@@ -39,65 +39,33 @@ namespace Gestaurante.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CrearMesaDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var mesa = await _mesaService.CreateAsync(dto, cancellationToken);
-                return ResponseHelper.SendResponse(mesa, 201);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            var mesa = await _mesaService.CreateAsync(dto, cancellationToken);
+            return ResponseHelper.SendResponse(mesa, 201);
         }
 
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] EditarMesaDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var mesa = await _mesaService.UpdateAsync(id, dto, cancellationToken);
-                return mesa == null
-                    ? ResponseHelper.NotFound("Mesa no encontrada.")
-                    : ResponseHelper.SendResponse(mesa);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.Conflict(ex.Message);
-            }
+            var mesa = await _mesaService.UpdateAsync(id, dto, cancellationToken);
+            return mesa == null
+                ? ResponseHelper.NotFound("Mesa no encontrada.")
+                : ResponseHelper.SendResponse(mesa);
         }
 
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            try
-            {
-                var deleted = await _mesaService.DeleteAsync(id, cancellationToken);
-                return deleted
-                    ? ResponseHelper.SendResponse(new { id, deleted = true })
-                    : ResponseHelper.NotFound("Mesa no encontrada.");
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.Conflict(ex.Message);
-            }
+            var deleted = await _mesaService.DeleteAsync(id, cancellationToken);
+            return deleted
+                ? ResponseHelper.SendResponse(new { id, deleted = true })
+                : ResponseHelper.NotFound("Mesa no encontrada.");
         }
 
         [HttpPost("{id:guid}/cerrar")]
         public async Task<IActionResult> CloseMesa(Guid id, [FromBody] CerrarMesaDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var factura = await _facturaService.CloseMesaAsync(id, dto, cancellationToken);
-                return ResponseHelper.SendResponse(factura, 201);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return ResponseHelper.NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            var factura = await _facturaService.CloseMesaAsync(id, dto, cancellationToken);
+            return ResponseHelper.SendResponse(factura, 201);
         }
     }
 }

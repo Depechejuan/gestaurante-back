@@ -3,7 +3,7 @@
 ## Qué hace este proyecto
 `gestaurante-back` es la API ASP.NET Core de Gestaurante. Gestiona:
 
-- autenticación de empleados por JWT
+- autenticación de empleados con JWT
 - autenticación de clientes online con JWT separado
 - empleados, clientes, mesas, pedidos, líneas de pedido y facturas
 - catálogo de categorías, ingredientes y platos
@@ -11,80 +11,61 @@
 - pedido online con recogida o domicilio
 - facturación, cobro, descuentos y envío por email
 
-La base de datos es PostgreSQL y el proyecto usa Entity Framework Core con migraciones.
+La persistencia está en PostgreSQL con Entity Framework Core.
 
 ## Arquitectura
-La solución está organizada como una API monolítica modular.
+La solución sigue un monolito modular:
 
 - `Controllers`: capa HTTP
 - `Models/Entities`: entidades persistidas
 - `Models/DTO`: contratos de entrada y salida
-- `Models/Services`: lógica de negocio
-- `Models/Data`: `DbContext`, factory y seed
-- `Models/Enums`: enums compartidos del dominio
-- `Utils`: helpers de mapeo, respuesta y lógica de apoyo
+- `Models/Services`: lógica de negocio y orquestación
+- `Models/Data`: `DbContext`, factoría de diseño y seed
+- `Models/Enums`: enums del dominio
+- `Configuration`: opciones tipadas y carga de `.env`
+- `Infrastructure`: bootstrap explícito de desarrollo
+- `Middleware`: manejo global de excepciones
+- `Utils`: helpers de mapeo y lógica compartida
 - `Migrations`: migraciones EF Core
-- `docs`: documentación interna y planes
+- `docs`: documentación interna
 
-### Flujo general
-- Los controladores reciben DTOs.
-- Los servicios hacen validación de negocio y persistencia.
-- EF Core trabaja contra [AppDbContext.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Data/AppDbContext.cs).
-- En el arranque se aplican migraciones y se ejecuta seed mínimo.
+### Piezas clave
+- Arranque y wiring: [Program.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Program.cs)
+- Configuración tipada: [AppConfiguration.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Configuration/AppConfiguration.cs), [AppOptions.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Configuration/AppOptions.cs)
+- Bootstrap controlado: [AppBootstrapService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Infrastructure/AppBootstrapService.cs)
+- Manejo global de errores: [ApiExceptionMiddleware.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Middleware/ApiExceptionMiddleware.cs)
+- Contexto EF: [AppDbContext.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Data/AppDbContext.cs)
+- Seed: [DbInitializer.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Data/DbInitializer.cs)
 
 ## Ubicación de cada cosa
 
-### Punto de entrada
-- [Program.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Program.cs)
-
 ### Controladores principales
-- `auth empleados`: [UserController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/UserController.cs)
-- `admin`: [AdminController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/AdminController.cs)
-- `clientes internos`: [ClienteController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/ClienteController.cs)
-- `catálogo público`: [PublicCatalogController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/PublicCatalogController.cs)
-- `cuenta cliente`: [PublicAccountController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/PublicAccountController.cs)
-- `checkout público`: [PublicCheckoutController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/PublicCheckoutController.cs)
-- `flujo QR`: [PublicMesaController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/PublicMesaController.cs)
-- `mesas`: [MesaController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/MesaController.cs)
-- `pedidos`: [PedidoController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/PedidoController.cs)
-- `facturas`: [FacturaController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/FacturaController.cs)
-- `catálogo interno`: [CategoriaController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/CategoriaController.cs), [IngredienteController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/IngredienteController.cs), [PlatoController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/PlatoController.cs)
+- empleados y auth interna: [UserController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/UserController.cs), [AdminController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/AdminController.cs)
+- clientes internos: [ClienteController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/ClienteController.cs)
+- catálogo público: [PublicCatalogController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/PublicCatalogController.cs)
+- cuenta cliente: [PublicAccountController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/PublicAccountController.cs)
+- checkout público: [PublicCheckoutController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/PublicCheckoutController.cs)
+- flujo QR: [PublicMesaController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/PublicMesaController.cs)
+- operación interna: [MesaController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/MesaController.cs), [PedidoController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/PedidoController.cs), [FacturaController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/FacturaController.cs)
+- catálogo interno: [CategoriaController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/CategoriaController.cs), [IngredienteController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/IngredienteController.cs), [PlatoController.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Controllers/PlatoController.cs)
 
 ### Servicios clave
-- autenticación empleados: [LoginService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/LoginService.cs), [JwtService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/JWTService.cs)
-- autenticación clientes: [CustomerAccountService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/CustomerAccountService.cs), [CustomerJwtService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/CustomerJwtService.cs)
-- mesas y QR: [MesaService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/MesaService.cs), [MesaPublicSessionService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/MesaPublicSessionService.cs)
-- pedidos: [PedidoService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/PedidoService.cs), [PublicCheckoutService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/PublicCheckoutService.cs)
-- facturas: [FacturaService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/FacturaService.cs)
-- catálogo: [CategoriaService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/CategoriaService.cs), [IngredienteService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/IngredienteService.cs), [PlatoService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/PlatoService.cs)
-- email: [IEmailService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/IEmailService.cs)
-- imágenes empleado: [CloudinaryEmployeeImageService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/CloudinaryEmployeeImageService.cs)
-
-### Datos y persistencia
-- contexto EF: [AppDbContext.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Data/AppDbContext.cs)
-- seed: [DbInitializer.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Data/DbInitializer.cs)
-- migraciones: [Migrations](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Migrations)
-
-### Utilidades
-- alérgenos: [AllergenResolver.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Utils/AllergenResolver.cs)
-- ingredientes visibles para carta pública: [PublicIngredientResolver.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Utils/PublicIngredientResolver.cs)
-- helpers de DTO: [ToDTO.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Utils/ToDTO.cs)
-
-## Entidades importantes
-- empleados: `Administrador`, `Camarero`, `Cocinero`, `Repartidor`
-- clientes: `UsuarioCliente`
-- catálogo: `Categoria`, `Ingrediente`, `Plato`, `PlatoIngrediente`
-- operación: `Mesa`, `MesaPublicSession`, `Pedido`, `DetallePedido`, `Factura`
-- cliente online: `ClienteDireccion`, `ClienteMetodoPago`, `ClienteEmailVerification`
+- auth empleados: [LoginService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/LoginService.cs), [JwtService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/JwtService.cs)
+- auth clientes: [CustomerAccountService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/CustomerAccountService.cs), [CustomerJwtService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/CustomerJwtService.cs)
+- catálogo: [CatalogProjectionService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/CatalogProjectionService.cs), [CategoriaService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/CategoriaService.cs), [IngredienteService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/IngredienteService.cs), [PlatoService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/PlatoService.cs)
+- operación: [MesaService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/MesaService.cs), [PedidoService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/PedidoService.cs), [FacturaService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/FacturaService.cs)
+- QR y online: [MesaPublicSessionService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/MesaPublicSessionService.cs), [PublicCheckoutService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/PublicCheckoutService.cs)
+- email: [IEmailService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/IEmailService.cs), [SmtpEmailService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/SmtpEmailService.cs)
+- imágenes: [CloudinaryService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/CloudinaryService.cs), [CloudinaryEmployeeImageService.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Services/CloudinaryEmployeeImageService.cs)
 
 ## Instalación y ejecución
 
 ### Requisitos
 - .NET SDK 9
 - PostgreSQL accesible
-- variables de entorno configuradas
+- `.env` configurado
 
-### Restaurar y compilar
+### Compilar
 ```bash
 cd /Users/juanleon/Documents/gestaurante/gestaurante-back
 dotnet build Gestaurante/Gestaurante.csproj
@@ -93,7 +74,7 @@ dotnet build Gestaurante/Gestaurante.csproj
 ### Variables de entorno
 Crear [`.env`](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/.env) a partir de [`.env.example`](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/.env.example).
 
-Variables mínimas:
+Mínimas:
 ```env
 DB_HOST=
 DB_PORT=
@@ -109,44 +90,53 @@ CUSTOMER_JWT_AUDIENCE=
 PORT=3003
 ```
 
-Variables opcionales/importantes:
-- `DEFAULT_*_PASSWORD`: seed de usuarios por defecto
-- `SMTP_*`: emails de validación, facturas y notificaciones
+Importantes:
+- `BOOTSTRAP_*`: migraciones, seed y reparación de datos solo bajo modo explícito
+- `DEFAULT_*_PASSWORD`: seed por defecto
+- `SMTP_*`: emails de validación, facturas y avisos
 - `CLOUDINARY_*`: imágenes de empleados
+- `CORS_ALLOWED_ORIGINS`: orígenes de producción
 
-### Ejecutar en desarrollo
+### Ejecutar la API
 ```bash
 cd /Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante
 dotnet run
 ```
 
-La API:
+El arranque normal:
 - carga `.env`
+- valida configuración
+- levanta la API
+- no migra ni seedea por defecto
+
+### Bootstrap explícito de desarrollo
+```bash
+cd /Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante
+dotnet run -- --bootstrap
+```
+
+Ese modo:
 - aplica migraciones
-- ejecuta seed mínimo
-- escucha en `http://localhost:${PORT}`
+- ejecuta reparaciones controladas
+- siembra datos por defecto
 
-### OpenAPI
-Con la API levantada:
+### Endpoints útiles
 - [openapi/v1.json](http://localhost:3003/openapi/v1.json)
+- [health](http://localhost:3003/health)
 
-## Reglas útiles para trabajar aquí
-- Los enums del dominio viven en [Models/Enums](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Enums).
-- Si el cambio toca base de datos, revisa si necesita migración.
-- No metas lógica de negocio pesada en controladores: muévela a `Models/Services`.
-- No dupliques reglas entre el catálogo público y el interno si pueden centralizarse.
-- El precio histórico debe venir de `DetallePedido.PrecioUnitario`, no del precio actual del plato.
-- Los clientes no se eliminan físicamente para operación diaria; se activan/desactivan.
-- Las facturas anónimas parten de un cliente anónimo controlado por seed.
+## Reglas útiles
+- Los enums de dominio viven en [Models/Enums](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Enums).
+- No metas lógica de negocio en controladores; muévela a `Models/Services`.
+- Usa excepciones coherentes y deja que el middleware global traduzca el error HTTP.
+- Si el cambio toca persistencia, revisa si necesita migración.
+- El precio histórico siempre sale de `DetallePedido.PrecioUnitario`, no del precio actual del plato.
+- Los clientes se activan/desactivan; no se borran para operación diaria.
 
 ## Puntos delicados
-- El arranque ejecuta migraciones y seed automáticamente.
-- Hay dos esquemas de autenticación:
-  - empleados
-  - clientes
-- Algunas pantallas del front dependen de endpoints públicos y privados distintos.
+- Hay dos esquemas JWT: empleados y clientes.
+- El bootstrap de desarrollo muta datos; el arranque normal no.
 - La búsqueda de clientes para facturas debe ignorar clientes inactivos.
-- El flujo QR y el pedido online comparten partes del dominio, pero no la autenticación.
+- El flujo QR y el pedido online comparten dominio, pero no autenticación.
 
 ## Comandos rápidos
 ```bash
@@ -157,9 +147,11 @@ dotnet build Gestaurante/Gestaurante.csproj
 cd Gestaurante
 dotnet run
 
-# crear migración
-dotnet ef migrations add NombreMigracion
+# bootstrap explícito
+cd Gestaurante
+dotnet run -- --bootstrap
 
-# aplicar migraciones
+# migraciones
+dotnet ef migrations add NombreMigracion
 dotnet ef database update
 ```

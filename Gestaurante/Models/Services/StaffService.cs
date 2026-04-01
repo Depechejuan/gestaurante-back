@@ -1,18 +1,21 @@
-﻿using Gestaurante.Models.Data;
+﻿using Gestaurante.Configuration;
+using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Gestaurante.Models.Services
 {
     public class StaffService
     {
         private readonly AppDbContext _db;
+        private readonly CloudinaryOptions _cloudinaryOptions;
 
-        public StaffService(AppDbContext db)
+        public StaffService(AppDbContext db, IOptions<CloudinaryOptions> cloudinaryOptions)
         {
             _db = db;
+            _cloudinaryOptions = cloudinaryOptions.Value;
         }
 
         public async Task<List<EmpleadoFullDTO>> GetAllUsers()
@@ -79,7 +82,7 @@ namespace Gestaurante.Models.Services
             };
         }
 
-        private static string NormalizeEmployeeImageUrl(string imageUrl)
+        private string NormalizeEmployeeImageUrl(string imageUrl)
         {
             if (string.IsNullOrWhiteSpace(imageUrl))
                 return string.Empty;
@@ -88,12 +91,7 @@ namespace Gestaurante.Models.Services
                 (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
                 return imageUrl;
 
-            var cloudName = Environment.GetEnvironmentVariable("CLOUDINARY_CLOUD_NAME")
-                ?? Environment.GetEnvironmentVariable("CLOUDINARY_CLOUDNAME");
-            if (string.IsNullOrWhiteSpace(cloudName))
-                return imageUrl;
-
-            return $"https://res.cloudinary.com/{cloudName}/image/upload/{imageUrl.TrimStart('/')}";
+            return _cloudinaryOptions.ResolveImageUrl(imageUrl);
         }
 
         private static TipoEmpleado ResolveEmployeeType(Empleado empleado)

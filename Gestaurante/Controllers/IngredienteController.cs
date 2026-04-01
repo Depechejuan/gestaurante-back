@@ -39,33 +39,19 @@ namespace Gestaurante.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] IngredienteDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var ingrediente = await _service.CreateAsync(dto, cancellationToken);
-                return ResponseHelper.SendResponse(ingrediente, 201);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            var ingrediente = await _service.CreateAsync(dto, cancellationToken);
+            return ResponseHelper.SendResponse(ingrediente, 201);
         }
 
         [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] IngredienteDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var ingrediente = await _service.UpdateAsync(id, dto, cancellationToken);
-                if (ingrediente == null)
-                    return ResponseHelper.NotFound("Ingrediente no encontrado.");
+            var ingrediente = await _service.UpdateAsync(id, dto, cancellationToken);
+            if (ingrediente == null)
+                return ResponseHelper.NotFound("Ingrediente no encontrado.");
 
-                return ResponseHelper.SendResponse(ingrediente);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            return ResponseHelper.SendResponse(ingrediente);
         }
 
         [Authorize(Roles = nameof(TipoEmpleado.Administrador))]

@@ -41,51 +41,30 @@ namespace Gestaurante.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] PlatoDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var plato = await _service.CreateAsync(dto, cancellationToken);
-                return ResponseHelper.SendResponse(plato, 201);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            var plato = await _service.CreateAsync(dto, cancellationToken);
+            return ResponseHelper.SendResponse(plato, 201);
         }
 
         [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] PlatoDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var plato = await _service.UpdateAsync(id, dto, cancellationToken);
-                if (plato == null)
-                    return ResponseHelper.NotFound("Plato no encontrado.");
+            var plato = await _service.UpdateAsync(id, dto, cancellationToken);
+            if (plato == null)
+                return ResponseHelper.NotFound("Plato no encontrado.");
 
-                return ResponseHelper.SendResponse(plato);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            return ResponseHelper.SendResponse(plato);
         }
 
         [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            try
-            {
-                var deleted = await _service.DeleteAsync(id, cancellationToken);
-                if (!deleted)
-                    return ResponseHelper.NotFound("Plato no encontrado.");
+            var deleted = await _service.DeleteAsync(id, cancellationToken);
+            if (!deleted)
+                return ResponseHelper.NotFound("Plato no encontrado.");
 
-                return ResponseHelper.SendResponse(new { deleted = true });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.Conflict(ex.Message);
-            }
+            return ResponseHelper.SendResponse(new { deleted = true });
         }
     }
 }

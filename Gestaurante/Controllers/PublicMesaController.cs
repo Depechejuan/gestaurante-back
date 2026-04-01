@@ -19,20 +19,9 @@ namespace Gestaurante.Controllers
         [HttpPost("{id}/session")]
         public async Task<IActionResult> OpenSession(string id, [FromBody] OpenMesaPublicSessionDTO? dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var mesaId = await _mesaPublicSessionService.ResolveMesaPublicIdAsync(id, cancellationToken);
-                var session = await _mesaPublicSessionService.OpenOrResumeAsync(mesaId, dto?.SessionToken, cancellationToken);
-                return ResponseHelper.SendResponse(session, 201);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return ResponseHelper.NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.Conflict(ex.Message);
-            }
+            var mesaId = await _mesaPublicSessionService.ResolveMesaPublicIdAsync(id, cancellationToken);
+            var session = await _mesaPublicSessionService.OpenOrResumeAsync(mesaId, dto?.SessionToken, cancellationToken);
+            return ResponseHelper.SendResponse(session, 201);
         }
 
         [HttpGet("{id}/pedidos")]
@@ -41,20 +30,9 @@ namespace Gestaurante.Controllers
             if (string.IsNullOrWhiteSpace(sessionToken))
                 return ResponseHelper.NotAuthorized("Debes indicar una sesión pública válida.");
 
-            try
-            {
-                var mesaId = await _mesaPublicSessionService.ResolveMesaPublicIdAsync(id, cancellationToken);
-                var pedidos = await _mesaPublicSessionService.GetPedidosAsync(mesaId, sessionToken, cancellationToken);
-                return ResponseHelper.SendResponse(pedidos);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return ResponseHelper.NotFound(ex.Message);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return ResponseHelper.NotAuthorized(ex.Message);
-            }
+            var mesaId = await _mesaPublicSessionService.ResolveMesaPublicIdAsync(id, cancellationToken);
+            var pedidos = await _mesaPublicSessionService.GetPedidosAsync(mesaId, sessionToken, cancellationToken);
+            return ResponseHelper.SendResponse(pedidos);
         }
 
         [HttpPost("{id}/pedido")]
@@ -63,24 +41,9 @@ namespace Gestaurante.Controllers
             if (string.IsNullOrWhiteSpace(sessionToken))
                 return ResponseHelper.NotAuthorized("Debes indicar una sesión pública válida.");
 
-            try
-            {
-                var mesaId = await _mesaPublicSessionService.ResolveMesaPublicIdAsync(id, cancellationToken);
-                var pedido = await _mesaPublicSessionService.CreatePedidoAsync(mesaId, sessionToken, dto, cancellationToken);
-                return ResponseHelper.SendResponse(pedido, 201);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return ResponseHelper.NotAuthorized(ex.Message);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return ResponseHelper.NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            var mesaId = await _mesaPublicSessionService.ResolveMesaPublicIdAsync(id, cancellationToken);
+            var pedido = await _mesaPublicSessionService.CreatePedidoAsync(mesaId, sessionToken, dto, cancellationToken);
+            return ResponseHelper.SendResponse(pedido, 201);
         }
     }
 }

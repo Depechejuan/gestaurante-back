@@ -1,7 +1,7 @@
 using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
-using Gestaurante.Utils;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
@@ -13,19 +13,22 @@ namespace Gestaurante.Models.Services
         private readonly FacturaService _facturaService;
         private readonly MockPaymentService _mockPaymentService;
         private readonly IEmailService _emailService;
+        private readonly CatalogProjectionService _catalogProjectionService;
 
         public PublicCheckoutService(
             AppDbContext db,
             PedidoService pedidoService,
             FacturaService facturaService,
             MockPaymentService mockPaymentService,
-            IEmailService emailService)
+            IEmailService emailService,
+            CatalogProjectionService catalogProjectionService)
         {
             _db = db;
             _pedidoService = pedidoService;
             _facturaService = facturaService;
             _mockPaymentService = mockPaymentService;
             _emailService = emailService;
+            _catalogProjectionService = catalogProjectionService;
         }
 
         public async Task<List<PlatoDTO>> GetCatalogoAsync(CancellationToken cancellationToken = default)
@@ -40,7 +43,7 @@ namespace Gestaurante.Models.Services
                 .ThenBy(p => p.Nombre)
                 .ToListAsync(cancellationToken);
 
-            return platos.Select(MapPublicPlato).ToList();
+            return platos.Select(_catalogProjectionService.MapPublic).ToList();
         }
 
         public async Task<PlatoDTO?> GetCatalogoItemAsync(Guid platoId, CancellationToken cancellationToken = default)
@@ -52,7 +55,7 @@ namespace Gestaurante.Models.Services
                     .ThenInclude(pi => pi.Ingrediente)
                 .FirstOrDefaultAsync(p => p.IdPlato == platoId && p.Disponible, cancellationToken);
 
-            return plato == null ? null : MapPublicPlato(plato);
+            return plato == null ? null : _catalogProjectionService.MapPublic(plato);
         }
 
         public async Task<PedidoDTO> CreateOnlineOrderAsync(Guid clienteId, CreateOnlineOrderDTO dto, CancellationToken cancellationToken = default)
@@ -64,10 +67,10 @@ namespace Gestaurante.Models.Services
                 throw new UnauthorizedAccessException("La cuenta del cliente no está activa o validada.");
 
             if (dto.Detalles.Count == 0)
-                throw new InvalidOperationException("El pedido online debe contener al menos una línea.");
+                throw new ValidationException("El pedido online debe contener al menos una línea.");
 
             if (dto.TipoEntrega == TipoEntrega.DOMICILIO && !dto.PagarOnline)
-                throw new InvalidOperationException("Los pedidos a domicilio requieren pago online.");
+                throw new ValidationException("Los pedidos a domicilio requieren pago online.");
 
             var subtotalProductos = await ResolveSubtotalProductosAsync(dto.Detalles, cancellationToken);
             var gastosEnvio = ResolveGastosEnvio(dto.TipoEntrega, subtotalProductos);
@@ -76,7 +79,7 @@ namespace Gestaurante.Models.Services
             if (dto.TipoEntrega == TipoEntrega.DOMICILIO)
             {
                 if (!dto.IdClienteDireccion.HasValue)
-                    throw new InvalidOperationException("Debes seleccionar una dirección de entrega.");
+                    throw new ValidationException("Debes seleccionar una dirección de entrega.");
 
                 var direccion = await _db.ClienteDirecciones
                     .AsNoTracking()
@@ -150,7 +153,7 @@ namespace Gestaurante.Models.Services
                     throw new KeyNotFoundException("Uno de los platos del pedido no existe.");
 
                 if (!plato.Disponible)
-                    throw new InvalidOperationException($"El plato {plato.Nombre} no está disponible.");
+                    throw new ValidationException($"El plato {plato.Nombre} no está disponible.");
 
                 subtotal += detalle.Cantidad * Convert.ToDouble(plato.Precio);
             }
@@ -170,34 +173,6 @@ namespace Gestaurante.Models.Services
                 return 2;
 
             return 0;
-        }
-
-        private static PlatoDTO MapPublicPlato(Plato plato)
-        {
-            var ingredientesRaw = plato.PlatoIngredientes
-                .OrderBy(pi => pi.Ingrediente != null ? pi.Ingrediente.Nombre : string.Empty)
-                .Select(pi => new PlatoIngredienteDTO
-                {
-                    IdIngrediente = pi.IdIngrediente,
-                    Nombre = pi.Ingrediente != null ? pi.Ingrediente.Nombre : string.Empty
-                })
-                .ToList();
-
-            var ingredientes = PublicIngredientResolver.ResolveForPublic(ingredientesRaw);
-
-            return new PlatoDTO
-            {
-                IdPlato = plato.IdPlato,
-                Nombre = plato.Nombre,
-                Descripcion = plato.Descripcion,
-                Imagen = plato.Imagen,
-                Disponible = plato.Disponible,
-                Precio = plato.Precio,
-                IdCategoria = plato.IdCategoria,
-                CategoriaDescripcion = plato.Categoria != null ? plato.Categoria.Descripcion : string.Empty,
-                Ingredientes = ingredientes,
-                Alergenos = AllergenResolver.ResolveFromIngredientes(ingredientes.Select(ingrediente => ingrediente.Nombre))
-            };
         }
     }
 }

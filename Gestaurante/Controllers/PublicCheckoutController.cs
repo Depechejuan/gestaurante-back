@@ -28,23 +28,8 @@ namespace Gestaurante.Controllers
             if (!clienteId.HasValue)
                 return ResponseHelper.NotAuthorized("Token de cliente inválido.");
 
-            try
-            {
-                var pedido = await _publicCheckoutService.CreateOnlineOrderAsync(clienteId.Value, dto, cancellationToken);
-                return ResponseHelper.SendResponse(pedido, 201);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return ResponseHelper.NotAuthorized(ex.Message);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return ResponseHelper.NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            var pedido = await _publicCheckoutService.CreateOnlineOrderAsync(clienteId.Value, dto, cancellationToken);
+            return ResponseHelper.SendResponse(pedido, 201);
         }
 
         [HttpGet("account/orders")]

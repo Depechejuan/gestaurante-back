@@ -1,6 +1,8 @@
 using BCrypt.Net;
+using Gestaurante.Configuration;
 using Gestaurante.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Gestaurante.Models.Data
 {
@@ -34,7 +36,7 @@ namespace Gestaurante.Models.Data
 
             string repartidorPassword = Environment.GetEnvironmentVariable("DEFAULT_REPARTIDOR_PASSWORD")
                 ?? Environment.GetEnvironmentVariable("DEFAULT_CAMARERO_PASSWORD")
-                ?? throw new Exception("DEFAULT_REPARTIDOR_PASSWORD o DEFAULT_CAMARERO_PASSWORD no definido");
+                ?? throw new InvalidOperationException("DEFAULT_REPARTIDOR_PASSWORD o DEFAULT_CAMARERO_PASSWORD no definido");
 
             string repartidorHash = BCrypt.Net.BCrypt.HashPassword(repartidorPassword, BCrypt.Net.BCrypt.GenerateSalt(12));
 
@@ -110,7 +112,7 @@ namespace Gestaurante.Models.Data
         public static async Task SeedDefaultCustomersAsync(AppDbContext context, CancellationToken cancellationToken = default)
         {
             string clientPassword = Environment.GetEnvironmentVariable("DEFAULT_CLIENT_PASSWORD")
-                ?? throw new Exception("DEFAULT_CLIENT_PASSWORD no definido");
+                ?? throw new InvalidOperationException("DEFAULT_CLIENT_PASSWORD no definido");
 
             string clientHash = BCrypt.Net.BCrypt.HashPassword(clientPassword, BCrypt.Net.BCrypt.GenerateSalt(12));
 
@@ -226,11 +228,11 @@ namespace Gestaurante.Models.Data
         private static List<DefaultEmployeeSeed> GetDefaultEmployeeCredentials()
         {
             string adminPassword = Environment.GetEnvironmentVariable("DEFAULT_ADMIN_PASSWORD")
-                ?? throw new Exception("DEFAULT_ADMIN_PASSWORD no definido");
+                ?? throw new InvalidOperationException("DEFAULT_ADMIN_PASSWORD no definido");
             string camareroPassword = Environment.GetEnvironmentVariable("DEFAULT_CAMARERO_PASSWORD")
-                ?? throw new Exception("DEFAULT_CAMARERO_PASSWORD no definido");
+                ?? throw new InvalidOperationException("DEFAULT_CAMARERO_PASSWORD no definido");
             string cocineroPassword = Environment.GetEnvironmentVariable("DEFAULT_COCINERO_PASSWORD")
-                ?? throw new Exception("DEFAULT_COCINERO_PASSWORD no definido");
+                ?? throw new InvalidOperationException("DEFAULT_COCINERO_PASSWORD no definido");
             string repartidorPassword = Environment.GetEnvironmentVariable("DEFAULT_REPARTIDOR_PASSWORD")
                 ?? camareroPassword;
 

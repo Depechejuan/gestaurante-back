@@ -39,51 +39,30 @@ namespace Gestaurante.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CategoriaDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var categoria = await _service.CreateAsync(dto, cancellationToken);
-                return ResponseHelper.SendResponse(categoria, 201);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            var categoria = await _service.CreateAsync(dto, cancellationToken);
+            return ResponseHelper.SendResponse(categoria, 201);
         }
 
         [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] CategoriaDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var categoria = await _service.UpdateAsync(id, dto, cancellationToken);
-                if (categoria == null)
-                    return ResponseHelper.NotFound("Categoria no encontrada.");
+            var categoria = await _service.UpdateAsync(id, dto, cancellationToken);
+            if (categoria == null)
+                return ResponseHelper.NotFound("Categoria no encontrada.");
 
-                return ResponseHelper.SendResponse(categoria);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            return ResponseHelper.SendResponse(categoria);
         }
 
         [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            try
-            {
-                var deleted = await _service.DeleteAsync(id, cancellationToken);
-                if (!deleted)
-                    return ResponseHelper.NotFound("Categoria no encontrada.");
+            var deleted = await _service.DeleteAsync(id, cancellationToken);
+            if (!deleted)
+                return ResponseHelper.NotFound("Categoria no encontrada.");
 
-                return ResponseHelper.SendResponse(new { deleted = true });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.Conflict(ex.Message);
-            }
+            return ResponseHelper.SendResponse(new { deleted = true });
         }
     }
 }

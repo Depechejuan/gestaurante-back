@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
 using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
@@ -67,16 +68,16 @@ namespace Gestaurante.Models.Services
                 .Where(v => v.IdUsuarioCliente == user.IdUsuarioCliente && v.ConsumedAt == null)
                 .OrderByDescending(v => v.CreatedAt)
                 .FirstOrDefaultAsync(cancellationToken)
-                ?? throw new InvalidOperationException("No hay un código de validación activo.");
+                ?? throw new ValidationException("No hay un código de validación activo.");
 
             if (verification.ExpiresAt <= DateTime.UtcNow)
-                throw new InvalidOperationException("El código ha expirado.");
+                throw new ValidationException("El código ha expirado.");
 
             verification.AttemptCount += 1;
             if (verification.CodeHash != HashCode(dto.Code))
             {
                 await _db.SaveChangesAsync(cancellationToken);
-                throw new InvalidOperationException("Código de validación incorrecto.");
+                throw new ValidationException("Código de validación incorrecto.");
             }
 
             verification.ConsumedAt = DateTime.UtcNow;
@@ -92,7 +93,7 @@ namespace Gestaurante.Models.Services
                 ?? throw new KeyNotFoundException("Cuenta no encontrada.");
 
             if (user.EmailVerificado)
-                throw new InvalidOperationException("La cuenta ya tiene el email validado.");
+                throw new ValidationException("La cuenta ya tiene el email validado.");
 
             await GenerateAndSendVerificationCodeAsync(user, cancellationToken);
         }

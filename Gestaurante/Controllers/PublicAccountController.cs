@@ -21,65 +21,29 @@ namespace Gestaurante.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] ClienteRegisterDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var result = await _customerAccountService.RegisterAsync(dto, cancellationToken);
-                return ResponseHelper.SendResponse(result, 201);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.Conflict(ex.Message);
-            }
+            var result = await _customerAccountService.RegisterAsync(dto, cancellationToken);
+            return ResponseHelper.SendResponse(result, 201);
         }
 
         [HttpPost("verify-email")]
         public async Task<IActionResult> VerifyEmail([FromBody] ClienteVerifyEmailDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                await _customerAccountService.VerifyEmailAsync(dto, cancellationToken);
-                return ResponseHelper.SendResponse(new { verified = true });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return ResponseHelper.NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            await _customerAccountService.VerifyEmailAsync(dto, cancellationToken);
+            return ResponseHelper.SendResponse(new { verified = true });
         }
 
         [HttpPost("resend-code")]
         public async Task<IActionResult> ResendCode([FromBody] ClienteResendCodeDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                await _customerAccountService.ResendVerificationCodeAsync(dto, cancellationToken);
-                return ResponseHelper.SendResponse(new { sent = true });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return ResponseHelper.NotFound(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            await _customerAccountService.ResendVerificationCodeAsync(dto, cancellationToken);
+            return ResponseHelper.SendResponse(new { sent = true });
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] ClienteLoginDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var token = await _customerAccountService.LoginAsync(dto, cancellationToken);
-                return ResponseHelper.SendResponse(token, 201);
-            }
-            catch (UnauthorizedAccessException ex)
-            {
-                return ResponseHelper.NotAuthorized(ex.Message);
-            }
+            var token = await _customerAccountService.LoginAsync(dto, cancellationToken);
+            return ResponseHelper.SendResponse(token, 201);
         }
 
         [Authorize(AuthenticationSchemes = "CustomerBearer")]
@@ -150,15 +114,8 @@ namespace Gestaurante.Controllers
             if (!clienteId.HasValue)
                 return ResponseHelper.NotAuthorized("Token de cliente inválido.");
 
-            try
-            {
-                await _customerAccountService.DeleteDireccionAsync(clienteId.Value, id, cancellationToken);
-                return ResponseHelper.SendResponse(new { deleted = true });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return ResponseHelper.NotFound(ex.Message);
-            }
+            await _customerAccountService.DeleteDireccionAsync(clienteId.Value, id, cancellationToken);
+            return ResponseHelper.SendResponse(new { deleted = true });
         }
 
         [Authorize(AuthenticationSchemes = "CustomerBearer")]
@@ -180,15 +137,8 @@ namespace Gestaurante.Controllers
             if (!clienteId.HasValue)
                 return ResponseHelper.NotAuthorized("Token de cliente inválido.");
 
-            try
-            {
-                var paymentMethod = await _customerAccountService.CreateMetodoPagoAsync(clienteId.Value, dto, cancellationToken);
-                return ResponseHelper.SendResponse(paymentMethod, 201);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            var paymentMethod = await _customerAccountService.CreateMetodoPagoAsync(clienteId.Value, dto, cancellationToken);
+            return ResponseHelper.SendResponse(paymentMethod, 201);
         }
 
         [Authorize(AuthenticationSchemes = "CustomerBearer")]
@@ -198,16 +148,9 @@ namespace Gestaurante.Controllers
             var clienteId = GetCustomerId();
             if (!clienteId.HasValue)
                 return ResponseHelper.NotAuthorized("Token de cliente inválido.");
-            
-            try
-            {
-                await _customerAccountService.DeleteMetodoPagoAsync(clienteId.Value, id, cancellationToken);
-                return ResponseHelper.SendResponse(new { deleted = true });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return ResponseHelper.NotFound(ex.Message);
-            }
+
+            await _customerAccountService.DeleteMetodoPagoAsync(clienteId.Value, id, cancellationToken);
+            return ResponseHelper.SendResponse(new { deleted = true });
         }
 
         private Guid? GetCustomerId()
