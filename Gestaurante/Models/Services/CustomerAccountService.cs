@@ -175,6 +175,56 @@ namespace Gestaurante.Models.Services
             return MapProfile(user);
         }
 
+        public async Task<ClienteProfileDTO?> UpdateInternalClienteAsync(Guid clienteId, UpdateInternalClienteDTO dto, CancellationToken cancellationToken = default)
+        {
+            var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.IdUsuarioCliente == clienteId, cancellationToken);
+            if (user == null)
+                return null;
+
+            var email = dto.Email.Trim();
+            var emailExists = await _db.UsuariosCliente.AnyAsync(
+                existingUser => existingUser.IdUsuarioCliente != clienteId && existingUser.Email.ToLower() == email.ToLower(),
+                cancellationToken);
+            if (emailExists)
+                throw new InvalidOperationException("Ya existe un cliente con ese email.");
+
+            var fiscalName = dto.FiscalName.Trim();
+            user.Email = email;
+            user.FiscalName = fiscalName;
+            user.FirstName = string.IsNullOrWhiteSpace(dto.FirstName)
+                ? ResolveFirstNameFromFiscalName(fiscalName)
+                : dto.FirstName.Trim();
+            user.LastName = string.IsNullOrWhiteSpace(dto.LastName)
+                ? ResolveLastNameFromFiscalName(fiscalName)
+                : dto.LastName.Trim();
+            user.Phone = dto.Phone.Trim();
+            user.Dni = dto.Dni.Trim().ToUpperInvariant();
+            user.Cif = dto.Cif.Trim().ToUpperInvariant();
+            user.BillingStreet = dto.BillingStreet.Trim();
+            user.BillingCity = dto.BillingCity.Trim();
+            user.BillingProvince = dto.BillingProvince.Trim();
+            user.BillingPostalCode = dto.BillingPostalCode.Trim();
+            user.Activo = dto.Activo;
+            user.EmailVerificado = dto.EmailVerificado;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(cancellationToken);
+            return MapProfile(user);
+        }
+
+        public async Task<ClienteProfileDTO?> SetActivoAsync(Guid clienteId, bool activo, CancellationToken cancellationToken = default)
+        {
+            var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.IdUsuarioCliente == clienteId, cancellationToken);
+            if (user == null)
+                return null;
+
+            user.Activo = activo;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(cancellationToken);
+            return MapProfile(user);
+        }
+
         public async Task<ClienteProfileDTO?> UpdateProfileAsync(Guid clienteId, UpdateClienteProfileDTO dto, CancellationToken cancellationToken = default)
         {
             var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.IdUsuarioCliente == clienteId, cancellationToken);

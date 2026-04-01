@@ -148,6 +148,7 @@ namespace Gestaurante.Models.Services
             var lowered = term.ToLower();
             return await _db.UsuariosCliente
                 .AsNoTracking()
+                .Where(u => u.Activo)
                 .Where(u =>
                     u.Email.ToLower().Contains(lowered)
                     || u.FirstName.ToLower().Contains(lowered)

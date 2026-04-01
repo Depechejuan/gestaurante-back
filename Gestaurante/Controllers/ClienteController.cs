@@ -46,5 +46,32 @@ namespace Gestaurante.Controllers
                 return ResponseHelper.Conflict(ex.Message);
             }
         }
+
+        [HttpPut("{id:guid}")]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> Update(Guid id, [FromBody] UpdateInternalClienteDTO dto, CancellationToken cancellationToken)
+        {
+            try
+            {
+                var cliente = await _customerAccountService.UpdateInternalClienteAsync(id, dto, cancellationToken);
+                return cliente == null
+                    ? ResponseHelper.NotFound("Cliente no encontrado.")
+                    : ResponseHelper.SendResponse(cliente);
+            }
+            catch (InvalidOperationException ex)
+            {
+                return ResponseHelper.Conflict(ex.Message);
+            }
+        }
+
+        [HttpPatch("{id:guid}/estado")]
+        [Authorize(Roles = "Administrador")]
+        public async Task<IActionResult> ToggleActivo(Guid id, [FromBody] ToggleClienteActivoDTO dto, CancellationToken cancellationToken)
+        {
+            var cliente = await _customerAccountService.SetActivoAsync(id, dto.Activo, cancellationToken);
+            return cliente == null
+                ? ResponseHelper.NotFound("Cliente no encontrado.")
+                : ResponseHelper.SendResponse(cliente);
+        }
     }
 }
