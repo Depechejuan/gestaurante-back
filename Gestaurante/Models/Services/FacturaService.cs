@@ -439,7 +439,8 @@ namespace Gestaurante.Models.Services
                 TotalLinea = detalle.Cantidad * detalle.PrecioUnitario
             }).ToList();
 
-            return MapFactura(factura, pedidoIds, lineas);
+            var effectiveFactura = await ResolveFacturaDisplaySnapshotAsync(factura, pedidos, cancellationToken);
+            return MapFactura(effectiveFactura, pedidoIds, lineas);
         }
 
         private async Task UpdateMesaAvailabilityAsync(Guid? mesaId, CancellationToken cancellationToken)
@@ -625,6 +626,24 @@ namespace Gestaurante.Models.Services
             factura.BillingPhone = FirstNonEmpty(dto.BillingPhone, "600000000");
         }
 
+        private async Task ApplyDefaultBillingSnapshotAsync(Factura factura, Pedido? pedido, CancellationToken cancellationToken)
+        {
+            if (pedido?.IdUsuarioCliente.HasValue == true)
+            {
+                var cliente = await _db.UsuariosCliente
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.IdUsuarioCliente == pedido.IdUsuarioCliente.Value, cancellationToken);
+
+                if (cliente != null && !IsAnonymousCustomer(cliente))
+                {
+                    ApplyPedidoCustomerBillingSnapshot(factura, cliente, pedido);
+                    return;
+                }
+            }
+
+            await ApplyAnonymousBillingSnapshotAsync(factura, cancellationToken);
+        }
+
         private static string ResolveBillingName(UsuarioCliente cliente, AsignarFacturaClienteDTO dto)
         {
             return FirstNonEmpty(dto.FiscalName, cliente.FiscalName, $"{cliente.FirstName} {cliente.LastName}".Trim(), "Cliente anónimo");
@@ -652,6 +671,27 @@ namespace Gestaurante.Models.Services
             factura.BillingPhone = "600000000";
         }
 
+        private static void ApplyPedidoCustomerBillingSnapshot(Factura factura, UsuarioCliente cliente, Pedido pedido)
+        {
+            factura.IdUsuarioCliente = cliente.IdUsuarioCliente;
+            factura.BillingName = LimitLength(FirstNonEmpty(
+                cliente.FiscalName,
+                pedido.ClienteNombre,
+                $"{cliente.FirstName} {cliente.LastName}".Trim(),
+                cliente.Email,
+                "Cliente"), 160);
+            factura.BillingDocument = LimitLength(FirstNonEmpty(cliente.Dni, cliente.Cif).ToUpperInvariant(), 20);
+            factura.BillingStreet = LimitLength(FirstNonEmpty(
+                cliente.BillingStreet,
+                pedido.ClienteDireccionSnapshot,
+                "Pendiente de completar"), 200);
+            factura.BillingCity = LimitLength(FirstNonEmpty(cliente.BillingCity, "Pendiente"), 120);
+            factura.BillingProvince = LimitLength(FirstNonEmpty(cliente.BillingProvince, "Pendiente"), 120);
+            factura.BillingPostalCode = LimitLength(FirstNonEmpty(cliente.BillingPostalCode, "Pendiente"), 20);
+            factura.BillingEmail = LimitLength(FirstNonEmpty(cliente.Email, pedido.ClienteEmail, AnonymousCustomerEmail), 100);
+            factura.BillingPhone = LimitLength(FirstNonEmpty(cliente.Phone, pedido.ClienteTelefono, "600000000"), 25);
+        }
+
         private async Task<List<FacturaClienteLookupDTO>> BuildAnonymousCustomerLookupAsync(CancellationToken cancellationToken)
         {
             return await _db.UsuariosCliente
@@ -675,6 +715,27 @@ namespace Gestaurante.Models.Services
                 .ToListAsync(cancellationToken);
         }
 
+        private async Task<Factura> ResolveFacturaDisplaySnapshotAsync(Factura factura, List<Pedido> pedidos, CancellationToken cancellationToken)
+        {
+            var isAnonymousFactura = factura.BillingName == AnonymousCustomerName && factura.BillingEmail == AnonymousCustomerEmail;
+            if (!isAnonymousFactura)
+                return factura;
+
+            var pedidoConCliente = pedidos.FirstOrDefault(pedido => pedido.IdUsuarioCliente.HasValue);
+            if (pedidoConCliente?.IdUsuarioCliente is not Guid clienteId)
+                return factura;
+
+            var cliente = await _db.UsuariosCliente
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.IdUsuarioCliente == clienteId, cancellationToken);
+            if (cliente == null || IsAnonymousCustomer(cliente))
+                return factura;
+
+            var displayFactura = CloneFactura(factura);
+            ApplyPedidoCustomerBillingSnapshot(displayFactura, cliente, pedidoConCliente);
+            return displayFactura;
+        }
+
         private static bool IsAnonymousCustomer(UsuarioCliente cliente)
         {
             return cliente.Email == AnonymousCustomerEmail || cliente.FiscalName == AnonymousCustomerName;
@@ -683,6 +744,45 @@ namespace Gestaurante.Models.Services
         private static string FirstNonEmpty(params string[] values)
         {
             return values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value))?.Trim() ?? string.Empty;
+        }
+
+        private static string LimitLength(string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value) || value.Length <= maxLength)
+                return value;
+
+            return value[..maxLength].TrimEnd();
+        }
+
+        private static Factura CloneFactura(Factura factura)
+        {
+            return new Factura(
+                factura.NumeroFactura,
+                factura.IdMesa,
+                factura.IdPedido,
+                factura.PrecioTotal,
+                factura.Descuento,
+                factura.Estado,
+                factura.FechaFactura,
+                factura.CanalPedido)
+            {
+                IdUsuarioCliente = factura.IdUsuarioCliente,
+                TipoDescuento = factura.TipoDescuento,
+                ValorDescuento = factura.ValorDescuento,
+                MotivoDescuento = factura.MotivoDescuento,
+                MetodoCobro = factura.MetodoCobro,
+                ImporteEntregado = factura.ImporteEntregado,
+                CambioEntregado = factura.CambioEntregado,
+                FechaCobro = factura.FechaCobro,
+                BillingName = factura.BillingName,
+                BillingDocument = factura.BillingDocument,
+                BillingStreet = factura.BillingStreet,
+                BillingCity = factura.BillingCity,
+                BillingProvince = factura.BillingProvince,
+                BillingPostalCode = factura.BillingPostalCode,
+                BillingEmail = factura.BillingEmail,
+                BillingPhone = factura.BillingPhone
+            };
         }
 
         private static string ResolveFacturaEmailTarget(FacturaDTO factura, string? requestedEmail)

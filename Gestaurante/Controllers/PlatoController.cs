@@ -66,5 +66,16 @@ namespace Gestaurante.Controllers
 
             return ResponseHelper.SendResponse(new { deleted = true });
         }
+
+        [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
+        [HttpPatch("{id:guid}/disponibilidad")]
+        public async Task<IActionResult> SetDisponibilidad(Guid id, [FromBody] UpdatePlatoDisponibilidadDTO dto, CancellationToken cancellationToken)
+        {
+            var plato = await _service.SetDisponibilidadAsync(id, dto.Disponible, cancellationToken);
+            if (plato == null)
+                return ResponseHelper.NotFound("Plato no encontrado.");
+
+            return ResponseHelper.SendResponse(plato);
+        }
     }
 }

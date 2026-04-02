@@ -140,16 +140,17 @@ namespace Gestaurante.Models.Services
 
         public async Task<ClienteProfileDTO> CreateInternalClienteAsync(CreateInternalClienteDTO dto, CancellationToken cancellationToken = default)
         {
-            var email = dto.Email.Trim();
+            var email = NormalizeEmail(dto.Email);
             if (await _db.UsuariosCliente.AnyAsync(user => user.Email.ToLower() == email.ToLower(), cancellationToken))
                 throw new InvalidOperationException("Ya existe un cliente con ese email.");
 
+            var fiscalName = NormalizeText(dto.FiscalName, 160);
             var firstName = string.IsNullOrWhiteSpace(dto.FirstName)
-                ? ResolveFirstNameFromFiscalName(dto.FiscalName)
-                : dto.FirstName.Trim();
+                ? ResolveFirstNameFromFiscalName(fiscalName)
+                : NormalizeText(dto.FirstName, 120);
             var lastName = string.IsNullOrWhiteSpace(dto.LastName)
-                ? ResolveLastNameFromFiscalName(dto.FiscalName)
-                : dto.LastName.Trim();
+                ? ResolveLastNameFromFiscalName(fiscalName)
+                : NormalizeText(dto.LastName, 160);
 
             var user = new UsuarioCliente
             {
@@ -158,14 +159,14 @@ namespace Gestaurante.Models.Services
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString("N")),
                 FirstName = firstName,
                 LastName = lastName,
-                Phone = dto.Phone.Trim(),
-                FiscalName = dto.FiscalName.Trim(),
-                Dni = dto.Dni.Trim().ToUpperInvariant(),
-                Cif = dto.Cif.Trim().ToUpperInvariant(),
-                BillingStreet = dto.BillingStreet.Trim(),
-                BillingCity = dto.BillingCity.Trim(),
-                BillingProvince = dto.BillingProvince.Trim(),
-                BillingPostalCode = dto.BillingPostalCode.Trim(),
+                Phone = NormalizeText(dto.Phone, 25),
+                FiscalName = fiscalName,
+                Dni = NormalizeUpperText(dto.Dni, 15),
+                Cif = NormalizeUpperText(dto.Cif, 20),
+                BillingStreet = NormalizeText(dto.BillingStreet, 200),
+                BillingCity = NormalizeText(dto.BillingCity, 120),
+                BillingProvince = NormalizeText(dto.BillingProvince, 120),
+                BillingPostalCode = NormalizeText(dto.BillingPostalCode, 20),
                 Activo = true,
                 EmailVerificado = true,
                 CreatedAt = DateTime.UtcNow
@@ -182,31 +183,35 @@ namespace Gestaurante.Models.Services
             if (user == null)
                 return null;
 
-            var email = dto.Email.Trim();
+            var email = NormalizeEmail(dto.Email);
             var emailExists = await _db.UsuariosCliente.AnyAsync(
                 existingUser => existingUser.IdUsuarioCliente != clienteId && existingUser.Email.ToLower() == email.ToLower(),
                 cancellationToken);
             if (emailExists)
                 throw new InvalidOperationException("Ya existe un cliente con ese email.");
 
-            var fiscalName = dto.FiscalName.Trim();
+            var fiscalName = NormalizeText(dto.FiscalName, 160);
             user.Email = email;
             user.FiscalName = fiscalName;
             user.FirstName = string.IsNullOrWhiteSpace(dto.FirstName)
                 ? ResolveFirstNameFromFiscalName(fiscalName)
-                : dto.FirstName.Trim();
+                : NormalizeText(dto.FirstName, 120);
             user.LastName = string.IsNullOrWhiteSpace(dto.LastName)
                 ? ResolveLastNameFromFiscalName(fiscalName)
-                : dto.LastName.Trim();
-            user.Phone = dto.Phone.Trim();
-            user.Dni = dto.Dni.Trim().ToUpperInvariant();
-            user.Cif = dto.Cif.Trim().ToUpperInvariant();
-            user.BillingStreet = dto.BillingStreet.Trim();
-            user.BillingCity = dto.BillingCity.Trim();
-            user.BillingProvince = dto.BillingProvince.Trim();
-            user.BillingPostalCode = dto.BillingPostalCode.Trim();
-            user.Activo = dto.Activo;
-            user.EmailVerificado = dto.EmailVerificado;
+                : NormalizeText(dto.LastName, 160);
+            user.Phone = NormalizeText(dto.Phone, 25);
+            user.Dni = NormalizeUpperText(dto.Dni, 15);
+            user.Cif = NormalizeUpperText(dto.Cif, 20);
+            user.BillingStreet = NormalizeText(dto.BillingStreet, 200);
+            user.BillingCity = NormalizeText(dto.BillingCity, 120);
+            user.BillingProvince = NormalizeText(dto.BillingProvince, 120);
+            user.BillingPostalCode = NormalizeText(dto.BillingPostalCode, 20);
+            if (dto.Activo.HasValue)
+                user.Activo = dto.Activo.Value;
+
+            if (dto.EmailVerificado.HasValue)
+                user.EmailVerificado = dto.EmailVerificado.Value;
+
             user.UpdatedAt = DateTime.UtcNow;
 
             await _db.SaveChangesAsync(cancellationToken);
@@ -477,6 +482,32 @@ namespace Gestaurante.Models.Services
                 ExpYear = method.ExpYear,
                 IsDefault = method.IsDefault
             };
+        }
+
+        private static string NormalizeEmail(string value)
+        {
+            var normalized = value.Trim();
+            if (string.IsNullOrWhiteSpace(normalized))
+                throw new ValidationException("El email es obligatorio.");
+
+            return TrimToLength(normalized, 100);
+        }
+
+        private static string NormalizeText(string value, int maxLength)
+        {
+            return TrimToLength(value.Trim(), maxLength);
+        }
+
+        private static string NormalizeUpperText(string value, int maxLength)
+        {
+            return TrimToLength(value.Trim().ToUpperInvariant(), maxLength);
+        }
+
+        private static string TrimToLength(string value, int maxLength)
+        {
+            return value.Length <= maxLength
+                ? value
+                : value[..maxLength];
         }
     }
 }

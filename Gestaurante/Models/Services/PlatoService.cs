@@ -136,6 +136,21 @@ namespace Gestaurante.Models.Services
             return true;
         }
 
+        public async Task<PlatoDTO?> SetDisponibilidadAsync(Guid id, bool disponible, CancellationToken cancellationToken = default)
+        {
+            var plato = await _db.Platos
+                .FirstOrDefaultAsync(p => p.IdPlato == id, cancellationToken);
+
+            if (plato == null)
+                return null;
+
+            plato.Disponible = disponible;
+            plato.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(cancellationToken);
+            return await GetByIdAsync(id, cancellationToken);
+        }
+
         private async Task<List<Ingrediente>> LoadIngredientesAsync(List<Guid> ingredienteIds, CancellationToken cancellationToken)
         {
             if (ingredienteIds.Count == 0)

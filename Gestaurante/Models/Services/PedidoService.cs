@@ -232,14 +232,14 @@ namespace Gestaurante.Models.Services
             if (detalle == null)
                 return null;
 
-            if (pedido.IdFactura.HasValue)
-                throw new InvalidOperationException("No se puede cambiar una línea de un pedido ya facturado.");
-
             if (dto.IdPlato.HasValue || dto.Cantidad.HasValue)
                 throw new InvalidOperationException(PedidoBloqueadoMessage);
 
             if (!dto.Estado.HasValue || dto.Estado.Value == detalle.Estado)
                 return await BuildDetalleDtoAsync(detalle, cancellationToken);
+
+            if (pedido.IdFactura.HasValue && dto.Estado.Value == EstadoDetallePedido.CANCELADA)
+                throw new InvalidOperationException("No se puede cancelar una línea de un pedido ya facturado.");
 
             ValidateDetalleTransition(detalle.Estado, dto.Estado.Value);
 
