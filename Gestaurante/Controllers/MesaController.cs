@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gestaurante.Controllers
 {
+    /// <summary>
+    /// Gestiona las mesas del restaurante y su cierre operativo.
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     [Authorize(Roles = "Administrador,Camarero")]
@@ -14,12 +17,18 @@ namespace Gestaurante.Controllers
         private readonly MesaService _mesaService;
         private readonly FacturaService _facturaService;
 
+        /// <summary>
+        /// Inicializa el controlador con los servicios de mesas y facturación.
+        /// </summary>
         public MesaController(MesaService mesaService, FacturaService facturaService)
         {
             _mesaService = mesaService;
             _facturaService = facturaService;
         }
 
+        /// <summary>
+        /// Obtiene el listado de mesas con su resumen operativo.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
@@ -27,6 +36,9 @@ namespace Gestaurante.Controllers
             return ResponseHelper.SendResponse(mesas);
         }
 
+        /// <summary>
+        /// Recupera el detalle completo de una mesa.
+        /// </summary>
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
@@ -36,6 +48,9 @@ namespace Gestaurante.Controllers
                 : ResponseHelper.SendResponse(mesa);
         }
 
+        /// <summary>
+        /// Crea una nueva mesa en el sistema.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CrearMesaDTO dto, CancellationToken cancellationToken)
         {
@@ -43,6 +58,9 @@ namespace Gestaurante.Controllers
             return ResponseHelper.SendResponse(mesa, 201);
         }
 
+        /// <summary>
+        /// Actualiza la configuración de una mesa existente.
+        /// </summary>
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] EditarMesaDTO dto, CancellationToken cancellationToken)
         {
@@ -52,6 +70,9 @@ namespace Gestaurante.Controllers
                 : ResponseHelper.SendResponse(mesa);
         }
 
+        /// <summary>
+        /// Elimina una mesa siempre que no tenga dependencias activas.
+        /// </summary>
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
@@ -61,6 +82,9 @@ namespace Gestaurante.Controllers
                 : ResponseHelper.NotFound("Mesa no encontrada.");
         }
 
+        /// <summary>
+        /// Cierra una mesa y genera la factura correspondiente de su consumo pendiente.
+        /// </summary>
         [HttpPost("{id:guid}/cerrar")]
         public async Task<IActionResult> CloseMesa(Guid id, [FromBody] CerrarMesaDTO dto, CancellationToken cancellationToken)
         {

@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gestaurante.Controllers
 {
+    /// <summary>
+    /// Gestiona pedidos internos, sus líneas y las transiciones operativas de sala, cocina y reparto.
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     [Authorize(Roles = "Administrador,Camarero,Cocinero,Repartidor")]
@@ -13,11 +16,17 @@ namespace Gestaurante.Controllers
     {
         private readonly PedidoService _pedidoService;
 
+        /// <summary>
+        /// Inicializa el controlador con el servicio de pedidos.
+        /// </summary>
         public PedidoController(PedidoService pedidoService)
         {
             _pedidoService = pedidoService;
         }
 
+        /// <summary>
+        /// Devuelve todos los pedidos disponibles para la operativa interna.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
@@ -25,6 +34,9 @@ namespace Gestaurante.Controllers
             return ResponseHelper.SendResponse(pedidos);
         }
 
+        /// <summary>
+        /// Recupera el detalle completo de un pedido.
+        /// </summary>
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
@@ -34,6 +46,9 @@ namespace Gestaurante.Controllers
                 : ResponseHelper.SendResponse(pedido);
         }
 
+        /// <summary>
+        /// Crea un nuevo pedido interno.
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] CrearPedidoDTO dto, CancellationToken cancellationToken)
         {
@@ -41,6 +56,9 @@ namespace Gestaurante.Controllers
             return ResponseHelper.SendResponse(pedido, 201);
         }
 
+        /// <summary>
+        /// Actualiza el estado y los datos editables de un pedido.
+        /// </summary>
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] EditarPedidoDTO dto, CancellationToken cancellationToken)
         {
@@ -50,6 +68,9 @@ namespace Gestaurante.Controllers
                 : ResponseHelper.SendResponse(pedido);
         }
 
+        /// <summary>
+        /// Elimina un pedido cuando la operación lo permite.
+        /// </summary>
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
@@ -59,6 +80,9 @@ namespace Gestaurante.Controllers
                 : ResponseHelper.NotFound("Pedido no encontrado.");
         }
 
+        /// <summary>
+        /// Cancela un pedido completo conservando la trazabilidad.
+        /// </summary>
         [HttpPost("{id:guid}/cancelar")]
         [Authorize(Roles = "Administrador,Camarero")]
         public async Task<IActionResult> Cancel(Guid id, [FromBody] CancelarPedidoDTO dto, CancellationToken cancellationToken)
@@ -69,6 +93,9 @@ namespace Gestaurante.Controllers
                 : ResponseHelper.SendResponse(pedido);
         }
 
+        /// <summary>
+        /// Recupera una línea concreta de un pedido.
+        /// </summary>
         [HttpGet("{pedidoId:guid}/linea/{detalleId:guid}")]
         public async Task<IActionResult> GetDetalle(Guid pedidoId, Guid detalleId, CancellationToken cancellationToken)
         {
@@ -78,6 +105,9 @@ namespace Gestaurante.Controllers
                 : ResponseHelper.SendResponse(detalle);
         }
 
+        /// <summary>
+        /// Añade una nueva línea a un pedido existente.
+        /// </summary>
         [HttpPost("{pedidoId:guid}/linea")]
         public async Task<IActionResult> AddDetalle(Guid pedidoId, [FromBody] CrearDetallePedidoDTO dto, CancellationToken cancellationToken)
         {
@@ -85,6 +115,9 @@ namespace Gestaurante.Controllers
             return ResponseHelper.SendResponse(detalle, 201);
         }
 
+        /// <summary>
+        /// Actualiza una línea de pedido o su estado operativo.
+        /// </summary>
         [HttpPut("{pedidoId:guid}/linea/{detalleId:guid}")]
         public async Task<IActionResult> UpdateDetalle(Guid pedidoId, Guid detalleId, [FromBody] EditarDetallePedidoDTO dto, CancellationToken cancellationToken)
         {
@@ -97,6 +130,9 @@ namespace Gestaurante.Controllers
                 : ResponseHelper.SendResponse(detalle);
         }
 
+        /// <summary>
+        /// Elimina una línea de pedido cuando la operación lo permite.
+        /// </summary>
         [HttpDelete("{pedidoId:guid}/linea/{detalleId:guid}")]
         public async Task<IActionResult> DeleteDetalle(Guid pedidoId, Guid detalleId, CancellationToken cancellationToken)
         {
@@ -106,6 +142,9 @@ namespace Gestaurante.Controllers
                 : ResponseHelper.NotFound("Línea de pedido no encontrada.");
         }
 
+        /// <summary>
+        /// Cancela una línea concreta manteniendo el histórico del pedido.
+        /// </summary>
         [HttpPost("{pedidoId:guid}/linea/{detalleId:guid}/cancelar")]
         [Authorize(Roles = "Administrador,Camarero")]
         public async Task<IActionResult> CancelDetalle(Guid pedidoId, Guid detalleId, [FromBody] CancelarDetallePedidoDTO dto, CancellationToken cancellationToken)
@@ -116,6 +155,9 @@ namespace Gestaurante.Controllers
                 : ResponseHelper.SendResponse(detalle);
         }
 
+        /// <summary>
+        /// Comprueba si el rol autenticado puede aplicar una transición concreta de estado a una línea.
+        /// </summary>
         private bool CanManageDetalleEstado(EstadoDetallePedido estado)
         {
             if (User.IsInRole("Administrador"))

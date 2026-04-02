@@ -6,6 +6,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
 {
+    /// <summary>
+    /// Expone el catálogo público y el checkout autenticado para pedidos online.
+    /// </summary>
     public class PublicCheckoutService
     {
         private readonly AppDbContext _db;
@@ -15,6 +18,15 @@ namespace Gestaurante.Models.Services
         private readonly IEmailService _emailService;
         private readonly CatalogProjectionService _catalogProjectionService;
 
+        /// <summary>
+        /// Inicializa el servicio público de checkout con las dependencias de pedidos, facturas y catálogo.
+        /// </summary>
+        /// <param name="db">Contexto EF del dominio.</param>
+        /// <param name="pedidoService">Servicio de creación y consulta de pedidos.</param>
+        /// <param name="facturaService">Servicio de creación de facturas.</param>
+        /// <param name="simulatedPaymentService">Servicio de pago online simulado.</param>
+        /// <param name="emailService">Servicio de envío de correos transaccionales.</param>
+        /// <param name="catalogProjectionService">Servicio de proyección del catálogo para consumo público.</param>
         public PublicCheckoutService(
             AppDbContext db,
             PedidoService pedidoService,
@@ -31,6 +43,11 @@ namespace Gestaurante.Models.Services
             _catalogProjectionService = catalogProjectionService;
         }
 
+        /// <summary>
+        /// Recupera el catálogo público de platos disponibles para compra online.
+        /// </summary>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Lista de platos disponibles y proyectados para cliente público.</returns>
         public async Task<List<PlatoDTO>> GetCatalogoAsync(CancellationToken cancellationToken = default)
         {
             var platos = await _db.Platos
@@ -46,6 +63,12 @@ namespace Gestaurante.Models.Services
             return platos.Select(_catalogProjectionService.MapPublic).ToList();
         }
 
+        /// <summary>
+        /// Recupera un plato público concreto si está disponible para pedido online.
+        /// </summary>
+        /// <param name="platoId">Identificador del plato solicitado.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Plato proyectado para cliente o <see langword="null"/> si no está disponible.</returns>
         public async Task<PlatoDTO?> GetCatalogoItemAsync(Guid platoId, CancellationToken cancellationToken = default)
         {
             var plato = await _db.Platos
@@ -58,6 +81,16 @@ namespace Gestaurante.Models.Services
             return plato == null ? null : _catalogProjectionService.MapPublic(plato);
         }
 
+        /// <summary>
+        /// Crea un pedido online autenticado, calcula envío y genera la factura si el pago es online.
+        /// </summary>
+        /// <param name="clienteId">Identificador del cliente autenticado.</param>
+        /// <param name="dto">Datos de checkout, entrega, pago y líneas del pedido.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Pedido online creado y persistido.</returns>
+        /// <remarks>
+        /// Para pedidos con pago online se genera también la factura pagada y se envía un correo de confirmación.
+        /// </remarks>
         public async Task<PedidoDTO> CreateOnlineOrderAsync(Guid clienteId, CreateOnlineOrderDTO dto, CancellationToken cancellationToken = default)
         {
             var cliente = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.IdUsuarioCliente == clienteId, cancellationToken)
@@ -135,6 +168,12 @@ namespace Gestaurante.Models.Services
             return pedido;
         }
 
+        /// <summary>
+        /// Calcula el subtotal de los artículos comprobando que todos los platos existen y están disponibles.
+        /// </summary>
+        /// <param name="detalles">Líneas recibidas en el checkout.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Importe total de artículos antes de gastos de envío.</returns>
         private async Task<double> ResolveSubtotalProductosAsync(List<CrearDetallePedidoDTO> detalles, CancellationToken cancellationToken)
         {
             var detallesValidos = detalles.Where(detalle => detalle.Cantidad > 0).ToList();
@@ -161,6 +200,12 @@ namespace Gestaurante.Models.Services
             return subtotal;
         }
 
+        /// <summary>
+        /// Determina los gastos de envío según el tipo de entrega y el subtotal del pedido.
+        /// </summary>
+        /// <param name="tipoEntrega">Modalidad de entrega elegida por el cliente.</param>
+        /// <param name="subtotalProductos">Subtotal de artículos sin incluir envío.</param>
+        /// <returns>Importe de gastos de envío a aplicar al pedido.</returns>
         private static double ResolveGastosEnvio(TipoEntrega tipoEntrega, double subtotalProductos)
         {
             if (tipoEntrega != TipoEntrega.DOMICILIO)

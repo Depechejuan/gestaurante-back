@@ -29,6 +29,11 @@ La solución sigue un monolito modular:
 - `Migrations`: migraciones EF Core
 - `docs`: documentación interna
 
+### Documentación de código
+- guía de XML comments y criterio de documentación: [Gestaurante/docs/backend-documentation.md](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/docs/backend-documentation.md)
+- los métodos públicos de controladores y servicios deben tener `summary`
+- añadir `param`, `returns` y `remarks` cuando el contrato o la regla de negocio lo requieran
+
 ### Piezas clave
 - Arranque y wiring: [Program.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Program.cs)
 - Configuración tipada: [AppConfiguration.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Configuration/AppConfiguration.cs), [AppOptions.cs](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Configuration/AppOptions.cs)

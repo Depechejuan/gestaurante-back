@@ -1,9 +1,20 @@
 # gestaurante-back
 Back-end de la Aplicación de Gestaurante
 
+## Documentación técnica
+- Guía de documentación C# y criterios de XML comments: [Gestaurante/docs/backend-documentation.md](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/docs/backend-documentation.md)
+- Guía operativa y estructura del proyecto: [AGENTS.md](/Users/juanleon/Documents/gestaurante/gestaurante-back/AGENTS.md)
+
 ## Documentación de Operaciones de Sala
 - El plan técnico preparado para `mesas -> pedidos -> factura` está detallado en [Gestaurante/docs/operaciones-sala-plan.md](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/docs/operaciones-sala-plan.md).
 - Este documento describe el alcance implementado sin tocar la lógica de `platos/ingredientes`, que se mantiene fuera de esta rama para no pisar el trabajo paralelo en curso.
+
+## Estilo de documentación C#
+- Los controladores y servicios públicos deben documentarse con XML comments.
+- `summary` describe intención y responsabilidad.
+- `param` y `returns` se usan cuando el contrato no es trivial.
+- `remarks` se reserva para reglas de negocio, side effects o restricciones importantes.
+- La referencia completa está en [Gestaurante/docs/backend-documentation.md](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/docs/backend-documentation.md).
 
 ## Roadmap futuro: catálogo, operación y pedido online
 

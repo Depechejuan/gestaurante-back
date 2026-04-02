@@ -9,6 +9,9 @@ using System.Security.Claims;
 
 namespace Gestaurante.Controllers
 {
+    /// <summary>
+    /// Gestiona la autenticación y el perfil básico de empleados internos.
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     public class UserController : ControllerBase
@@ -17,6 +20,13 @@ namespace Gestaurante.Controllers
         private readonly IJwtService _jwtService;
         private readonly StaffService _staffService;
 
+        /// <summary>
+        /// Inicializa el controlador con los servicios de login, JWT y staff.
+        /// </summary>
+        /// <param name="loginService">Servicio de validación de credenciales internas.</param>
+        /// <param name="jwtService">Servicio generador del JWT de empleados.</param>
+        /// <param name="registerService">Dependencia histórica del controlador.</param>
+        /// <param name="staffService">Servicio de resolución del perfil básico del empleado.</param>
         public UserController(LoginService loginService, IJwtService jwtService, RegisterService registerService, StaffService staffService)
         {
             _loginService = loginService;
@@ -24,6 +34,11 @@ namespace Gestaurante.Controllers
             _staffService = staffService;
         }
 
+        /// <summary>
+        /// Valida las credenciales de un empleado y devuelve un token de acceso.
+        /// </summary>
+        /// <param name="dto">Credenciales de acceso del empleado.</param>
+        /// <returns>Respuesta HTTP con el token emitido o un 401 si las credenciales son inválidas.</returns>
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] LoginDTO dto)
         {
@@ -44,6 +59,10 @@ namespace Gestaurante.Controllers
             return ResponseHelper.SendResponse(response, 201);
         }
 
+        /// <summary>
+        /// Recupera la información básica del empleado autenticado.
+        /// </summary>
+        /// <returns>Respuesta HTTP con el perfil básico del empleado autenticado.</returns>
         [Authorize]
         [HttpGet("me")]
         public async Task<IActionResult> GetMe()

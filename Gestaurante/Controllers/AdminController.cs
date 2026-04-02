@@ -8,6 +8,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Gestaurante.Controllers
 {
+    /// <summary>
+    /// Centraliza operaciones administrativas sobre empleados y configuración interna.
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
@@ -16,6 +19,9 @@ namespace Gestaurante.Controllers
         private readonly RegisterService _registerService;
         private readonly StaffService _staffService;
 
+        /// <summary>
+        /// Inicializa el controlador con los servicios de registro y staff.
+        /// </summary>
         public AdminController(RegisterService registerService, StaffService staffService)
         {
             _registerService = registerService;
@@ -23,15 +29,19 @@ namespace Gestaurante.Controllers
         }
 
 
+        /// <summary>
+        /// Registra un nuevo empleado interno.
+        /// </summary>
         [HttpPost("register")]
-        //[Consumes("multipart/form-data")]
-        // NO ME DEJA REGISTRAR NUEVO USUARIO, PIDE FOTO ?????
         public async Task<IActionResult> Register([FromBody] RegistroDTO dto)
         {
             var empleado = await _registerService.CrearEmpleado(dto);
             return ResponseHelper.SendResponse(new { id = empleado.Id, foto = empleado.ImageURL });
         }
 
+        /// <summary>
+        /// Recupera la información básica de un empleado concreto.
+        /// </summary>
         [HttpPost("getbasicuser")]
         public async Task<IActionResult> GetBasicUser([FromBody] IdRequestDTO user)
         {
@@ -42,6 +52,9 @@ namespace Gestaurante.Controllers
             return ResponseHelper.SendResponse(empleado);
         }
 
+        /// <summary>
+        /// Devuelve el listado completo de empleados.
+        /// </summary>
         [HttpPost("getusers")]
         public async Task<IActionResult> GetUsers()
         {
@@ -49,6 +62,9 @@ namespace Gestaurante.Controllers
             return ResponseHelper.SendResponse(empleados);
         }
 
+        /// <summary>
+        /// Recupera la ficha completa de un empleado por identificador.
+        /// </summary>
         [HttpGet("user/{id}")]
         public async Task<IActionResult> GetFullUser(Guid id)
         {
@@ -59,6 +75,9 @@ namespace Gestaurante.Controllers
             return ResponseHelper.SendResponse(empleado);
         }
 
+        /// <summary>
+        /// Sustituye la fotografía de un empleado existente.
+        /// </summary>
         [HttpPut("user/{id}/photo")]
         public async Task<IActionResult> UpdatePhoto([FromRoute] Guid id, [FromForm] IFormFile file)
         {
@@ -70,6 +89,9 @@ namespace Gestaurante.Controllers
             return ResponseHelper.SendResponse(new { foto = empleadoEdit.ImageURL });
         }
 
+        /// <summary>
+        /// Actualiza la ficha completa de un empleado interno.
+        /// </summary>
         [HttpPut("user/{id}")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> GetUniqueUser([FromRoute] Guid id, [FromForm] EditarEmpleadoDTO dto, CancellationToken cancellationToken)
