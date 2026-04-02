@@ -41,7 +41,7 @@ La idea no es implementarlo todo a la vez, sino avanzar por fases y con contrato
 
 #### Fase 1: QR de mesa completo
 - Exponer catálogo real para `/public/mesa/{id}`.
-- Terminar el flujo sobre catálogo real en lugar de mocks.
+- Seguir ampliando el flujo sobre catálogo real, sin dependencias de datos falsos.
 - Revisar el DTO/respuesta final que consumirá el cliente para su histórico visible.
 
 #### Fase 2: pedido online para recogida
@@ -152,7 +152,7 @@ Cocineros:
     natalia.ramos@gestaurante.com
 
 Camareros:
-paula.garcia@gestaurante.com
+    paula.garcia@gestaurante.com
     diego.herrera@gestaurante.com
     laura.perez@gestaurante.com
     jorge.ruiz@gestaurante.com

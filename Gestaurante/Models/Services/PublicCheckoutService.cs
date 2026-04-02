@@ -11,7 +11,7 @@ namespace Gestaurante.Models.Services
         private readonly AppDbContext _db;
         private readonly PedidoService _pedidoService;
         private readonly FacturaService _facturaService;
-        private readonly MockPaymentService _mockPaymentService;
+        private readonly SimulatedPaymentService _simulatedPaymentService;
         private readonly IEmailService _emailService;
         private readonly CatalogProjectionService _catalogProjectionService;
 
@@ -19,14 +19,14 @@ namespace Gestaurante.Models.Services
             AppDbContext db,
             PedidoService pedidoService,
             FacturaService facturaService,
-            MockPaymentService mockPaymentService,
+            SimulatedPaymentService simulatedPaymentService,
             IEmailService emailService,
             CatalogProjectionService catalogProjectionService)
         {
             _db = db;
             _pedidoService = pedidoService;
             _facturaService = facturaService;
-            _mockPaymentService = mockPaymentService;
+            _simulatedPaymentService = simulatedPaymentService;
             _emailService = emailService;
             _catalogProjectionService = catalogProjectionService;
         }
@@ -91,7 +91,7 @@ namespace Gestaurante.Models.Services
 
             ClienteMetodoPago? metodoPago = null;
             if (dto.PagarOnline)
-                metodoPago = await _mockPaymentService.ResolvePaymentMethodAsync(
+                metodoPago = await _simulatedPaymentService.ResolvePaymentMethodAsync(
                     clienteId,
                     dto.PaymentMethod ?? new CheckoutPaymentMethodDTO(),
                     cancellationToken);
@@ -102,7 +102,7 @@ namespace Gestaurante.Models.Services
                 Estado = EstadoPedido.CONFIRMADO,
                 CanalPedido = CanalPedido.ONLINE,
                 TipoEntrega = dto.TipoEntrega,
-                EstadoPago = dto.PagarOnline ? EstadoPago.PAGADO_MOCK : EstadoPago.PENDIENTE_LOCAL,
+                EstadoPago = dto.PagarOnline ? EstadoPago.PAGADO_ONLINE : EstadoPago.PENDIENTE_LOCAL,
                 IdUsuarioCliente = clienteId,
                 ClienteNombre = $"{cliente.FirstName} {cliente.LastName}".Trim(),
                 ClienteEmail = cliente.Email,

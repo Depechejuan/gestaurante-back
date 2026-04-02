@@ -6,13 +6,13 @@ Documento de referencia para la rama `codex/pedidos-online`.
 - Añadir cuentas de cliente separadas de empleados.
 - Permitir pedido online con recogida o domicilio.
 - Validar email por código.
-- Soportar pago online mock con método reutilizable tokenizado.
+- Soportar pago online simulado con método reutilizable tokenizado.
 - Integrar cocina, camarero y repartidor en el mismo flujo operativo.
 
 ## Decisiones cerradas
 - `UsuariosCliente` y `Empleados` son dominios distintos.
-- El pago es mock, pero el envío de email usa SMTP configurable.
-- La tarjeta completa no se guarda; solo se conserva un token mock y datos enmascarados.
+- El pago es simulado, pero el envío de email usa SMTP configurable.
+- La tarjeta completa no se guarda; solo se conserva un token de pago y datos enmascarados.
 - `Repartidor` se modela como nuevo rol interno.
 - Las notificaciones internas son por polling, no por websocket.
 

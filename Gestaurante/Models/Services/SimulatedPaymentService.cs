@@ -8,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
 {
-    public class MockPaymentService
+    public class SimulatedPaymentService
     {
         private readonly AppDbContext _db;
 
-        public MockPaymentService(AppDbContext db)
+        public SimulatedPaymentService(AppDbContext db)
         {
             _db = db;
         }
@@ -28,7 +28,7 @@ namespace Gestaurante.Models.Services
             {
                 IdClienteMetodoPago = Guid.NewGuid(),
                 IdUsuarioCliente = clienteId,
-                MockPaymentToken = GenerateMockToken(dto.CardNumber, clienteId),
+                PaymentToken = GeneratePaymentToken(dto.CardNumber, clienteId),
                 Brand = DetectBrand(dto.CardNumber),
                 Last4 = dto.CardNumber[^4..],
                 HolderName = dto.HolderName.Trim(),
@@ -78,7 +78,7 @@ namespace Gestaurante.Models.Services
             {
                 IdClienteMetodoPago = Guid.NewGuid(),
                 IdUsuarioCliente = clienteId,
-                MockPaymentToken = GenerateMockToken(createDto.CardNumber, clienteId),
+                PaymentToken = GeneratePaymentToken(createDto.CardNumber, clienteId),
                 Brand = DetectBrand(createDto.CardNumber),
                 Last4 = createDto.CardNumber[^4..],
                 HolderName = createDto.HolderName,
@@ -127,11 +127,11 @@ namespace Gestaurante.Models.Services
                 throw new ValidationException("Año de expiración no válido.");
         }
 
-        private static string GenerateMockToken(string cardNumber, Guid clienteId)
+        private static string GeneratePaymentToken(string cardNumber, Guid clienteId)
         {
             using var sha = SHA256.Create();
             var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes($"{clienteId}:{cardNumber}:{DateTime.UtcNow.Ticks}"));
-            return $"mock_{Convert.ToHexString(bytes)[..24]}";
+            return $"pay_{Convert.ToHexString(bytes)[..24]}";
         }
 
         private static string DetectBrand(string cardNumber)

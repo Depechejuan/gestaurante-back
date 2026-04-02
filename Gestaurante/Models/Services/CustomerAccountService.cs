@@ -13,18 +13,18 @@ namespace Gestaurante.Models.Services
         private readonly AppDbContext _db;
         private readonly IEmailService _emailService;
         private readonly ICustomerJwtService _customerJwtService;
-        private readonly MockPaymentService _mockPaymentService;
+        private readonly SimulatedPaymentService _simulatedPaymentService;
 
         public CustomerAccountService(
             AppDbContext db,
             IEmailService emailService,
             ICustomerJwtService customerJwtService,
-            MockPaymentService mockPaymentService)
+            SimulatedPaymentService simulatedPaymentService)
         {
             _db = db;
             _emailService = emailService;
             _customerJwtService = customerJwtService;
-            _mockPaymentService = mockPaymentService;
+            _simulatedPaymentService = simulatedPaymentService;
         }
 
         public async Task<ClienteRegisterResponseDTO> RegisterAsync(ClienteRegisterDTO dto, CancellationToken cancellationToken = default)
@@ -338,13 +338,13 @@ namespace Gestaurante.Models.Services
 
         public async Task<ClienteMetodoPagoDTO> CreateMetodoPagoAsync(Guid clienteId, CreateClienteMetodoPagoDTO dto, CancellationToken cancellationToken = default)
         {
-            var method = await _mockPaymentService.CreateSavedMethodAsync(clienteId, dto, cancellationToken);
+            var method = await _simulatedPaymentService.CreateSavedMethodAsync(clienteId, dto, cancellationToken);
             return MapMetodoPago(method);
         }
 
         public async Task DeleteMetodoPagoAsync(Guid clienteId, Guid paymentMethodId, CancellationToken cancellationToken = default)
         {
-            await _mockPaymentService.DeleteSavedMethodAsync(clienteId, paymentMethodId, cancellationToken);
+            await _simulatedPaymentService.DeleteSavedMethodAsync(clienteId, paymentMethodId, cancellationToken);
         }
 
         private async Task GenerateAndSendVerificationCodeAsync(UsuarioCliente user, CancellationToken cancellationToken)

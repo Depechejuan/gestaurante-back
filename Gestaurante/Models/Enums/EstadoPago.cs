@@ -4,8 +4,8 @@ namespace Gestaurante.Models.Enums
     {
         NO_APLICA = 0,
         PENDIENTE_LOCAL = 1,
-        PAGADO_MOCK = 2,
+        PAGADO_ONLINE = 2,
         PAGADO_LOCAL = 3,
-        REEMBOLSADO_MOCK = 4
+        REEMBOLSADO_ONLINE = 4
     }
 }

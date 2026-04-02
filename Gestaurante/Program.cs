@@ -148,7 +148,7 @@ builder.Services.AddScoped<FacturaService>();
 builder.Services.AddScoped<MesaPublicSessionService>();
 builder.Services.AddScoped<ICustomerJwtService, CustomerJwtService>();
 builder.Services.AddScoped<CustomerAccountService>();
-builder.Services.AddScoped<MockPaymentService>();
+builder.Services.AddScoped<SimulatedPaymentService>();
 builder.Services.AddScoped<PublicCheckoutService>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddScoped<CloudinaryService>();
