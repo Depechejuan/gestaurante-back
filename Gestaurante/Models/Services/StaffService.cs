@@ -61,7 +61,11 @@ namespace Gestaurante.Models.Services
 
             return new EmpleadoBasicDTO(
                     empleado.Id,
-                    tipo
+                    tipo,
+                    empleado.FirstName,
+                    empleado.FirstLastName,
+                    empleado.SecondLastName,
+                    empleado.Email
                 );
         }
 

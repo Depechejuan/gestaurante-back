@@ -119,7 +119,7 @@ namespace Gestaurante.Models.Services
                     .FirstOrDefaultAsync(d => d.IdClienteDireccion == dto.IdClienteDireccion.Value && d.IdUsuarioCliente == clienteId, cancellationToken)
                     ?? throw new KeyNotFoundException("Dirección de entrega no encontrada.");
 
-                direccionSnapshot = $"{direccion.Alias} · {direccion.Street}, {direccion.PostalCode} {direccion.City}, {direccion.Province}";
+                direccionSnapshot = $"{direccion.Street}, {direccion.PostalCode} {direccion.City}, {direccion.Province}";
             }
 
             ClienteMetodoPago? metodoPago = null;

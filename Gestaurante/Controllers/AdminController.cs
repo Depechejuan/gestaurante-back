@@ -100,12 +100,7 @@ namespace Gestaurante.Controllers
             if (newEmpleado == null)
                 return ResponseHelper.NotFound("Empleado no encontrado.");
 
-            var tipo = dto.Tipo
-                ?? (newEmpleado is Administrador ? TipoEmpleado.Administrador
-                : newEmpleado is Camarero ? TipoEmpleado.Camarero
-                : newEmpleado is Repartidor ? TipoEmpleado.Repartidor
-                : TipoEmpleado.Cocinero);
-            var empleado = ToDTO.EmpleadoToEmpleadoFullDTO(newEmpleado, tipo);
+            var empleado = await _staffService.GetFullUser(id);
 
             return ResponseHelper.SendResponse(empleado);
         }
