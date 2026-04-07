@@ -8,6 +8,7 @@ namespace Gestaurante.Models.DTO
         public Guid IdPedido { get; set; }
         public Guid IdPlato { get; set; }
         public string PlatoNombre { get; set; } = string.Empty;
+        public string CategoriaDescripcion { get; set; } = string.Empty;
         public int Cantidad { get; set; }
         public double PrecioUnitario { get; set; }
         public double Subtotal { get; set; }

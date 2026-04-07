@@ -160,3 +160,6 @@ dotnet run -- --bootstrap
 dotnet ef migrations add NombreMigracion
 dotnet ef database update
 ```
+
+# Reglas de Programación/código
+- Los bloques "if" y bucles "for" que contengan una única línea, no tendrán llaves de apertura/cierre.

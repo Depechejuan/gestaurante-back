@@ -259,19 +259,35 @@ namespace Gestaurante.Models.Services
             if (pedido == null)
                 return null;
 
-            if (pedido.IdFactura.HasValue)
+            var motivoCancelacion = dto?.Motivo?.Trim() ?? string.Empty;
+            var canCancelFacturadoOnline = pedido.IdFactura.HasValue
+                && pedido.CanalPedido == CanalPedido.ONLINE
+                && pedido.TipoEntrega == TipoEntrega.DOMICILIO;
+
+            if (pedido.IdFactura.HasValue && !canCancelFacturadoOnline)
                 throw new InvalidOperationException("No se puede cancelar un pedido ya facturado.");
+
+            if (canCancelFacturadoOnline && string.IsNullOrWhiteSpace(motivoCancelacion))
+                throw new InvalidOperationException("Debes indicar un motivo de cancelación.");
 
             if (pedido.Estado != EstadoPedido.CANCELADO)
             {
                 pedido.Estado = EstadoPedido.CANCELADO;
-                foreach (var detalle in pedido.DetallesPedido.Where(d => d.Estado != EstadoDetallePedido.CANCELADA))
-                {
-                    detalle.Estado = EstadoDetallePedido.CANCELADA;
-                    detalle.FechaCancelacion = DateTime.UtcNow;
+                if (!pedido.IdFactura.HasValue) {
+                    foreach (var detalle in pedido.DetallesPedido.Where(d => d.Estado != EstadoDetallePedido.CANCELADA))
+                    {
+                        detalle.Estado = EstadoDetallePedido.CANCELADA;
+                        detalle.FechaCancelacion = DateTime.UtcNow;
+                    }
+
+                    SyncPedidoEstadoFromDetalles(pedido);
                 }
 
-                SyncPedidoEstadoFromDetalles(pedido);
+                pedido.Notas = AppendInternalPedidoNote(
+                    pedido.Notas,
+                    string.IsNullOrWhiteSpace(motivoCancelacion)
+                        ? "Cancelado desde panel interno."
+                        : $"Cancelado: {motivoCancelacion}");
                 SetFechaModificacion(pedido);
                 await _db.SaveChangesAsync(cancellationToken);
                 await UpdateMesaAvailabilityAsync(pedido.IdMesa, cancellationToken);
@@ -446,13 +462,13 @@ namespace Gestaurante.Models.Services
                 .Where(d => pedidoIds.Contains(d.IdPedido))
                 .ToListAsync(cancellationToken);
 
-            var platos = await ResolvePlatoNamesAsync(detalles, cancellationToken);
+            var platos = await ResolvePlatoMetadataAsync(detalles, cancellationToken);
 
             return pedidos.Select(pedido =>
             {
                 var detallesPedido = detalles
                     .Where(d => d.IdPedido == pedido.IdPedido)
-                    .Select(detalle => MapDetalle(detalle, platos.GetValueOrDefault(detalle.IdPlato, "Plato desconocido")))
+                    .Select(detalle => MapDetalle(detalle, platos.GetValueOrDefault(detalle.IdPlato)))
                     .ToList();
 
                 return MapPedido(pedido, detallesPedido);
@@ -469,27 +485,31 @@ namespace Gestaurante.Models.Services
                 .Where(d => d.IdPedido == pedido.IdPedido)
                 .ToListAsync(cancellationToken);
 
-            var platos = await ResolvePlatoNamesAsync(detalles, cancellationToken);
+            var platos = await ResolvePlatoMetadataAsync(detalles, cancellationToken);
             var detallesDto = detalles
-                .Select(detalle => MapDetalle(detalle, platos.GetValueOrDefault(detalle.IdPlato, "Plato desconocido")))
+                .Select(detalle => MapDetalle(detalle, platos.GetValueOrDefault(detalle.IdPlato)))
                 .ToList();
 
             return MapPedido(pedido, detallesDto);
         }
 
         /// <summary>
-        /// Resuelve los nombres de plato necesarios para pintar las líneas de pedido.
+        /// Resuelve el nombre y la categoría de plato necesarios para pintar y ordenar las líneas de pedido.
         /// </summary>
-        private async Task<Dictionary<Guid, string>> ResolvePlatoNamesAsync(List<DetallePedido> detalles, CancellationToken cancellationToken)
+        private async Task<Dictionary<Guid, PlatoDetalleMetadata>> ResolvePlatoMetadataAsync(List<DetallePedido> detalles, CancellationToken cancellationToken)
         {
             var platoIds = detalles.Select(d => d.IdPlato).Distinct().ToList();
             if (platoIds.Count == 0)
-                return new Dictionary<Guid, string>();
+                return new Dictionary<Guid, PlatoDetalleMetadata>();
 
             return await _db.Platos
                 .AsNoTracking()
+                .Include(plato => plato.Categoria)
                 .Where(p => platoIds.Contains(p.IdPlato))
-                .ToDictionaryAsync(p => p.IdPlato, p => p.Nombre, cancellationToken);
+                .ToDictionaryAsync(
+                    p => p.IdPlato,
+                    p => new PlatoDetalleMetadata(p.Nombre, p.Categoria != null ? p.Categoria.Descripcion : string.Empty),
+                    cancellationToken);
         }
 
         /// <summary>
@@ -497,13 +517,14 @@ namespace Gestaurante.Models.Services
         /// </summary>
         private async Task<DetallePedidoDTO> BuildDetalleDtoAsync(DetallePedido detalle, CancellationToken cancellationToken)
         {
-            var platoNombre = await _db.Platos
+            var metadata = await _db.Platos
                 .AsNoTracking()
+                .Include(p => p.Categoria)
                 .Where(p => p.IdPlato == detalle.IdPlato)
-                .Select(p => p.Nombre)
-                .FirstOrDefaultAsync(cancellationToken) ?? "Plato desconocido";
+                .Select(p => new PlatoDetalleMetadata(p.Nombre, p.Categoria != null ? p.Categoria.Descripcion : string.Empty))
+                .FirstOrDefaultAsync(cancellationToken) ?? new PlatoDetalleMetadata("Plato desconocido", string.Empty);
 
-            return MapDetalle(detalle, platoNombre);
+            return MapDetalle(detalle, metadata);
         }
 
         /// <summary>
@@ -545,7 +566,7 @@ namespace Gestaurante.Models.Services
         /// <summary>
         /// Mapea una línea de pedido al DTO público e interno.
         /// </summary>
-        private static DetallePedidoDTO MapDetalle(DetallePedido detalle, string platoNombre)
+        private static DetallePedidoDTO MapDetalle(DetallePedido detalle, PlatoDetalleMetadata? metadata)
         {
             var subtotal = detalle.Estado != EstadoDetallePedido.CANCELADA
                 ? detalle.Cantidad * detalle.PrecioUnitario
@@ -556,7 +577,8 @@ namespace Gestaurante.Models.Services
                 IdDetallePedido = detalle.IdDetallePedido,
                 IdPedido = detalle.IdPedido,
                 IdPlato = detalle.IdPlato,
-                PlatoNombre = platoNombre,
+                PlatoNombre = metadata?.Nombre ?? "Plato desconocido",
+                CategoriaDescripcion = metadata?.CategoriaDescripcion ?? string.Empty,
                 Cantidad = detalle.Cantidad,
                 PrecioUnitario = detalle.PrecioUnitario,
                 Subtotal = subtotal,
@@ -565,6 +587,8 @@ namespace Gestaurante.Models.Services
                 SeTieneEnCuentaEnFactura = detalle.Estado != EstadoDetallePedido.CANCELADA
             };
         }
+
+        private sealed record PlatoDetalleMetadata(string Nombre, string CategoriaDescripcion);
 
         /// <summary>
         /// Valida que la transición de estado del pedido sea coherente con el flujo operativo.
@@ -731,6 +755,24 @@ namespace Gestaurante.Models.Services
         {
             var property = typeof(Pedido).GetProperty(nameof(Pedido.FechaModificacion));
             property?.SetValue(pedido, DateTime.UtcNow);
+        }
+
+        /// <summary>
+        /// Añade una nota interna al pedido preservando el contenido previo y respetando la longitud máxima del campo.
+        /// </summary>
+        private static string AppendInternalPedidoNote(string currentNotes, string note)
+        {
+            var cleanNote = note.Trim();
+            if (string.IsNullOrWhiteSpace(cleanNote))
+                return currentNotes;
+
+            var mergedNotes = string.IsNullOrWhiteSpace(currentNotes)
+                ? cleanNote
+                : $"{currentNotes.Trim()}\n{cleanNote}";
+
+            return mergedNotes.Length <= 500
+                ? mergedNotes
+                : mergedNotes[^500..];
         }
     }
 }

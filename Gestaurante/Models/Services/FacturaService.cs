@@ -952,10 +952,6 @@ namespace Gestaurante.Models.Services
                 : string.Join(string.Empty, factura.Lineas.Select(linea =>
                     $"<tr><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.IdPedido.ToString()[..8]}</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.PlatoNombre}</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.Cantidad}</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.PrecioUnitario:0.00} EUR</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.TotalLinea:0.00} EUR</td></tr>"));
 
-            var discountReason = string.IsNullOrWhiteSpace(factura.MotivoDescuento)
-                ? string.Empty
-                : $"<p style=\"margin:0;\">Motivo descuento: <strong>{factura.MotivoDescuento}</strong></p>";
-
             var customerBlock = factura.ClienteFactura.EsAnonima
                 ? $"<p style=\"margin:0;\">{factura.ClienteFactura.BillingName}</p>"
                 : $"""
@@ -1010,7 +1006,6 @@ namespace Gestaurante.Models.Services
                   <footer style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;margin-top:18px;padding-top:12px;border-top:1px solid #d7e0dc;">
                     <p style="margin:0;">Total bruto: <strong>{factura.PrecioTotal:0.00} EUR</strong></p>
                     <p style="margin:0;">Descuento: <strong>{factura.Descuento:0.00} EUR</strong></p>
-                    {discountReason}
                     <p style="margin:0;">Total final: <strong>{factura.TotalConDescuento:0.00} EUR</strong></p>
                   </footer>
                 </section>

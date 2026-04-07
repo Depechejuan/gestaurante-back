@@ -151,7 +151,7 @@ dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer --version 9.0.0
 
 
 # Usuarios de Prueba - Uso Interno
-Todas las contraseñas son las genéricas del .env
+Todas las contraseñas son las genéricas especificadas en el archivo .env
 
 Administradores:
 admin@gestaurante.com
@@ -161,6 +161,7 @@ Cocineros:
     maria.santos@gestaurante.com
     alberto.molina@gestaurante.com
     natalia.ramos@gestaurante.com
+    carmen.navarro@gestaurante.com
 
 Camareros:
     paula.garcia@gestaurante.com
@@ -168,4 +169,8 @@ Camareros:
     laura.perez@gestaurante.com
     jorge.ruiz@gestaurante.com
     elena.flores@gestaurante.com
-    sergio.ortiz@gestaurante.com
+
+Repartidores:
+    sergio.reparto@gestaurante.com
+    irene.reparto@gestaurante.com
+    marcos.reparto@gestaurante.com
