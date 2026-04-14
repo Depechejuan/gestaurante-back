@@ -8,6 +8,9 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Gestaurante.Controllers
 {
+    /// <summary>
+    /// Centraliza operaciones administrativas sobre empleados y configuración interna.
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
@@ -16,6 +19,9 @@ namespace Gestaurante.Controllers
         private readonly RegisterService _registerService;
         private readonly StaffService _staffService;
 
+        /// <summary>
+        /// Inicializa el controlador con los servicios de registro y staff.
+        /// </summary>
         public AdminController(RegisterService registerService, StaffService staffService)
         {
             _registerService = registerService;
@@ -23,137 +29,80 @@ namespace Gestaurante.Controllers
         }
 
 
+        /// <summary>
+        /// Registra un nuevo empleado interno.
+        /// </summary>
         [HttpPost("register")]
-        //[Consumes("multipart/form-data")]
-        // NO ME DEJA REGISTRAR NUEVO USUARIO, PIDE FOTO ?????
         public async Task<IActionResult> Register([FromBody] RegistroDTO dto)
         {
-            try
-            {
-                var empleado = await _registerService.CrearEmpleado(dto);
-                return ResponseHelper.SendResponse(new { id = empleado.Id, foto = empleado.ImageURL });
-            }
-            catch (ValidationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.Conflict(ex.Message);
-            }
-            catch
-            {
-                return ResponseHelper.ServerError("No se ha podido registrar el empleado.");
-            }
+            var empleado = await _registerService.CrearEmpleado(dto);
+            return ResponseHelper.SendResponse(new { id = empleado.Id, foto = empleado.ImageURL });
         }
 
+        /// <summary>
+        /// Recupera la información básica de un empleado concreto.
+        /// </summary>
         [HttpPost("getbasicuser")]
         public async Task<IActionResult> GetBasicUser([FromBody] IdRequestDTO user)
         {
-            try
-            {
-                var empleado = await _staffService.GetBasicStaff(user.Id);
-                if (empleado == null)
-                    return ResponseHelper.NotFound("Empleado no encontrado.");
+            var empleado = await _staffService.GetBasicStaff(user.Id);
+            if (empleado == null)
+                return ResponseHelper.NotFound("Empleado no encontrado.");
 
-                return ResponseHelper.SendResponse(empleado);
-            }
-            catch
-            {
-                return ResponseHelper.ServerError("No se ha podido recuperar el usuario solicitado.");
-            }
+            return ResponseHelper.SendResponse(empleado);
         }
 
+        /// <summary>
+        /// Devuelve el listado completo de empleados.
+        /// </summary>
         [HttpPost("getusers")]
         public async Task<IActionResult> GetUsers()
         {
-            try
-            {
-                var empleados = await _staffService.GetAllUsers();
-                return ResponseHelper.SendResponse(empleados);
-            }
-            catch
-            {
-                return ResponseHelper.ServerError("No se ha podido cargar la lista de empleados.");
-            }
+            var empleados = await _staffService.GetAllUsers();
+            return ResponseHelper.SendResponse(empleados);
         }
 
+        /// <summary>
+        /// Recupera la ficha completa de un empleado por identificador.
+        /// </summary>
         [HttpGet("user/{id}")]
         public async Task<IActionResult> GetFullUser(Guid id)
         {
-            try
-            {
-                var empleado = await _staffService.GetFullUser(id);
-                if (empleado == null)
-                    return ResponseHelper.NotFound("Empleado no encontrado.");
+            var empleado = await _staffService.GetFullUser(id);
+            if (empleado == null)
+                return ResponseHelper.NotFound("Empleado no encontrado.");
 
-                return ResponseHelper.SendResponse(empleado);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return ResponseHelper.NotFound(ex.Message);
-            }
-            catch
-            {
-                return ResponseHelper.ServerError("No se ha podido recuperar el detalle del empleado.");
-            }
+            return ResponseHelper.SendResponse(empleado);
         }
 
+        /// <summary>
+        /// Sustituye la fotografía de un empleado existente.
+        /// </summary>
         [HttpPut("user/{id}/photo")]
         public async Task<IActionResult> UpdatePhoto([FromRoute] Guid id, [FromForm] IFormFile file)
         {
-            try
-            {
-                EmpleadoFullDTO empleado = await _staffService.GetFullUser(id);
-                if (empleado == null)
-                    return ResponseHelper.NotFound("Empleado no encontrado.");
+            EmpleadoFullDTO empleado = await _staffService.GetFullUser(id);
+            if (empleado == null)
+                return ResponseHelper.NotFound("Empleado no encontrado.");
 
-                Empleado empleadoEdit = await _registerService.UploadPhoto(empleado, file, "empleados");
-                // actualizar empleadoEdit
-
-                return ResponseHelper.SendResponse(new { foto = empleadoEdit.ImageURL });
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return ResponseHelper.NotFound(ex.Message);
-            }
-            catch
-            {
-                return ResponseHelper.ServerError("No se ha podido actualizar la foto del empleado.");
-            }
+            Empleado empleadoEdit = await _registerService.UploadPhoto(empleado, file, "empleados");
+            return ResponseHelper.SendResponse(new { foto = empleadoEdit.ImageURL });
         }
 
+        /// <summary>
+        /// Actualiza la ficha completa de un empleado interno.
+        /// </summary>
         [HttpPut("user/{id}")]
         [Consumes("multipart/form-data")]
         public async Task<IActionResult> GetUniqueUser([FromRoute] Guid id, [FromForm] EditarEmpleadoDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var newEmpleado = await _registerService.EditarEmpleado(id, dto, cancellationToken);
-                if (newEmpleado == null)
-                    return ResponseHelper.NotFound("Empleado no encontrado.");
+            var newEmpleado = await _registerService.EditarEmpleado(id, dto, cancellationToken);
+            if (newEmpleado == null)
+                return ResponseHelper.NotFound("Empleado no encontrado.");
 
-                var tipo = dto.Tipo
-                    ?? (newEmpleado is Administrador ? TipoEmpleado.Administrador
-                    : newEmpleado is Camarero ? TipoEmpleado.Camarero
-                    : newEmpleado is Repartidor ? TipoEmpleado.Repartidor
-                    : TipoEmpleado.Cocinero);
-                var empleado = ToDTO.EmpleadoToEmpleadoFullDTO(newEmpleado, tipo);
+            var empleado = await _staffService.GetFullUser(id);
 
-                return ResponseHelper.SendResponse(empleado);
-            }
-            catch (KeyNotFoundException ex)
-            {
-                return ResponseHelper.NotFound(ex.Message);
-            }
-            catch (ValidationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
-            catch
-            {
-                return ResponseHelper.ServerError("No se ha podido actualizar el empleado.");
-            }
+            return ResponseHelper.SendResponse(empleado);
         }
 
     }

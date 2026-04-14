@@ -11,5 +11,6 @@ namespace Gestaurante.Models.DTO
         public Guid IdCategoria { get; set; }
         public string CategoriaDescripcion { get; set; } = string.Empty;
         public List<PlatoIngredienteDTO> Ingredientes { get; set; } = new();
+        public List<string> Alergenos { get; set; } = new();
     }
 }

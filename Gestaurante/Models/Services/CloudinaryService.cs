@@ -1,25 +1,32 @@
 ﻿using CloudinaryDotNet;
 using CloudinaryDotNet.Actions;
+using Gestaurante.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace Gestaurante.Models.Services
 {
     public class CloudinaryService
     {
         private readonly Cloudinary _cloudinary;
+        private readonly CloudinaryOptions _options;
 
-        public CloudinaryService(IConfiguration config)
+        public CloudinaryService(IOptions<CloudinaryOptions> options)
         {
+            _options = options.Value;
+
+            if (!_options.IsConfigured)
+                throw new InvalidOperationException("Cloudinary no está configurado. Revisa CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY y CLOUDINARY_API_SECRET.");
+
             var account = new Account(
-                Environment.GetEnvironmentVariable("CLOUDINARY_CLOUDNAME"),
-                Environment.GetEnvironmentVariable("CLOUDINARY_APIKEY"),
-                Environment.GetEnvironmentVariable("CLOUDINARY_APISECRET")
+                _options.CloudName,
+                _options.ApiKey,
+                _options.ApiSecret
             );
 
             _cloudinary = new Cloudinary(account);
         }
 
-        // Incluímos la localización, así la carpeta será siempre esa :)
-        public async Task<string> UploadImageAsync(Guid id, IFormFile file, string location) 
+        public async Task<string> UploadImageAsync(Guid id, IFormFile file, string location)
         {
             if (file == null || file.Length == 0)
                 return string.Empty;
@@ -36,6 +43,11 @@ namespace Gestaurante.Models.Services
             var result = await _cloudinary.UploadAsync(uploadParams);
 
             return result.SecureUrl.ToString();
+        }
+
+        public string ResolveImageUrl(string imagePath)
+        {
+            return _options.ResolveImageUrl(imagePath);
         }
     }
 

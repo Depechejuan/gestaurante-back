@@ -1,9 +1,20 @@
 # gestaurante-back
 Back-end de la Aplicación de Gestaurante
 
+## Documentación técnica
+- Guía de documentación C# y criterios de XML comments: [Gestaurante/docs/backend-documentation.md](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/docs/backend-documentation.md)
+- Guía operativa y estructura del proyecto: [AGENTS.md](/Users/juanleon/Documents/gestaurante/gestaurante-back/AGENTS.md)
+
 ## Documentación de Operaciones de Sala
 - El plan técnico preparado para `mesas -> pedidos -> factura` está detallado en [Gestaurante/docs/operaciones-sala-plan.md](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/docs/operaciones-sala-plan.md).
 - Este documento describe el alcance implementado sin tocar la lógica de `platos/ingredientes`, que se mantiene fuera de esta rama para no pisar el trabajo paralelo en curso.
+
+## Estilo de documentación C#
+- Los controladores y servicios públicos deben documentarse con XML comments.
+- `summary` describe intención y responsabilidad.
+- `param` y `returns` se usan cuando el contrato no es trivial.
+- `remarks` se reserva para reglas de negocio, side effects o restricciones importantes.
+- La referencia completa está en [Gestaurante/docs/backend-documentation.md](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/docs/backend-documentation.md).
 
 ## Roadmap futuro: catálogo, operación y pedido online
 
@@ -41,7 +52,7 @@ La idea no es implementarlo todo a la vez, sino avanzar por fases y con contrato
 
 #### Fase 1: QR de mesa completo
 - Exponer catálogo real para `/public/mesa/{id}`.
-- Terminar el flujo sobre catálogo real en lugar de mocks.
+- Seguir ampliando el flujo sobre catálogo real, sin dependencias de datos falsos.
 - Revisar el DTO/respuesta final que consumirá el cliente para su histórico visible.
 
 #### Fase 2: pedido online para recogida
@@ -140,7 +151,7 @@ dotnet add package Microsoft.AspNetCore.Authentication.JwtBearer --version 9.0.0
 
 
 # Usuarios de Prueba - Uso Interno
-Todas las contraseñas son las genéricas del .env
+Todas las contraseñas son las genéricas especificadas en el archivo .env
 
 Administradores:
 admin@gestaurante.com
@@ -150,11 +161,16 @@ Cocineros:
     maria.santos@gestaurante.com
     alberto.molina@gestaurante.com
     natalia.ramos@gestaurante.com
+    carmen.navarro@gestaurante.com
 
 Camareros:
-paula.garcia@gestaurante.com
+    paula.garcia@gestaurante.com
     diego.herrera@gestaurante.com
     laura.perez@gestaurante.com
     jorge.ruiz@gestaurante.com
     elena.flores@gestaurante.com
-    sergio.ortiz@gestaurante.com
+
+Repartidores:
+    sergio.reparto@gestaurante.com
+    irene.reparto@gestaurante.com
+    marcos.reparto@gestaurante.com

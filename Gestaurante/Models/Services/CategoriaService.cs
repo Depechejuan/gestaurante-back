@@ -1,6 +1,7 @@
 using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
@@ -43,7 +44,7 @@ namespace Gestaurante.Models.Services
         public async Task<CategoriaDTO> CreateAsync(CategoriaDTO dto, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrWhiteSpace(dto.Descripcion))
-                throw new InvalidOperationException("La descripcion de la categoria es obligatoria.");
+                throw new ValidationException("La descripcion de la categoria es obligatoria.");
 
             var descripcion = dto.Descripcion.Trim();
             var exists = await _db.Categorias.AnyAsync(c => c.Descripcion.ToLower() == descripcion.ToLower(), cancellationToken);
@@ -68,7 +69,7 @@ namespace Gestaurante.Models.Services
                 return null;
 
             if (string.IsNullOrWhiteSpace(dto.Descripcion))
-                throw new InvalidOperationException("La descripcion de la categoria es obligatoria.");
+                throw new ValidationException("La descripcion de la categoria es obligatoria.");
 
             var descripcion = dto.Descripcion.Trim();
             var duplicate = await _db.Categorias.AnyAsync(

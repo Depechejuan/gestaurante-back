@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
 using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
@@ -7,11 +8,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
 {
-    public class MockPaymentService
+    public class SimulatedPaymentService
     {
         private readonly AppDbContext _db;
 
-        public MockPaymentService(AppDbContext db)
+        public SimulatedPaymentService(AppDbContext db)
         {
             _db = db;
         }
@@ -27,7 +28,7 @@ namespace Gestaurante.Models.Services
             {
                 IdClienteMetodoPago = Guid.NewGuid(),
                 IdUsuarioCliente = clienteId,
-                MockPaymentToken = GenerateMockToken(dto.CardNumber, clienteId),
+                PaymentToken = GeneratePaymentToken(dto.CardNumber, clienteId),
                 Brand = DetectBrand(dto.CardNumber),
                 Last4 = dto.CardNumber[^4..],
                 HolderName = dto.HolderName.Trim(),
@@ -56,7 +57,7 @@ namespace Gestaurante.Models.Services
                 || !paymentMethod.ExpMonth.HasValue
                 || !paymentMethod.ExpYear.HasValue)
             {
-                throw new InvalidOperationException("Debes indicar una tarjeta válida para el pago online.");
+                throw new ValidationException("Debes indicar una tarjeta válida para el pago online.");
             }
 
             var createDto = new CreateClienteMetodoPagoDTO
@@ -77,7 +78,7 @@ namespace Gestaurante.Models.Services
             {
                 IdClienteMetodoPago = Guid.NewGuid(),
                 IdUsuarioCliente = clienteId,
-                MockPaymentToken = GenerateMockToken(createDto.CardNumber, clienteId),
+                PaymentToken = GeneratePaymentToken(createDto.CardNumber, clienteId),
                 Brand = DetectBrand(createDto.CardNumber),
                 Last4 = createDto.CardNumber[^4..],
                 HolderName = createDto.HolderName,
@@ -113,24 +114,24 @@ namespace Gestaurante.Models.Services
         {
             var normalized = new string(cardNumber.Where(char.IsDigit).ToArray());
             if (normalized.Length < 12 || normalized.Length > 19)
-                throw new InvalidOperationException("Número de tarjeta no válido.");
+                throw new ValidationException("Número de tarjeta no válido.");
 
             if (string.IsNullOrWhiteSpace(holderName))
-                throw new InvalidOperationException("El titular de la tarjeta es obligatorio.");
+                throw new ValidationException("El titular de la tarjeta es obligatorio.");
 
             if (expMonth < 1 || expMonth > 12)
-                throw new InvalidOperationException("Mes de expiración no válido.");
+                throw new ValidationException("Mes de expiración no válido.");
 
             var currentYear = DateTime.UtcNow.Year;
             if (expYear < currentYear)
-                throw new InvalidOperationException("Año de expiración no válido.");
+                throw new ValidationException("Año de expiración no válido.");
         }
 
-        private static string GenerateMockToken(string cardNumber, Guid clienteId)
+        private static string GeneratePaymentToken(string cardNumber, Guid clienteId)
         {
             using var sha = SHA256.Create();
             var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes($"{clienteId}:{cardNumber}:{DateTime.UtcNow.Ticks}"));
-            return $"mock_{Convert.ToHexString(bytes)[..24]}";
+            return $"pay_{Convert.ToHexString(bytes)[..24]}";
         }
 
         private static string DetectBrand(string cardNumber)

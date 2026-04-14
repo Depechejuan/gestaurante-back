@@ -243,7 +243,8 @@ namespace Gestaurante.Models.Data
                     .IsRequired()
                     .ValueGeneratedOnAdd();
 
-                entity.Property(m => m.MockPaymentToken)
+                entity.Property(m => m.PaymentToken)
+                    .HasColumnName("MockPaymentToken")
                     .IsRequired()
                     .HasMaxLength(120);
 

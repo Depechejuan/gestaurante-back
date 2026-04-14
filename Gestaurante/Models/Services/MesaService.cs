@@ -47,12 +47,12 @@ namespace Gestaurante.Models.Services
                 .Where(d => pedidos.Select(p => p.IdPedido).Contains(d.IdPedido))
                 .ToListAsync(cancellationToken);
 
-            var platos = await ResolvePlatoNamesAsync(detalles, cancellationToken);
+            var platos = await ResolvePlatoMetadataAsync(detalles, cancellationToken);
             var pedidosDto = pedidos.Select(pedido =>
             {
                 var detallesDto = detalles
                     .Where(d => d.IdPedido == pedido.IdPedido)
-                    .Select(detalle => MapDetalle(detalle, platos.GetValueOrDefault(detalle.IdPlato, "Plato desconocido")))
+                    .Select(detalle => MapDetalle(detalle, platos.GetValueOrDefault(detalle.IdPlato)))
                     .ToList();
 
                 return MapPedido(pedido, detallesDto);
@@ -206,16 +206,20 @@ namespace Gestaurante.Models.Services
                 .AnyAsync(d => pedidoIds.Contains(d.IdPedido) && d.Estado != EstadoDetallePedido.CANCELADA, cancellationToken);
         }
 
-        private async Task<Dictionary<Guid, string>> ResolvePlatoNamesAsync(List<DetallePedido> detalles, CancellationToken cancellationToken)
+        private async Task<Dictionary<Guid, PlatoDetalleMetadata>> ResolvePlatoMetadataAsync(List<DetallePedido> detalles, CancellationToken cancellationToken)
         {
             var platoIds = detalles.Select(d => d.IdPlato).Distinct().ToList();
             if (platoIds.Count == 0)
-                return new Dictionary<Guid, string>();
+                return new Dictionary<Guid, PlatoDetalleMetadata>();
 
             return await _db.Platos
                 .AsNoTracking()
+                .Include(p => p.Categoria)
                 .Where(p => platoIds.Contains(p.IdPlato))
-                .ToDictionaryAsync(p => p.IdPlato, p => p.Nombre, cancellationToken);
+                .ToDictionaryAsync(
+                    p => p.IdPlato,
+                    p => new PlatoDetalleMetadata(p.Nombre, p.Categoria != null ? p.Categoria.Descripcion : string.Empty),
+                    cancellationToken);
         }
 
         private static MesaDTO MapMesa(Mesa mesa, MesaResumen? resumen)
@@ -249,7 +253,7 @@ namespace Gestaurante.Models.Services
             };
         }
 
-        private static DetallePedidoDTO MapDetalle(DetallePedido detalle, string platoNombre)
+        private static DetallePedidoDTO MapDetalle(DetallePedido detalle, PlatoDetalleMetadata? metadata)
         {
             var subtotal = detalle.Estado != EstadoDetallePedido.CANCELADA
                 ? detalle.Cantidad * detalle.PrecioUnitario
@@ -260,7 +264,8 @@ namespace Gestaurante.Models.Services
                 IdDetallePedido = detalle.IdDetallePedido,
                 IdPedido = detalle.IdPedido,
                 IdPlato = detalle.IdPlato,
-                PlatoNombre = platoNombre,
+                PlatoNombre = metadata?.Nombre ?? "Plato desconocido",
+                CategoriaDescripcion = metadata?.CategoriaDescripcion ?? string.Empty,
                 Cantidad = detalle.Cantidad,
                 PrecioUnitario = detalle.PrecioUnitario,
                 Subtotal = subtotal,
@@ -269,6 +274,8 @@ namespace Gestaurante.Models.Services
                 SeTieneEnCuentaEnFactura = detalle.Estado != EstadoDetallePedido.CANCELADA
             };
         }
+
+        private sealed record PlatoDetalleMetadata(string Nombre, string CategoriaDescripcion);
 
         private sealed class MesaResumen
         {

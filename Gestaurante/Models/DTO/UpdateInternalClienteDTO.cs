@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Gestaurante.Models.DTO
 {
-    public class CreateInternalClienteDTO
+    public class UpdateInternalClienteDTO
     {
         [Required]
         [EmailAddress]
@@ -27,5 +27,8 @@ namespace Gestaurante.Models.DTO
         public string BillingProvince { get; set; } = string.Empty;
 
         public string BillingPostalCode { get; set; } = string.Empty;
+
+        public bool? Activo { get; set; }
+        public bool? EmailVerificado { get; set; }
     }
 }

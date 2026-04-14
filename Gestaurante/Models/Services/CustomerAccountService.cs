@@ -1,5 +1,6 @@
 using System.Security.Cryptography;
 using System.Text;
+using System.ComponentModel.DataAnnotations;
 using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
@@ -7,25 +8,41 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
 {
+    /// <summary>
+    /// Gestiona el ciclo de vida de la cuenta de cliente, su perfil y sus datos auxiliares.
+    /// </summary>
     public class CustomerAccountService
     {
         private readonly AppDbContext _db;
         private readonly IEmailService _emailService;
         private readonly ICustomerJwtService _customerJwtService;
-        private readonly MockPaymentService _mockPaymentService;
+        private readonly SimulatedPaymentService _simulatedPaymentService;
 
+        /// <summary>
+        /// Inicializa el servicio de cuentas de cliente.
+        /// </summary>
+        /// <param name="db">Contexto EF del dominio.</param>
+        /// <param name="emailService">Servicio de envío de correos.</param>
+        /// <param name="customerJwtService">Servicio emisor del JWT de cliente.</param>
+        /// <param name="simulatedPaymentService">Servicio de métodos de pago simulados.</param>
         public CustomerAccountService(
             AppDbContext db,
             IEmailService emailService,
             ICustomerJwtService customerJwtService,
-            MockPaymentService mockPaymentService)
+            SimulatedPaymentService simulatedPaymentService)
         {
             _db = db;
             _emailService = emailService;
             _customerJwtService = customerJwtService;
-            _mockPaymentService = mockPaymentService;
+            _simulatedPaymentService = simulatedPaymentService;
         }
 
+        /// <summary>
+        /// Registra una nueva cuenta de cliente y envía el código de verificación por correo.
+        /// </summary>
+        /// <param name="dto">Datos mínimos de alta del cliente.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Resultado del registro con el identificador del cliente creado.</returns>
         public async Task<ClienteRegisterResponseDTO> RegisterAsync(ClienteRegisterDTO dto, CancellationToken cancellationToken = default)
         {
             var existing = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.Email.ToLower() == dto.Email.ToLower(), cancellationToken);
@@ -58,6 +75,11 @@ namespace Gestaurante.Models.Services
             };
         }
 
+        /// <summary>
+        /// Verifica el correo electrónico de una cuenta usando el código activo más reciente.
+        /// </summary>
+        /// <param name="dto">Email y código OTP enviados por el cliente.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
         public async Task VerifyEmailAsync(ClienteVerifyEmailDTO dto, CancellationToken cancellationToken = default)
         {
             var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.Email.ToLower() == dto.Email.ToLower(), cancellationToken)
@@ -67,16 +89,16 @@ namespace Gestaurante.Models.Services
                 .Where(v => v.IdUsuarioCliente == user.IdUsuarioCliente && v.ConsumedAt == null)
                 .OrderByDescending(v => v.CreatedAt)
                 .FirstOrDefaultAsync(cancellationToken)
-                ?? throw new InvalidOperationException("No hay un código de validación activo.");
+                ?? throw new ValidationException("No hay un código de validación activo.");
 
             if (verification.ExpiresAt <= DateTime.UtcNow)
-                throw new InvalidOperationException("El código ha expirado.");
+                throw new ValidationException("El código ha expirado.");
 
             verification.AttemptCount += 1;
             if (verification.CodeHash != HashCode(dto.Code))
             {
                 await _db.SaveChangesAsync(cancellationToken);
-                throw new InvalidOperationException("Código de validación incorrecto.");
+                throw new ValidationException("Código de validación incorrecto.");
             }
 
             verification.ConsumedAt = DateTime.UtcNow;
@@ -86,17 +108,28 @@ namespace Gestaurante.Models.Services
             await _db.SaveChangesAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Regenera y reenvía un código de verificación para una cuenta todavía no validada.
+        /// </summary>
+        /// <param name="dto">Datos de la cuenta para la que se solicita un nuevo código.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
         public async Task ResendVerificationCodeAsync(ClienteResendCodeDTO dto, CancellationToken cancellationToken = default)
         {
             var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.Email.ToLower() == dto.Email.ToLower(), cancellationToken)
                 ?? throw new KeyNotFoundException("Cuenta no encontrada.");
 
             if (user.EmailVerificado)
-                throw new InvalidOperationException("La cuenta ya tiene el email validado.");
+                throw new ValidationException("La cuenta ya tiene el email validado.");
 
             await GenerateAndSendVerificationCodeAsync(user, cancellationToken);
         }
 
+        /// <summary>
+        /// Autentica a un cliente verificado y devuelve su token de acceso.
+        /// </summary>
+        /// <param name="dto">Credenciales de acceso del cliente.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Token de cliente junto a sus datos mínimos de sesión.</returns>
         public async Task<ClienteTokenDTO> LoginAsync(ClienteLoginDTO dto, CancellationToken cancellationToken = default)
         {
             var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.Email.ToLower() == dto.Email.ToLower(), cancellationToken);
@@ -108,12 +141,24 @@ namespace Gestaurante.Models.Services
             return new ClienteTokenDTO(token, _customerJwtService.GetExpiracion(), user.IdUsuarioCliente, user.Email, user.EmailVerificado);
         }
 
+        /// <summary>
+        /// Recupera el perfil del cliente autenticado.
+        /// </summary>
+        /// <param name="clienteId">Identificador del cliente autenticado.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Perfil del cliente o <see langword="null"/> si no existe.</returns>
         public async Task<ClienteProfileDTO?> GetProfileAsync(Guid clienteId, CancellationToken cancellationToken = default)
         {
             var user = await _db.UsuariosCliente.AsNoTracking().FirstOrDefaultAsync(u => u.IdUsuarioCliente == clienteId, cancellationToken);
             return user == null ? null : MapProfile(user);
         }
 
+        /// <summary>
+        /// Recupera clientes para uso interno con filtro opcional por texto libre.
+        /// </summary>
+        /// <param name="query">Texto opcional de búsqueda por identidad o datos fiscales.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Lista de clientes visibles para el panel interno.</returns>
         public async Task<List<ClienteProfileDTO>> GetInternalClientesAsync(string? query, CancellationToken cancellationToken = default)
         {
             var clientesQuery = _db.UsuariosCliente.AsNoTracking();
@@ -137,18 +182,25 @@ namespace Gestaurante.Models.Services
             return users.Select(MapProfile).ToList();
         }
 
+        /// <summary>
+        /// Crea un cliente desde el panel interno dejando la cuenta activa y validada.
+        /// </summary>
+        /// <param name="dto">Datos fiscales y de contacto del cliente interno.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Perfil del cliente creado.</returns>
         public async Task<ClienteProfileDTO> CreateInternalClienteAsync(CreateInternalClienteDTO dto, CancellationToken cancellationToken = default)
         {
-            var email = dto.Email.Trim();
+            var email = NormalizeEmail(dto.Email);
             if (await _db.UsuariosCliente.AnyAsync(user => user.Email.ToLower() == email.ToLower(), cancellationToken))
                 throw new InvalidOperationException("Ya existe un cliente con ese email.");
 
+            var fiscalName = NormalizeText(dto.FiscalName, 160);
             var firstName = string.IsNullOrWhiteSpace(dto.FirstName)
-                ? ResolveFirstNameFromFiscalName(dto.FiscalName)
-                : dto.FirstName.Trim();
+                ? ResolveFirstNameFromFiscalName(fiscalName)
+                : NormalizeText(dto.FirstName, 120);
             var lastName = string.IsNullOrWhiteSpace(dto.LastName)
-                ? ResolveLastNameFromFiscalName(dto.FiscalName)
-                : dto.LastName.Trim();
+                ? ResolveLastNameFromFiscalName(fiscalName)
+                : NormalizeText(dto.LastName, 160);
 
             var user = new UsuarioCliente
             {
@@ -157,14 +209,14 @@ namespace Gestaurante.Models.Services
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(Guid.NewGuid().ToString("N")),
                 FirstName = firstName,
                 LastName = lastName,
-                Phone = dto.Phone.Trim(),
-                FiscalName = dto.FiscalName.Trim(),
-                Dni = dto.Dni.Trim().ToUpperInvariant(),
-                Cif = dto.Cif.Trim().ToUpperInvariant(),
-                BillingStreet = dto.BillingStreet.Trim(),
-                BillingCity = dto.BillingCity.Trim(),
-                BillingProvince = dto.BillingProvince.Trim(),
-                BillingPostalCode = dto.BillingPostalCode.Trim(),
+                Phone = NormalizeText(dto.Phone, 25),
+                FiscalName = fiscalName,
+                Dni = NormalizeUpperText(dto.Dni, 15),
+                Cif = NormalizeUpperText(dto.Cif, 20),
+                BillingStreet = NormalizeText(dto.BillingStreet, 200),
+                BillingCity = NormalizeText(dto.BillingCity, 120),
+                BillingProvince = NormalizeText(dto.BillingProvince, 120),
+                BillingPostalCode = NormalizeText(dto.BillingPostalCode, 20),
                 Activo = true,
                 EmailVerificado = true,
                 CreatedAt = DateTime.UtcNow
@@ -175,6 +227,81 @@ namespace Gestaurante.Models.Services
             return MapProfile(user);
         }
 
+        /// <summary>
+        /// Actualiza los datos globales de un cliente desde el panel interno.
+        /// </summary>
+        /// <param name="clienteId">Identificador del cliente a modificar.</param>
+        /// <param name="dto">Datos actualizados del cliente.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Perfil actualizado o <see langword="null"/> si el cliente no existe.</returns>
+        public async Task<ClienteProfileDTO?> UpdateInternalClienteAsync(Guid clienteId, UpdateInternalClienteDTO dto, CancellationToken cancellationToken = default)
+        {
+            var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.IdUsuarioCliente == clienteId, cancellationToken);
+            if (user == null)
+                return null;
+
+            var email = NormalizeEmail(dto.Email);
+            var emailExists = await _db.UsuariosCliente.AnyAsync(
+                existingUser => existingUser.IdUsuarioCliente != clienteId && existingUser.Email.ToLower() == email.ToLower(),
+                cancellationToken);
+            if (emailExists)
+                throw new InvalidOperationException("Ya existe un cliente con ese email.");
+
+            var fiscalName = NormalizeText(dto.FiscalName, 160);
+            user.Email = email;
+            user.FiscalName = fiscalName;
+            user.FirstName = string.IsNullOrWhiteSpace(dto.FirstName)
+                ? ResolveFirstNameFromFiscalName(fiscalName)
+                : NormalizeText(dto.FirstName, 120);
+            user.LastName = string.IsNullOrWhiteSpace(dto.LastName)
+                ? ResolveLastNameFromFiscalName(fiscalName)
+                : NormalizeText(dto.LastName, 160);
+            user.Phone = NormalizeText(dto.Phone, 25);
+            user.Dni = NormalizeUpperText(dto.Dni, 15);
+            user.Cif = NormalizeUpperText(dto.Cif, 20);
+            user.BillingStreet = NormalizeText(dto.BillingStreet, 200);
+            user.BillingCity = NormalizeText(dto.BillingCity, 120);
+            user.BillingProvince = NormalizeText(dto.BillingProvince, 120);
+            user.BillingPostalCode = NormalizeText(dto.BillingPostalCode, 20);
+            if (dto.Activo.HasValue)
+                user.Activo = dto.Activo.Value;
+
+            if (dto.EmailVerificado.HasValue)
+                user.EmailVerificado = dto.EmailVerificado.Value;
+
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(cancellationToken);
+            return MapProfile(user);
+        }
+
+        /// <summary>
+        /// Activa o desactiva una cuenta de cliente sin eliminarla.
+        /// </summary>
+        /// <param name="clienteId">Identificador del cliente.</param>
+        /// <param name="activo">Nuevo estado activo de la cuenta.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Perfil actualizado o <see langword="null"/> si el cliente no existe.</returns>
+        public async Task<ClienteProfileDTO?> SetActivoAsync(Guid clienteId, bool activo, CancellationToken cancellationToken = default)
+        {
+            var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.IdUsuarioCliente == clienteId, cancellationToken);
+            if (user == null)
+                return null;
+
+            user.Activo = activo;
+            user.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(cancellationToken);
+            return MapProfile(user);
+        }
+
+        /// <summary>
+        /// Actualiza el perfil editable del propio cliente autenticado.
+        /// </summary>
+        /// <param name="clienteId">Identificador del cliente autenticado.</param>
+        /// <param name="dto">Datos de perfil editables por el propio cliente.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Perfil actualizado o <see langword="null"/> si no existe.</returns>
         public async Task<ClienteProfileDTO?> UpdateProfileAsync(Guid clienteId, UpdateClienteProfileDTO dto, CancellationToken cancellationToken = default)
         {
             var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.IdUsuarioCliente == clienteId, cancellationToken);
@@ -197,6 +324,12 @@ namespace Gestaurante.Models.Services
             return MapProfile(user);
         }
 
+        /// <summary>
+        /// Recupera las direcciones guardadas del cliente autenticado.
+        /// </summary>
+        /// <param name="clienteId">Identificador del cliente autenticado.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Direcciones guardadas del cliente.</returns>
         public async Task<List<ClienteDireccionDTO>> GetDireccionesAsync(Guid clienteId, CancellationToken cancellationToken = default)
         {
             return await _db.ClienteDirecciones
@@ -208,6 +341,13 @@ namespace Gestaurante.Models.Services
                 .ToListAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Añade una nueva dirección al perfil del cliente.
+        /// </summary>
+        /// <param name="clienteId">Identificador del cliente autenticado.</param>
+        /// <param name="dto">Datos de la nueva dirección.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Dirección creada.</returns>
         public async Task<ClienteDireccionDTO> CreateDireccionAsync(Guid clienteId, CreateClienteDireccionDTO dto, CancellationToken cancellationToken = default)
         {
             if (dto.IsDefault)
@@ -231,6 +371,14 @@ namespace Gestaurante.Models.Services
             return MapDireccion(direccion);
         }
 
+        /// <summary>
+        /// Modifica una dirección existente del cliente autenticado.
+        /// </summary>
+        /// <param name="clienteId">Identificador del cliente autenticado.</param>
+        /// <param name="direccionId">Identificador de la dirección a modificar.</param>
+        /// <param name="dto">Datos actualizados de la dirección.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Dirección actualizada o <see langword="null"/> si no existe.</returns>
         public async Task<ClienteDireccionDTO?> UpdateDireccionAsync(Guid clienteId, Guid direccionId, UpdateClienteDireccionDTO dto, CancellationToken cancellationToken = default)
         {
             var direccion = await _db.ClienteDirecciones
@@ -254,6 +402,12 @@ namespace Gestaurante.Models.Services
             return MapDireccion(direccion);
         }
 
+        /// <summary>
+        /// Elimina una dirección guardada del cliente autenticado.
+        /// </summary>
+        /// <param name="clienteId">Identificador del cliente autenticado.</param>
+        /// <param name="direccionId">Identificador de la dirección a borrar.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
         public async Task DeleteDireccionAsync(Guid clienteId, Guid direccionId, CancellationToken cancellationToken = default)
         {
             var direccion = await _db.ClienteDirecciones
@@ -265,6 +419,12 @@ namespace Gestaurante.Models.Services
             await _db.SaveChangesAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Recupera los métodos de pago guardados del cliente autenticado.
+        /// </summary>
+        /// <param name="clienteId">Identificador del cliente autenticado.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Métodos de pago disponibles para el cliente.</returns>
         public async Task<List<ClienteMetodoPagoDTO>> GetMetodosPagoAsync(Guid clienteId, CancellationToken cancellationToken = default)
         {
             return await _db.ClienteMetodosPago
@@ -285,17 +445,33 @@ namespace Gestaurante.Models.Services
                 .ToListAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Crea y guarda un nuevo método de pago simulado para reutilizarlo en futuros pedidos.
+        /// </summary>
+        /// <param name="clienteId">Identificador del cliente autenticado.</param>
+        /// <param name="dto">Datos del método de pago a guardar.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Método de pago guardado ya proyectado al DTO público.</returns>
         public async Task<ClienteMetodoPagoDTO> CreateMetodoPagoAsync(Guid clienteId, CreateClienteMetodoPagoDTO dto, CancellationToken cancellationToken = default)
         {
-            var method = await _mockPaymentService.CreateSavedMethodAsync(clienteId, dto, cancellationToken);
+            var method = await _simulatedPaymentService.CreateSavedMethodAsync(clienteId, dto, cancellationToken);
             return MapMetodoPago(method);
         }
 
+        /// <summary>
+        /// Elimina un método de pago previamente guardado por el cliente.
+        /// </summary>
+        /// <param name="clienteId">Identificador del cliente autenticado.</param>
+        /// <param name="paymentMethodId">Identificador del método de pago.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
         public async Task DeleteMetodoPagoAsync(Guid clienteId, Guid paymentMethodId, CancellationToken cancellationToken = default)
         {
-            await _mockPaymentService.DeleteSavedMethodAsync(clienteId, paymentMethodId, cancellationToken);
+            await _simulatedPaymentService.DeleteSavedMethodAsync(clienteId, paymentMethodId, cancellationToken);
         }
 
+        /// <summary>
+        /// Genera un código OTP, lo persiste y lo envía al correo del cliente.
+        /// </summary>
         private async Task GenerateAndSendVerificationCodeAsync(UsuarioCliente user, CancellationToken cancellationToken)
         {
             var code = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
@@ -317,6 +493,9 @@ namespace Gestaurante.Models.Services
                 cancellationToken: cancellationToken);
         }
 
+        /// <summary>
+        /// Retira la marca de dirección por defecto al resto de direcciones del cliente.
+        /// </summary>
         private async Task ClearDefaultAddressAsync(Guid clienteId, CancellationToken cancellationToken)
         {
             var defaults = await _db.ClienteDirecciones
@@ -327,6 +506,9 @@ namespace Gestaurante.Models.Services
                 address.IsDefault = false;
         }
 
+        /// <summary>
+        /// Calcula el hash SHA256 del código de verificación.
+        /// </summary>
         private static string HashCode(string code)
         {
             using var sha = SHA256.Create();
@@ -334,6 +516,9 @@ namespace Gestaurante.Models.Services
             return Convert.ToHexString(bytes);
         }
 
+        /// <summary>
+        /// Deriva un nombre básico a partir del email cuando aún no existe información personal.
+        /// </summary>
         private static string ResolveDefaultCustomerName(string email)
         {
             var localPart = email.Split('@', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.Trim();
@@ -344,6 +529,9 @@ namespace Gestaurante.Models.Services
             return string.IsNullOrWhiteSpace(sanitized) ? "Cliente" : sanitized;
         }
 
+        /// <summary>
+        /// Obtiene un nombre provisional a partir del nombre fiscal.
+        /// </summary>
         private static string ResolveFirstNameFromFiscalName(string fiscalName)
         {
             var sanitized = fiscalName.Trim();
@@ -353,6 +541,9 @@ namespace Gestaurante.Models.Services
             return sanitized.Split(' ', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault() ?? "Cliente";
         }
 
+        /// <summary>
+        /// Obtiene apellidos provisionales a partir del nombre fiscal.
+        /// </summary>
         private static string ResolveLastNameFromFiscalName(string fiscalName)
         {
             var sanitized = fiscalName.Trim();
@@ -363,6 +554,9 @@ namespace Gestaurante.Models.Services
             return parts.Length > 1 ? string.Join(' ', parts.Skip(1)) : string.Empty;
         }
 
+        /// <summary>
+        /// Mapea la entidad de cliente al DTO de perfil expuesto por la API.
+        /// </summary>
         private static ClienteProfileDTO MapProfile(UsuarioCliente user)
         {
             return new ClienteProfileDTO
@@ -384,6 +578,9 @@ namespace Gestaurante.Models.Services
             };
         }
 
+        /// <summary>
+        /// Mapea una dirección guardada al DTO consumido por el front.
+        /// </summary>
         private static ClienteDireccionDTO MapDireccion(ClienteDireccion direccion)
         {
             return new ClienteDireccionDTO
@@ -399,6 +596,9 @@ namespace Gestaurante.Models.Services
             };
         }
 
+        /// <summary>
+        /// Proporciona una proyección reutilizable de direcciones para consultas EF.
+        /// </summary>
         private static System.Linq.Expressions.Expression<Func<ClienteDireccion, ClienteDireccionDTO>> MapDireccionExpression()
         {
             return direccion => new ClienteDireccionDTO
@@ -414,6 +614,9 @@ namespace Gestaurante.Models.Services
             };
         }
 
+        /// <summary>
+        /// Mapea un método de pago guardado al DTO público del área cliente.
+        /// </summary>
         private static ClienteMetodoPagoDTO MapMetodoPago(ClienteMetodoPago method)
         {
             return new ClienteMetodoPagoDTO
@@ -426,6 +629,44 @@ namespace Gestaurante.Models.Services
                 ExpYear = method.ExpYear,
                 IsDefault = method.IsDefault
             };
+        }
+
+        /// <summary>
+        /// Normaliza y valida el email almacenado de un cliente.
+        /// </summary>
+        private static string NormalizeEmail(string value)
+        {
+            var normalized = value.Trim();
+            if (string.IsNullOrWhiteSpace(normalized))
+                throw new ValidationException("El email es obligatorio.");
+
+            return TrimToLength(normalized, 100);
+        }
+
+        /// <summary>
+        /// Recorta un texto libre al tamaño máximo permitido.
+        /// </summary>
+        private static string NormalizeText(string value, int maxLength)
+        {
+            return TrimToLength(value.Trim(), maxLength);
+        }
+
+        /// <summary>
+        /// Recorta un texto y lo transforma a mayúsculas para documentos fiscales.
+        /// </summary>
+        private static string NormalizeUpperText(string value, int maxLength)
+        {
+            return TrimToLength(value.Trim().ToUpperInvariant(), maxLength);
+        }
+
+        /// <summary>
+        /// Limita un texto al tamaño máximo admitido por el dominio.
+        /// </summary>
+        private static string TrimToLength(string value, int maxLength)
+        {
+            return value.Length <= maxLength
+                ? value
+                : value[..maxLength];
         }
     }
 }

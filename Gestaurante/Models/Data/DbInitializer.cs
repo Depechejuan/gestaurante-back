@@ -1,6 +1,8 @@
 using BCrypt.Net;
+using Gestaurante.Configuration;
 using Gestaurante.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Gestaurante.Models.Data
 {
@@ -16,7 +18,6 @@ namespace Gestaurante.Models.Data
             if (await context.Empleados.AnyAsync(cancellationToken))
             {
                 await EnsureDefaultEmployeesAsync(context, defaultCredentials, cancellationToken);
-                await SeedDefaultRepartidoresAsync(context, cancellationToken);
                 await SeedDefaultMesasAsync(context, cancellationToken);
                 return;
             }
@@ -24,34 +25,6 @@ namespace Gestaurante.Models.Data
             await context.Empleados.AddRangeAsync(empleados, cancellationToken);
             await context.SaveChangesAsync(cancellationToken);
             await SeedDefaultMesasAsync(context, cancellationToken);
-        }
-
-        private static async Task SeedDefaultRepartidoresAsync(AppDbContext context, CancellationToken cancellationToken)
-        {
-            var existingRepartidores = await context.Empleados.OfType<Repartidor>().AnyAsync(cancellationToken);
-            if (existingRepartidores)
-                return;
-
-            string repartidorPassword = Environment.GetEnvironmentVariable("DEFAULT_REPARTIDOR_PASSWORD")
-                ?? Environment.GetEnvironmentVariable("DEFAULT_CAMARERO_PASSWORD")
-                ?? throw new Exception("DEFAULT_REPARTIDOR_PASSWORD o DEFAULT_CAMARERO_PASSWORD no definido");
-
-            string repartidorHash = BCrypt.Net.BCrypt.HashPassword(repartidorPassword, BCrypt.Net.BCrypt.GenerateSalt(12));
-
-            var repartidores = new List<Repartidor>
-            {
-                new Repartidor("sergio.reparto@gestaurante.com", repartidorHash, "Sergio", "Morales", "Cruz", "00000011B", "0444444444441"),
-                new Repartidor("irene.reparto@gestaurante.com", repartidorHash, "Irene", "Campos", "Sanz", "00000012N", "0444444444442")
-            };
-
-            foreach (var repartidor in repartidores)
-            {
-                repartidor.Activo = true;
-                repartidor.ImageURL = string.Empty;
-            }
-
-            await context.Empleados.AddRangeAsync(repartidores, cancellationToken);
-            await context.SaveChangesAsync(cancellationToken);
         }
 
         private static async Task SeedDefaultMesasAsync(AppDbContext context, CancellationToken cancellationToken)
@@ -110,7 +83,7 @@ namespace Gestaurante.Models.Data
         public static async Task SeedDefaultCustomersAsync(AppDbContext context, CancellationToken cancellationToken = default)
         {
             string clientPassword = Environment.GetEnvironmentVariable("DEFAULT_CLIENT_PASSWORD")
-                ?? throw new Exception("DEFAULT_CLIENT_PASSWORD no definido");
+                ?? throw new InvalidOperationException("DEFAULT_CLIENT_PASSWORD no definido");
 
             string clientHash = BCrypt.Net.BCrypt.HashPassword(clientPassword, BCrypt.Net.BCrypt.GenerateSalt(12));
 
@@ -226,11 +199,11 @@ namespace Gestaurante.Models.Data
         private static List<DefaultEmployeeSeed> GetDefaultEmployeeCredentials()
         {
             string adminPassword = Environment.GetEnvironmentVariable("DEFAULT_ADMIN_PASSWORD")
-                ?? throw new Exception("DEFAULT_ADMIN_PASSWORD no definido");
+                ?? throw new InvalidOperationException("DEFAULT_ADMIN_PASSWORD no definido");
             string camareroPassword = Environment.GetEnvironmentVariable("DEFAULT_CAMARERO_PASSWORD")
-                ?? throw new Exception("DEFAULT_CAMARERO_PASSWORD no definido");
+                ?? throw new InvalidOperationException("DEFAULT_CAMARERO_PASSWORD no definido");
             string cocineroPassword = Environment.GetEnvironmentVariable("DEFAULT_COCINERO_PASSWORD")
-                ?? throw new Exception("DEFAULT_COCINERO_PASSWORD no definido");
+                ?? throw new InvalidOperationException("DEFAULT_COCINERO_PASSWORD no definido");
             string repartidorPassword = Environment.GetEnvironmentVariable("DEFAULT_REPARTIDOR_PASSWORD")
                 ?? camareroPassword;
 
@@ -257,7 +230,8 @@ namespace Gestaurante.Models.Data
                 new("jorge.ruiz@gestaurante.com", camareroPassword, TipoEmpleado.Camarero, "Jorge", "Ruiz", "Ortega", "00000009D", "0333333333334"),
                 new("elena.flores@gestaurante.com", camareroPassword, TipoEmpleado.Camarero, "Elena", "Flores", "Cano", "00000010X", "0333333333335"),
                 new("sergio.reparto@gestaurante.com", repartidorPassword, TipoEmpleado.Repartidor, "Sergio", "Morales", "Cruz", "00000011B", "0444444444441"),
-                new("irene.reparto@gestaurante.com", repartidorPassword, TipoEmpleado.Repartidor, "Irene", "Campos", "Sanz", "00000012N", "0444444444442")
+                new("irene.reparto@gestaurante.com", repartidorPassword, TipoEmpleado.Repartidor, "Irene", "Campos", "Sanz", "00000012N", "0444444444442"),
+                new("marcos.reparto@gestaurante.com", repartidorPassword, TipoEmpleado.Repartidor, "Marcos", "Delgado", "Prieto", "00000013J", "0444444444443")
             };
         }
 

@@ -1,6 +1,8 @@
-﻿using Gestaurante.Models.DTO;
+﻿using Gestaurante.Configuration;
+using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -15,23 +17,16 @@ namespace Gestaurante.Models.Services
 
     public class JwtService : IJwtService
     {
-        private readonly IConfiguration _configuration;
+        private readonly EmployeeJwtOptions _options;
 
-        public JwtService(IConfiguration configuration)
+        public JwtService(IOptions<EmployeeJwtOptions> options)
         {
-            _configuration = configuration;
+            _options = options.Value;
         }
 
         public string GenerarToken(EmpleadoLoginDTO empleado)
         {
-            var claveSecreta = _configuration["JWT_KEY"];
-            var emisor = _configuration["JWT_ISSUER"];
-            var audiencia = _configuration["JWT_AUDIENCE"];
-
-            if (string.IsNullOrEmpty(claveSecreta))
-                throw new ArgumentNullException("Jwt:Key no configurado");
-
-            var clave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(claveSecreta));
+            var clave = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));
             var credenciales = new SigningCredentials(clave, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -44,8 +39,8 @@ namespace Gestaurante.Models.Services
             };
 
             var token = new JwtSecurityToken(
-                issuer: emisor,
-                audience: audiencia,
+                issuer: _options.Issuer,
+                audience: _options.Audience,
                 claims: claims,
                 expires: GetExpiracion(),
                 signingCredentials: credenciales
@@ -56,8 +51,7 @@ namespace Gestaurante.Models.Services
 
         public DateTime GetExpiracion()
         {
-            var dias = _configuration.GetValue<int>("JWT_EXPIRE_DAYS", 30);
-            return DateTime.UtcNow.AddDays(dias);
+            return DateTime.UtcNow.AddDays(_options.ExpireDays);
         }
     }
 }

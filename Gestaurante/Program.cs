@@ -1,231 +1,198 @@
-﻿using Gestaurante.Models.Data;
-using Gestaurante.Models.Services;
-using DotNetEnv;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Text;
+using System.Text.Json.Serialization;
+using Gestaurante.Configuration;
+using Gestaurante.Infrastructure;
+using Gestaurante.Middleware;
+using Gestaurante.Models.Data;
+using Gestaurante.Models.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 
-// Cargar variables del .env
-var envCandidates = new[]
+AppConfiguration.LoadDotEnv();
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.RegisterApplicationOptions(builder.Configuration, args);
+
+var databaseOptions = builder.Configuration.BuildDatabaseOptions();
+var employeeJwtOptions = builder.Configuration.BuildEmployeeJwtOptions();
+var customerJwtOptions = builder.Configuration.BuildCustomerJwtOptions();
+var bootstrapOptions = builder.Configuration.BuildBootstrapOptions(args);
+var corsPolicyOptions = builder.Configuration.BuildCorsPolicyOptions();
+var appPort = builder.Configuration.GetTrimmedValue("PORT") ?? "3000";
+
+builder.WebHost.UseUrls($"http://localhost:{appPort}");
+
+builder.Services.AddCors(options =>
 {
-    Path.Combine(Directory.GetCurrentDirectory(), ".env"),
-    Path.Combine(Directory.GetCurrentDirectory(), "Gestaurante", ".env"),
-    Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../.env"))
-};
-
-foreach (var envPath in envCandidates.Distinct())
-{
-    if (!File.Exists(envPath))
-        continue;
-
-    Env.Load(envPath);
-}
-
-static string? ReadEnv(string key)
-{
-    var value = Environment.GetEnvironmentVariable(key)?.Trim();
-    if (string.IsNullOrWhiteSpace(value))
-        return value;
-
-    return value.Trim().Trim('"');
-}
-
-// Creación de la Connection String
-string dbHost = ReadEnv("DB_HOST")
-    ?? throw new Exception("DB_HOST no definido");
-
-string dbPort = ReadEnv("DB_PORT") ?? "3306";
-string dbName = ReadEnv("DB_NAME")
-    ?? throw new Exception("DB_NAME no definido");
-
-string dbUser = ReadEnv("DB_USER")
-    ?? throw new Exception("DB_USER no definido");
-
-string dbPassword = ReadEnv("DB_PASSWORD")
-    ?? throw new Exception("DB_PASSWORD no definido");
-
-
-string connectionString =
-    $"Server={dbHost};Port={dbPort};Database={dbName};User Id={dbUser};Password={dbPassword};SSL Mode=Require;Trust Server Certificate=true;";
-
-string appPort = ReadEnv("PORT") ?? "3000";
-
-Console.WriteLine($"Gestaurante API iniciando en localhost:{appPort}");
-
-var contentRoot = Directory.Exists(Path.Combine(Directory.GetCurrentDirectory(), "Gestaurante"))
-    ? Path.Combine(Directory.GetCurrentDirectory(), "Gestaurante")
-    : Directory.GetCurrentDirectory();
-
-Console.WriteLine("Creando host web...");
-
-var host = new WebHostBuilder()
-    .UseKestrel()
-    .UseContentRoot(contentRoot)
-    .UseUrls($"http://localhost:{appPort}")
-    .ConfigureAppConfiguration((context, configuration) =>
+    options.AddPolicy("FrontendPolicy", policy =>
     {
-        configuration.SetBasePath(contentRoot);
-        configuration.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true);
-        configuration.AddJsonFile($"appsettings.{context.HostingEnvironment.EnvironmentName}.json", optional: true, reloadOnChange: true);
-        configuration.AddEnvironmentVariables();
-    })
-    .ConfigureServices(services =>
-    {
-        services.AddCors(options =>
+        if (builder.Environment.IsDevelopment())
         {
-            options.AddPolicy("LocalPolicy", policy =>
-            {
-                policy.SetIsOriginAllowed(origin =>
-                    {
-                        if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
-                            return false;
-
-                        var isLocalHost = uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase)
-                            || uri.Host.Equals("127.0.0.1");
-
-                        return isLocalHost && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
-                    })
-                    .AllowAnyHeader()
-                    .WithMethods("PUT", "PATCH", "POST", "GET", "DELETE");
-            });
-        });
-
-        services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
+            policy.SetIsOriginAllowed(origin =>
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = ReadEnv("JWT_ISSUER"),
-                    ValidAudience = ReadEnv("JWT_AUDIENCE"),
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(
-                            ReadEnv("JWT_KEY")
-                            ?? throw new Exception("JWT_KEY no definida")
-                        )
-                    ),
-                    ClockSkew = TimeSpan.Zero
-                };
+                    if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
+                        return false;
 
-                options.Events = new JwtBearerEvents
-                {
-                    OnTokenValidated = async context =>
-                    {
-                        var db = context.HttpContext.RequestServices.GetRequiredService<AppDbContext>();
-                        var subject = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub)
-                            ?? context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
-                        var email = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Email)
-                            ?? context.Principal?.FindFirstValue(ClaimTypes.Email);
+                    var isLocalHost = uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase)
+                        || uri.Host.Equals("127.0.0.1");
 
-                        if (!Guid.TryParse(subject, out var userId) || string.IsNullOrWhiteSpace(email))
-                        {
-                            context.Fail("Token inválido.");
-                            return;
-                        }
+                    return isLocalHost && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+                })
+                .AllowAnyHeader()
+                .AllowAnyMethod();
 
-                        var empleado = await db.Empleados.FirstOrDefaultAsync(e => e.Id == userId);
-                        if (empleado == null || !empleado.Activo || !string.Equals(empleado.Email, email, StringComparison.OrdinalIgnoreCase))
-                            context.Fail("Usuario no válido o inactivo.");
-                    }
-                };
-            })
-            .AddJwtBearer("CustomerBearer", options =>
-            {
-                options.TokenValidationParameters = new TokenValidationParameters
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                    ValidIssuer = ReadEnv("CUSTOMER_JWT_ISSUER"),
-                    ValidAudience = ReadEnv("CUSTOMER_JWT_AUDIENCE"),
-                    IssuerSigningKey = new SymmetricSecurityKey(
-                        Encoding.UTF8.GetBytes(
-                            ReadEnv("CUSTOMER_JWT_KEY")
-                            ?? throw new Exception("CUSTOMER_JWT_KEY no definida")
-                        )
-                    ),
-                    ClockSkew = TimeSpan.Zero
-                };
+            return;
+        }
 
-                options.Events = new JwtBearerEvents
-                {
-                    OnTokenValidated = async context =>
-                    {
-                        var db = context.HttpContext.RequestServices.GetRequiredService<AppDbContext>();
-                        var subject = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub)
-                            ?? context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
-                        var email = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Email)
-                            ?? context.Principal?.FindFirstValue(ClaimTypes.Email);
+        if (corsPolicyOptions.AllowedOrigins.Count > 0)
+        {
+            policy.WithOrigins(corsPolicyOptions.AllowedOrigins.ToArray())
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+        }
+    });
+});
 
-                        if (!Guid.TryParse(subject, out var customerId) || string.IsNullOrWhiteSpace(email))
-                        {
-                            context.Fail("Token de cliente inválido.");
-                            return;
-                        }
-
-                        var cliente = await db.UsuariosCliente.FirstOrDefaultAsync(u => u.IdUsuarioCliente == customerId);
-                        if (cliente == null || !cliente.Activo || !cliente.EmailVerificado || !string.Equals(cliente.Email, email, StringComparison.OrdinalIgnoreCase))
-                            context.Fail("Cliente no válido o inactivo.");
-                    }
-                };
-            });
-
-        services.AddAuthorization();
-        services.AddDbContext<AppDbContext>(options => options.UseNpgsql(connectionString));
-        services.AddScoped<LoginService>();
-        services.AddScoped<IJwtService, JwtService>();
-        services.AddScoped<RegisterService>();
-        services.AddScoped<StaffService>();
-        services.AddScoped<CategoriaService>();
-        services.AddScoped<IngredienteService>();
-        services.AddScoped<PlatoService>();
-        services.AddScoped<PedidoService>();
-        services.AddScoped<MesaService>();
-        services.AddScoped<FacturaService>();
-        services.AddScoped<MesaPublicSessionService>();
-        services.AddScoped<ICustomerJwtService, CustomerJwtService>();
-        services.AddScoped<CustomerAccountService>();
-        services.AddScoped<MockPaymentService>();
-        services.AddScoped<PublicCheckoutService>();
-        services.AddScoped<IEmailService, SmtpEmailService>();
-        services.AddHttpClient<IEmployeeImageService, CloudinaryEmployeeImageService>();
-        services.AddControllers();
-    })
-    .Configure(app =>
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
     {
-        using var scope = app.ApplicationServices.CreateScope();
-        var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-        Console.WriteLine("Aplicando migraciones...");
-        db.Database.Migrate();
-        db.Database.ExecuteSqlRaw("""
-            ALTER TABLE "Pedidos"
-            ADD COLUMN IF NOT EXISTS "GastosEnvio" numeric(10,2) NOT NULL DEFAULT 0;
-            """);
-        Console.WriteLine("Migraciones aplicadas.");
-        Console.WriteLine("Ejecutando seed por defecto...");
-        DbInitializer.SeedDefaultEmployeesAsync(db).GetAwaiter().GetResult();
-        DbInitializer.SeedDefaultCustomersAsync(db).GetAwaiter().GetResult();
-        DbInitializer.CleanupOrphanFacturasAsync(db).GetAwaiter().GetResult();
-        Console.WriteLine("Seed completado.");
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = employeeJwtOptions.Issuer,
+            ValidAudience = employeeJwtOptions.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(employeeJwtOptions.Key)),
+            ClockSkew = TimeSpan.Zero
+        };
 
-        app.UseHttpsRedirection();
-        app.UseRouting();
-        app.UseCors("LocalPolicy");
-        app.UseAuthentication();
-        app.UseAuthorization();
-        app.UseEndpoints(endpoints => endpoints.MapControllers());
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async context =>
+            {
+                var db = context.HttpContext.RequestServices.GetRequiredService<AppDbContext>();
+                var subject = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub)
+                    ?? context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+                var email = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Email)
+                    ?? context.Principal?.FindFirstValue(ClaimTypes.Email);
+
+                if (!Guid.TryParse(subject, out var userId) || string.IsNullOrWhiteSpace(email))
+                {
+                    context.Fail("Token inválido.");
+                    return;
+                }
+
+                var empleado = await db.Empleados.FirstOrDefaultAsync(e => e.Id == userId);
+                if (empleado == null || !empleado.Activo || !string.Equals(empleado.Email, email, StringComparison.OrdinalIgnoreCase))
+                    context.Fail("Usuario no válido o inactivo.");
+            }
+        };
     })
-    .Build();
+    .AddJwtBearer("CustomerBearer", options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = customerJwtOptions.Issuer,
+            ValidAudience = customerJwtOptions.Audience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(customerJwtOptions.Key)),
+            ClockSkew = TimeSpan.Zero
+        };
 
-Console.WriteLine("Host construido.");
-host.Run();
+        options.Events = new JwtBearerEvents
+        {
+            OnTokenValidated = async context =>
+            {
+                var db = context.HttpContext.RequestServices.GetRequiredService<AppDbContext>();
+                var subject = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Sub)
+                    ?? context.Principal?.FindFirstValue(ClaimTypes.NameIdentifier);
+                var email = context.Principal?.FindFirstValue(JwtRegisteredClaimNames.Email)
+                    ?? context.Principal?.FindFirstValue(ClaimTypes.Email);
+
+                if (!Guid.TryParse(subject, out var customerId) || string.IsNullOrWhiteSpace(email))
+                {
+                    context.Fail("Token de cliente inválido.");
+                    return;
+                }
+
+                var cliente = await db.UsuariosCliente.FirstOrDefaultAsync(u => u.IdUsuarioCliente == customerId);
+                if (cliente == null || !cliente.Activo || !cliente.EmailVerificado || !string.Equals(cliente.Email, email, StringComparison.OrdinalIgnoreCase))
+                    context.Fail("Cliente no válido o inactivo.");
+            }
+        };
+    });
+
+builder.Services.AddAuthorization();
+builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(databaseOptions.BuildConnectionString()));
+builder.Services.AddScoped<IAppBootstrapService, AppBootstrapService>();
+builder.Services.AddScoped<LoginService>();
+builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<RegisterService>();
+builder.Services.AddScoped<StaffService>();
+builder.Services.AddScoped<CategoriaService>();
+builder.Services.AddScoped<IngredienteService>();
+builder.Services.AddScoped<CatalogProjectionService>();
+builder.Services.AddScoped<PlatoService>();
+builder.Services.AddScoped<PedidoService>();
+builder.Services.AddScoped<MesaService>();
+builder.Services.AddScoped<FacturaService>();
+builder.Services.AddScoped<MesaPublicSessionService>();
+builder.Services.AddScoped<ICustomerJwtService, CustomerJwtService>();
+builder.Services.AddScoped<CustomerAccountService>();
+builder.Services.AddScoped<SimulatedPaymentService>();
+builder.Services.AddScoped<PublicCheckoutService>();
+builder.Services.AddScoped<IEmailService, SmtpEmailService>();
+builder.Services.AddScoped<CloudinaryService>();
+builder.Services.AddScoped<IEmployeeImageService, CloudinaryEmployeeImageService>();
+builder.Services.AddHealthChecks();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
+var app = builder.Build();
+var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Gestaurante.Startup");
+
+logger.LogInformation("Gestaurante API iniciando en localhost:{Port}", appPort);
+
+if (bootstrapOptions.RunOnStart)
+{
+    using var bootstrapScope = app.Services.CreateScope();
+    var bootstrapper = bootstrapScope.ServiceProvider.GetRequiredService<IAppBootstrapService>();
+    await bootstrapper.RunAsync();
+}
+
+app.UseMiddleware<ApiExceptionMiddleware>();
+app.UseHttpsRedirection();
+app.UseRouting();
+app.UseCors("FrontendPolicy");
+app.UseAuthentication();
+app.UseAuthorization();
+
+app.MapControllers();
+app.MapGet("/health", async (AppDbContext db, IWebHostEnvironment environment, CancellationToken cancellationToken) =>
+{
+    var databaseReachable = await db.Database.CanConnectAsync(cancellationToken);
+    var statusCode = databaseReachable ? StatusCodes.Status200OK : StatusCodes.Status503ServiceUnavailable;
+
+    return Results.Json(new
+    {
+        status = databaseReachable ? "ok" : "degraded",
+        environment = environment.EnvironmentName,
+        database = databaseReachable ? "reachable" : "unreachable",
+        bootstrapEnabled = bootstrapOptions.RunOnStart
+    }, statusCode: statusCode);
+});
+
+app.Run();

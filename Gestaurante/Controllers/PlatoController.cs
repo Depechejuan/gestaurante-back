@@ -7,17 +7,26 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Gestaurante.Controllers
 {
+    /// <summary>
+    /// Gestiona el catálogo interno de platos y su disponibilidad administrativa.
+    /// </summary>
     [ApiController]
     [Route("[controller]")]
     public class PlatoController : ControllerBase
     {
         private readonly PlatoService _service;
 
+        /// <summary>
+        /// Inicializa el controlador con el servicio de platos.
+        /// </summary>
         public PlatoController(PlatoService service)
         {
             _service = service;
         }
 
+        /// <summary>
+        /// Devuelve todos los platos del catálogo interno.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
         {
@@ -25,6 +34,9 @@ namespace Gestaurante.Controllers
             return ResponseHelper.SendResponse(platos);
         }
 
+        /// <summary>
+        /// Recupera el detalle de un plato concreto.
+        /// </summary>
         [HttpGet("{id:guid}")]
         public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
         {
@@ -37,55 +49,57 @@ namespace Gestaurante.Controllers
             return ResponseHelper.SendResponse(plato);
         }
 
+        /// <summary>
+        /// Crea un nuevo plato en el catálogo.
+        /// </summary>
         [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] PlatoDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var plato = await _service.CreateAsync(dto, cancellationToken);
-                return ResponseHelper.SendResponse(plato, 201);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            var plato = await _service.CreateAsync(dto, cancellationToken);
+            return ResponseHelper.SendResponse(plato, 201);
         }
 
+        /// <summary>
+        /// Actualiza la ficha de un plato existente.
+        /// </summary>
         [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
         [HttpPut("{id:guid}")]
         public async Task<IActionResult> Update(Guid id, [FromBody] PlatoDTO dto, CancellationToken cancellationToken)
         {
-            try
-            {
-                var plato = await _service.UpdateAsync(id, dto, cancellationToken);
-                if (plato == null)
-                    return ResponseHelper.NotFound("Plato no encontrado.");
+            var plato = await _service.UpdateAsync(id, dto, cancellationToken);
+            if (plato == null)
+                return ResponseHelper.NotFound("Plato no encontrado.");
 
-                return ResponseHelper.SendResponse(plato);
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.ValidationError(ex.Message);
-            }
+            return ResponseHelper.SendResponse(plato);
         }
 
+        /// <summary>
+        /// Elimina físicamente un plato que no tenga dependencias históricas.
+        /// </summary>
         [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
         [HttpDelete("{id:guid}")]
         public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
         {
-            try
-            {
-                var deleted = await _service.DeleteAsync(id, cancellationToken);
-                if (!deleted)
-                    return ResponseHelper.NotFound("Plato no encontrado.");
+            var deleted = await _service.DeleteAsync(id, cancellationToken);
+            if (!deleted)
+                return ResponseHelper.NotFound("Plato no encontrado.");
 
-                return ResponseHelper.SendResponse(new { deleted = true });
-            }
-            catch (InvalidOperationException ex)
-            {
-                return ResponseHelper.Conflict(ex.Message);
-            }
+            return ResponseHelper.SendResponse(new { deleted = true });
+        }
+
+        /// <summary>
+        /// Activa o desactiva la visibilidad operativa de un plato sin alterar su histórico.
+        /// </summary>
+        [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
+        [HttpPatch("{id:guid}/disponibilidad")]
+        public async Task<IActionResult> SetDisponibilidad(Guid id, [FromBody] UpdatePlatoDisponibilidadDTO dto, CancellationToken cancellationToken)
+        {
+            var plato = await _service.SetDisponibilidadAsync(id, dto.Disponible, cancellationToken);
+            if (plato == null)
+                return ResponseHelper.NotFound("Plato no encontrado.");
+
+            return ResponseHelper.SendResponse(plato);
         }
     }
 }

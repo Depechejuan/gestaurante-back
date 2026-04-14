@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
 {
+    /// <summary>
+    /// Gestiona la generación, edición, cobro y envío de facturas del sistema.
+    /// </summary>
     public class FacturaService
     {
         private const string AnonymousCustomerEmail = "anonimo@gestaurante.local";
@@ -13,6 +16,12 @@ namespace Gestaurante.Models.Services
         private readonly MesaPublicSessionService _mesaPublicSessionService;
         private readonly IEmailService _emailService;
 
+        /// <summary>
+        /// Inicializa el servicio de facturación.
+        /// </summary>
+        /// <param name="db">Contexto EF del dominio.</param>
+        /// <param name="mesaPublicSessionService">Servicio que invalida sesiones públicas al cerrar mesas.</param>
+        /// <param name="emailService">Servicio de envío de facturas por correo.</param>
         public FacturaService(AppDbContext db, MesaPublicSessionService mesaPublicSessionService, IEmailService emailService)
         {
             _db = db;
@@ -20,6 +29,11 @@ namespace Gestaurante.Models.Services
             _emailService = emailService;
         }
 
+        /// <summary>
+        /// Recupera todas las facturas ordenadas por fecha descendente.
+        /// </summary>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Listado completo de facturas.</returns>
         public async Task<List<FacturaDTO>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             var facturas = await _db.Facturas
@@ -30,6 +44,12 @@ namespace Gestaurante.Models.Services
             return await BuildFacturaListAsync(facturas, cancellationToken);
         }
 
+        /// <summary>
+        /// Recupera una factura concreta con sus líneas y cliente asociado.
+        /// </summary>
+        /// <param name="numeroFactura">Identificador único de la factura.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Factura solicitada o <see langword="null"/> si no existe.</returns>
         public async Task<FacturaDTO?> GetByIdAsync(Guid numeroFactura, CancellationToken cancellationToken = default)
         {
             var factura = await _db.Facturas
@@ -42,6 +62,12 @@ namespace Gestaurante.Models.Services
             return await BuildFacturaDtoAsync(factura, cancellationToken);
         }
 
+        /// <summary>
+        /// Crea una factura a partir de una mesa, un pedido o un importe manual.
+        /// </summary>
+        /// <param name="dto">Datos necesarios para generar la factura.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Factura creada y proyectada a DTO.</returns>
         public async Task<FacturaDTO> CreateAsync(CrearFacturaDTO dto, CancellationToken cancellationToken = default)
         {
             if (dto.IdMesa.HasValue)
@@ -78,11 +104,25 @@ namespace Gestaurante.Models.Services
             return await BuildFacturaDtoAsync(factura, cancellationToken);
         }
 
+        /// <summary>
+        /// Cierra una mesa generando la factura final de sus pedidos pendientes.
+        /// </summary>
+        /// <param name="mesaId">Identificador de la mesa a cerrar.</param>
+        /// <param name="dto">Datos de cierre y descuento aplicable.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Factura final resultante del cierre de mesa.</returns>
         public async Task<FacturaDTO> CloseMesaAsync(Guid mesaId, CerrarMesaDTO dto, CancellationToken cancellationToken = default)
         {
             return await CreateFromMesaAsync(mesaId, dto.Descuento, dto.EstadoFactura, dto.FechaFactura, cancellationToken);
         }
 
+        /// <summary>
+        /// Actualiza los datos editables de una factura existente.
+        /// </summary>
+        /// <param name="numeroFactura">Identificador de la factura.</param>
+        /// <param name="dto">Cambios solicitados sobre la factura.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Factura actualizada o <see langword="null"/> si no existe.</returns>
         public async Task<FacturaDTO?> UpdateAsync(Guid numeroFactura, EditarFacturaDTO dto, CancellationToken cancellationToken = default)
         {
             var factura = await _db.Facturas.FirstOrDefaultAsync(f => f.NumeroFactura == numeroFactura, cancellationToken);
@@ -139,6 +179,12 @@ namespace Gestaurante.Models.Services
             return await BuildFacturaDtoAsync(factura, cancellationToken);
         }
 
+        /// <summary>
+        /// Busca clientes aptos para asignar la titularidad fiscal de una factura.
+        /// </summary>
+        /// <param name="query">Texto libre para la búsqueda de clientes.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Clientes compatibles con la asignación de factura.</returns>
         public async Task<List<FacturaClienteLookupDTO>> SearchClientesAsync(string? query, CancellationToken cancellationToken = default)
         {
             var term = query?.Trim() ?? string.Empty;
@@ -148,6 +194,7 @@ namespace Gestaurante.Models.Services
             var lowered = term.ToLower();
             return await _db.UsuariosCliente
                 .AsNoTracking()
+                .Where(u => u.Activo)
                 .Where(u =>
                     u.Email.ToLower().Contains(lowered)
                     || u.FirstName.ToLower().Contains(lowered)
@@ -177,6 +224,13 @@ namespace Gestaurante.Models.Services
                 .ToListAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Asigna un cliente existente o manual a una factura y actualiza su snapshot fiscal.
+        /// </summary>
+        /// <param name="numeroFactura">Identificador de la factura.</param>
+        /// <param name="dto">Datos del cliente o del snapshot fiscal manual.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Factura actualizada o <see langword="null"/> si no existe.</returns>
         public async Task<FacturaDTO?> AssignClienteAsync(Guid numeroFactura, AsignarFacturaClienteDTO dto, CancellationToken cancellationToken = default)
         {
             var factura = await _db.Facturas.FirstOrDefaultAsync(f => f.NumeroFactura == numeroFactura, cancellationToken);
@@ -203,6 +257,13 @@ namespace Gestaurante.Models.Services
             return await BuildFacturaDtoAsync(factura, cancellationToken);
         }
 
+        /// <summary>
+        /// Cobra una factura pendiente y registra el método de pago aplicado.
+        /// </summary>
+        /// <param name="numeroFactura">Identificador de la factura.</param>
+        /// <param name="dto">Datos del cobro a registrar.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Factura cobrada o <see langword="null"/> si no existe.</returns>
         public async Task<FacturaDTO?> ChargeAsync(Guid numeroFactura, CobrarFacturaDTO dto, CancellationToken cancellationToken = default)
         {
             var factura = await _db.Facturas.FirstOrDefaultAsync(f => f.NumeroFactura == numeroFactura, cancellationToken);
@@ -245,6 +306,13 @@ namespace Gestaurante.Models.Services
             return await BuildFacturaDtoAsync(factura, cancellationToken);
         }
 
+        /// <summary>
+        /// Envía una factura por correo al destinatario resuelto para esa factura.
+        /// </summary>
+        /// <param name="numeroFactura">Identificador de la factura.</param>
+        /// <param name="requestedEmail">Email opcional de destino, obligatorio en facturas anónimas.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Email final al que se envió la factura.</returns>
         public async Task<string> SendFacturaEmailAsync(Guid numeroFactura, string? requestedEmail, CancellationToken cancellationToken = default)
         {
             var factura = await GetByIdAsync(numeroFactura, cancellationToken)
@@ -258,6 +326,12 @@ namespace Gestaurante.Models.Services
             return email;
         }
 
+        /// <summary>
+        /// Elimina una factura solo cuando no tiene pedidos asociados.
+        /// </summary>
+        /// <param name="numeroFactura">Identificador de la factura.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns><see langword="true"/> si la factura se elimina; en otro caso, <see langword="false"/>.</returns>
         public async Task<bool> DeleteAsync(Guid numeroFactura, CancellationToken cancellationToken = default)
         {
             var factura = await _db.Facturas.FirstOrDefaultAsync(f => f.NumeroFactura == numeroFactura, cancellationToken);
@@ -273,6 +347,9 @@ namespace Gestaurante.Models.Services
             return true;
         }
 
+        /// <summary>
+        /// Genera una factura a partir de un único pedido.
+        /// </summary>
         private async Task<FacturaDTO> CreateFromPedidoAsync(Guid pedidoId, double descuento, EstadoFactura estado, DateTime? fechaFactura, CancellationToken cancellationToken)
         {
             var pedido = await _db.Pedidos.FirstOrDefaultAsync(p => p.IdPedido == pedidoId, cancellationToken);
@@ -313,6 +390,9 @@ namespace Gestaurante.Models.Services
             return await BuildFacturaDtoAsync(factura, cancellationToken);
         }
 
+        /// <summary>
+        /// Genera una factura agregada a partir de todos los pedidos pendientes de una mesa.
+        /// </summary>
         private async Task<FacturaDTO> CreateFromMesaAsync(Guid mesaId, double descuento, EstadoFactura estado, DateTime? fechaFactura, CancellationToken cancellationToken)
         {
             var mesa = await _db.Mesas.FirstOrDefaultAsync(m => m.IdMesa == mesaId, cancellationToken);
@@ -371,6 +451,9 @@ namespace Gestaurante.Models.Services
             return await BuildFacturaDtoAsync(factura, cancellationToken);
         }
 
+        /// <summary>
+        /// Calcula el total facturable de un pedido incluyendo gastos de envío.
+        /// </summary>
         private async Task<double> ResolvePedidoTotalAsync(Guid pedidoId, CancellationToken cancellationToken)
         {
             var subtotal = await _db.DetallesPedido
@@ -387,6 +470,9 @@ namespace Gestaurante.Models.Services
             return subtotal + gastosEnvio;
         }
 
+        /// <summary>
+        /// Construye una colección de DTOs de factura para listados.
+        /// </summary>
         private async Task<List<FacturaDTO>> BuildFacturaListAsync(List<Factura> facturas, CancellationToken cancellationToken)
         {
             var facturaIds = facturas.Select(f => f.NumeroFactura).ToList();
@@ -404,6 +490,9 @@ namespace Gestaurante.Models.Services
                 .ToList();
         }
 
+        /// <summary>
+        /// Construye el DTO completo de una factura resolviendo líneas y snapshot visible de cliente.
+        /// </summary>
         private async Task<FacturaDTO> BuildFacturaDtoAsync(Factura factura, CancellationToken cancellationToken)
         {
             var pedidos = await _db.Pedidos
@@ -438,9 +527,13 @@ namespace Gestaurante.Models.Services
                 TotalLinea = detalle.Cantidad * detalle.PrecioUnitario
             }).ToList();
 
-            return MapFactura(factura, pedidoIds, lineas);
+            var effectiveFactura = await ResolveFacturaDisplaySnapshotAsync(factura, pedidos, cancellationToken);
+            return MapFactura(effectiveFactura, pedidoIds, lineas);
         }
 
+        /// <summary>
+        /// Actualiza el estado disponible de una mesa según sus pedidos pendientes de facturar.
+        /// </summary>
         private async Task UpdateMesaAvailabilityAsync(Guid? mesaId, CancellationToken cancellationToken)
         {
             if (!mesaId.HasValue)
@@ -464,6 +557,9 @@ namespace Gestaurante.Models.Services
             await _db.SaveChangesAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Mapea la entidad factura al DTO consumido por administración y staff.
+        /// </summary>
         private static FacturaDTO MapFactura(Factura factura, List<Guid> pedidoIds, List<FacturaLineaDTO> lineas)
         {
             return new FacturaDTO
@@ -503,6 +599,9 @@ namespace Gestaurante.Models.Services
             };
         }
 
+        /// <summary>
+        /// Resuelve el cliente que se quiere asignar a la factura a partir del formulario recibido.
+        /// </summary>
         private async Task<UsuarioCliente?> ResolveClienteForFacturaAsync(AsignarFacturaClienteDTO dto, CancellationToken cancellationToken)
         {
             if (dto.IdUsuarioCliente.HasValue)
@@ -557,6 +656,9 @@ namespace Gestaurante.Models.Services
             return await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.Cif.ToLower() == cif, cancellationToken);
         }
 
+        /// <summary>
+        /// Copia al cliente los datos fiscales editados desde la asignación de factura.
+        /// </summary>
         private static void UpdateCustomerFiscalData(UsuarioCliente cliente, AsignarFacturaClienteDTO dto)
         {
             if (!string.IsNullOrWhiteSpace(dto.FiscalName))
@@ -584,6 +686,9 @@ namespace Gestaurante.Models.Services
                 cliente.Phone = dto.BillingPhone.Trim();
         }
 
+        /// <summary>
+        /// Aplica a la factura un snapshot fiscal basado en un cliente persistido.
+        /// </summary>
         private static void ApplyCustomerBillingSnapshot(Factura factura, UsuarioCliente cliente, AsignarFacturaClienteDTO dto)
         {
             if (IsAnonymousCustomer(cliente))
@@ -611,6 +716,9 @@ namespace Gestaurante.Models.Services
             factura.BillingPhone = FirstNonEmpty(dto.BillingPhone, cliente.Phone, "600000000");
         }
 
+        /// <summary>
+        /// Aplica a la factura un snapshot fiscal manual sin vincular a un cliente persistido.
+        /// </summary>
         private static void ApplyManualBillingSnapshot(Factura factura, AsignarFacturaClienteDTO dto)
         {
             factura.IdUsuarioCliente = null;
@@ -624,16 +732,46 @@ namespace Gestaurante.Models.Services
             factura.BillingPhone = FirstNonEmpty(dto.BillingPhone, "600000000");
         }
 
+        /// <summary>
+        /// Resuelve el snapshot fiscal por defecto priorizando el cliente real del pedido.
+        /// </summary>
+        private async Task ApplyDefaultBillingSnapshotAsync(Factura factura, Pedido? pedido, CancellationToken cancellationToken)
+        {
+            if (pedido?.IdUsuarioCliente.HasValue == true)
+            {
+                var cliente = await _db.UsuariosCliente
+                    .AsNoTracking()
+                    .FirstOrDefaultAsync(u => u.IdUsuarioCliente == pedido.IdUsuarioCliente.Value, cancellationToken);
+
+                if (cliente != null && !IsAnonymousCustomer(cliente))
+                {
+                    ApplyPedidoCustomerBillingSnapshot(factura, cliente, pedido);
+                    return;
+                }
+            }
+
+            await ApplyAnonymousBillingSnapshotAsync(factura, cancellationToken);
+        }
+
+        /// <summary>
+        /// Resuelve el nombre fiscal visible de la factura a partir del cliente y el formulario.
+        /// </summary>
         private static string ResolveBillingName(UsuarioCliente cliente, AsignarFacturaClienteDTO dto)
         {
             return FirstNonEmpty(dto.FiscalName, cliente.FiscalName, $"{cliente.FirstName} {cliente.LastName}".Trim(), "Cliente anónimo");
         }
 
+        /// <summary>
+        /// Resuelve el documento fiscal visible de la factura.
+        /// </summary>
         private static string ResolveBillingDocument(UsuarioCliente cliente, AsignarFacturaClienteDTO dto)
         {
             return FirstNonEmpty(dto.Dni, dto.Cif, cliente.Dni, cliente.Cif, "00000000X").ToUpperInvariant();
         }
 
+        /// <summary>
+        /// Aplica el snapshot fiscal por defecto del cliente anónimo.
+        /// </summary>
         private async Task ApplyAnonymousBillingSnapshotAsync(Factura factura, CancellationToken cancellationToken)
         {
             factura.IdUsuarioCliente = await _db.UsuariosCliente
@@ -651,6 +789,33 @@ namespace Gestaurante.Models.Services
             factura.BillingPhone = "600000000";
         }
 
+        /// <summary>
+        /// Aplica a la factura el snapshot de un cliente procedente de un pedido online.
+        /// </summary>
+        private static void ApplyPedidoCustomerBillingSnapshot(Factura factura, UsuarioCliente cliente, Pedido pedido)
+        {
+            factura.IdUsuarioCliente = cliente.IdUsuarioCliente;
+            factura.BillingName = LimitLength(FirstNonEmpty(
+                cliente.FiscalName,
+                pedido.ClienteNombre,
+                $"{cliente.FirstName} {cliente.LastName}".Trim(),
+                cliente.Email,
+                "Cliente"), 160);
+            factura.BillingDocument = LimitLength(FirstNonEmpty(cliente.Dni, cliente.Cif).ToUpperInvariant(), 20);
+            factura.BillingStreet = LimitLength(FirstNonEmpty(
+                cliente.BillingStreet,
+                pedido.ClienteDireccionSnapshot,
+                "Pendiente de completar"), 200);
+            factura.BillingCity = LimitLength(FirstNonEmpty(cliente.BillingCity, "Pendiente"), 120);
+            factura.BillingProvince = LimitLength(FirstNonEmpty(cliente.BillingProvince, "Pendiente"), 120);
+            factura.BillingPostalCode = LimitLength(FirstNonEmpty(cliente.BillingPostalCode, "Pendiente"), 20);
+            factura.BillingEmail = LimitLength(FirstNonEmpty(cliente.Email, pedido.ClienteEmail, AnonymousCustomerEmail), 100);
+            factura.BillingPhone = LimitLength(FirstNonEmpty(cliente.Phone, pedido.ClienteTelefono, "600000000"), 25);
+        }
+
+        /// <summary>
+        /// Construye la opción de búsqueda del cliente anónimo por defecto.
+        /// </summary>
         private async Task<List<FacturaClienteLookupDTO>> BuildAnonymousCustomerLookupAsync(CancellationToken cancellationToken)
         {
             return await _db.UsuariosCliente
@@ -674,16 +839,94 @@ namespace Gestaurante.Models.Services
                 .ToListAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Sustituye en lectura el snapshot anónimo por el cliente real del pedido cuando procede.
+        /// </summary>
+        private async Task<Factura> ResolveFacturaDisplaySnapshotAsync(Factura factura, List<Pedido> pedidos, CancellationToken cancellationToken)
+        {
+            var isAnonymousFactura = factura.BillingName == AnonymousCustomerName && factura.BillingEmail == AnonymousCustomerEmail;
+            if (!isAnonymousFactura)
+                return factura;
+
+            var pedidoConCliente = pedidos.FirstOrDefault(pedido => pedido.IdUsuarioCliente.HasValue);
+            if (pedidoConCliente?.IdUsuarioCliente is not Guid clienteId)
+                return factura;
+
+            var cliente = await _db.UsuariosCliente
+                .AsNoTracking()
+                .FirstOrDefaultAsync(u => u.IdUsuarioCliente == clienteId, cancellationToken);
+            if (cliente == null || IsAnonymousCustomer(cliente))
+                return factura;
+
+            var displayFactura = CloneFactura(factura);
+            ApplyPedidoCustomerBillingSnapshot(displayFactura, cliente, pedidoConCliente);
+            return displayFactura;
+        }
+
+        /// <summary>
+        /// Indica si un cliente corresponde al perfil anónimo del sistema.
+        /// </summary>
         private static bool IsAnonymousCustomer(UsuarioCliente cliente)
         {
             return cliente.Email == AnonymousCustomerEmail || cliente.FiscalName == AnonymousCustomerName;
         }
 
+        /// <summary>
+        /// Devuelve el primer valor no vacío de una secuencia de candidatos.
+        /// </summary>
         private static string FirstNonEmpty(params string[] values)
         {
             return values.FirstOrDefault(value => !string.IsNullOrWhiteSpace(value))?.Trim() ?? string.Empty;
         }
 
+        /// <summary>
+        /// Limita un texto al máximo permitido por la entidad destino.
+        /// </summary>
+        private static string LimitLength(string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value) || value.Length <= maxLength)
+                return value;
+
+            return value[..maxLength].TrimEnd();
+        }
+
+        /// <summary>
+        /// Clona una factura para proyectar un snapshot visible sin mutar la entidad persistida.
+        /// </summary>
+        private static Factura CloneFactura(Factura factura)
+        {
+            return new Factura(
+                factura.NumeroFactura,
+                factura.IdMesa,
+                factura.IdPedido,
+                factura.PrecioTotal,
+                factura.Descuento,
+                factura.Estado,
+                factura.FechaFactura,
+                factura.CanalPedido)
+            {
+                IdUsuarioCliente = factura.IdUsuarioCliente,
+                TipoDescuento = factura.TipoDescuento,
+                ValorDescuento = factura.ValorDescuento,
+                MotivoDescuento = factura.MotivoDescuento,
+                MetodoCobro = factura.MetodoCobro,
+                ImporteEntregado = factura.ImporteEntregado,
+                CambioEntregado = factura.CambioEntregado,
+                FechaCobro = factura.FechaCobro,
+                BillingName = factura.BillingName,
+                BillingDocument = factura.BillingDocument,
+                BillingStreet = factura.BillingStreet,
+                BillingCity = factura.BillingCity,
+                BillingProvince = factura.BillingProvince,
+                BillingPostalCode = factura.BillingPostalCode,
+                BillingEmail = factura.BillingEmail,
+                BillingPhone = factura.BillingPhone
+            };
+        }
+
+        /// <summary>
+        /// Resuelve el email de destino al que debe enviarse la factura.
+        /// </summary>
         private static string ResolveFacturaEmailTarget(FacturaDTO factura, string? requestedEmail)
         {
             var providedEmail = requestedEmail?.Trim() ?? string.Empty;
@@ -699,16 +942,15 @@ namespace Gestaurante.Models.Services
             return factura.ClienteFactura.BillingEmail.Trim();
         }
 
+        /// <summary>
+        /// Genera el contenido HTML del correo de factura.
+        /// </summary>
         private static string BuildFacturaEmailBody(FacturaDTO factura)
         {
             var rows = factura.Lineas.Count == 0
                 ? "<tr><td colspan=\"5\" style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">No hay líneas disponibles en esta factura.</td></tr>"
                 : string.Join(string.Empty, factura.Lineas.Select(linea =>
                     $"<tr><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.IdPedido.ToString()[..8]}</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.PlatoNombre}</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.Cantidad}</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.PrecioUnitario:0.00} EUR</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.TotalLinea:0.00} EUR</td></tr>"));
-
-            var discountReason = string.IsNullOrWhiteSpace(factura.MotivoDescuento)
-                ? string.Empty
-                : $"<p style=\"margin:0;\">Motivo descuento: <strong>{factura.MotivoDescuento}</strong></p>";
 
             var customerBlock = factura.ClienteFactura.EsAnonima
                 ? $"<p style=\"margin:0;\">{factura.ClienteFactura.BillingName}</p>"
@@ -764,19 +1006,24 @@ namespace Gestaurante.Models.Services
                   <footer style="display:flex;flex-direction:column;gap:8px;align-items:flex-end;margin-top:18px;padding-top:12px;border-top:1px solid #d7e0dc;">
                     <p style="margin:0;">Total bruto: <strong>{factura.PrecioTotal:0.00} EUR</strong></p>
                     <p style="margin:0;">Descuento: <strong>{factura.Descuento:0.00} EUR</strong></p>
-                    {discountReason}
                     <p style="margin:0;">Total final: <strong>{factura.TotalConDescuento:0.00} EUR</strong></p>
                   </footer>
                 </section>
                 """;
         }
 
+        /// <summary>
+        /// Recalcula el importe de descuento efectivo de la factura.
+        /// </summary>
         private static void RecalculateFacturaTotals(Factura factura)
         {
             factura.ValorDescuento = Math.Max(0, factura.ValorDescuento);
             factura.Descuento = CalculateDiscountAmount(factura.PrecioTotal, factura.TipoDescuento, factura.ValorDescuento);
         }
 
+        /// <summary>
+        /// Calcula el descuento monetario a aplicar según el tipo de descuento configurado.
+        /// </summary>
         private static double CalculateDiscountAmount(double subtotal, TipoDescuentoFactura tipoDescuento, double valorDescuento)
         {
             if (subtotal <= 0 || valorDescuento <= 0)
@@ -789,6 +1036,9 @@ namespace Gestaurante.Models.Services
             return Math.Min(subtotal, Math.Max(0, Math.Round(discount, 2)));
         }
 
+        /// <summary>
+        /// Calcula el total final de la factura tras aplicar el descuento.
+        /// </summary>
         private static double CalculateTotalConDescuento(Factura factura)
         {
             return Math.Max(0, Math.Round(factura.PrecioTotal - factura.Descuento, 2));

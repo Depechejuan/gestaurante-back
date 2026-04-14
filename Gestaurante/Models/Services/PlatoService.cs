@@ -1,19 +1,35 @@
 using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
+using System.ComponentModel.DataAnnotations;
 using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
 {
+    /// <summary>
+    /// Gestiona la administración interna del catálogo de platos.
+    /// </summary>
     public class PlatoService
     {
         private readonly AppDbContext _db;
+        private readonly CatalogProjectionService _catalogProjectionService;
 
-        public PlatoService(AppDbContext db)
+        /// <summary>
+        /// Inicializa el servicio de platos con acceso a persistencia y proyección de catálogo.
+        /// </summary>
+        /// <param name="db">Contexto de base de datos del dominio.</param>
+        /// <param name="catalogProjectionService">Servicio de proyección de platos a DTOs.</param>
+        public PlatoService(AppDbContext db, CatalogProjectionService catalogProjectionService)
         {
             _db = db;
+            _catalogProjectionService = catalogProjectionService;
         }
 
+        /// <summary>
+        /// Recupera todos los platos del catálogo interno con su categoría e ingredientes.
+        /// </summary>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Listado completo de platos para administración interna.</returns>
         public async Task<List<PlatoDTO>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             var platos = await _db.Platos
@@ -24,9 +40,15 @@ namespace Gestaurante.Models.Services
                 .OrderBy(p => p.Nombre)
                 .ToListAsync(cancellationToken);
 
-            return platos.Select(MapPlato).ToList();
+            return platos.Select(_catalogProjectionService.MapInternal).ToList();
         }
 
+        /// <summary>
+        /// Recupera un plato concreto por identificador.
+        /// </summary>
+        /// <param name="id">Identificador del plato.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Plato solicitado o <see langword="null"/> si no existe.</returns>
         public async Task<PlatoDTO?> GetByIdAsync(Guid id, CancellationToken cancellationToken = default)
         {
             var plato = await _db.Platos
@@ -36,16 +58,22 @@ namespace Gestaurante.Models.Services
                     .ThenInclude(pi => pi.Ingrediente)
                 .FirstOrDefaultAsync(p => p.IdPlato == id, cancellationToken);
 
-            return plato == null ? null : MapPlato(plato);
+            return plato == null ? null : _catalogProjectionService.MapInternal(plato);
         }
 
+        /// <summary>
+        /// Crea un nuevo plato y vincula sus ingredientes seleccionados.
+        /// </summary>
+        /// <param name="dto">Datos del nuevo plato.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Plato creado ya proyectado a DTO.</returns>
         public async Task<PlatoDTO> CreateAsync(PlatoDTO dto, CancellationToken cancellationToken = default)
         {
             ValidatePlatoInput(dto);
 
             var categoria = await _db.Categorias.FirstOrDefaultAsync(c => c.IdCategoria == dto.IdCategoria, cancellationToken);
             if (categoria == null)
-                throw new InvalidOperationException("La categoria indicada no existe.");
+                throw new ValidationException("La categoria indicada no existe.");
 
             var duplicate = await _db.Platos.AnyAsync(p => p.Nombre.ToLower() == dto.Nombre.Trim().ToLower(), cancellationToken);
             if (duplicate)
@@ -73,6 +101,13 @@ namespace Gestaurante.Models.Services
             return (await GetByIdAsync(plato.IdPlato, cancellationToken))!;
         }
 
+        /// <summary>
+        /// Actualiza los datos principales y las relaciones de ingredientes de un plato existente.
+        /// </summary>
+        /// <param name="id">Identificador del plato a actualizar.</param>
+        /// <param name="dto">Datos actualizados del plato.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Plato actualizado o <see langword="null"/> si no existe.</returns>
         public async Task<PlatoDTO?> UpdateAsync(Guid id, PlatoDTO dto, CancellationToken cancellationToken = default)
         {
             var plato = await _db.Platos
@@ -86,7 +121,7 @@ namespace Gestaurante.Models.Services
 
             var categoria = await _db.Categorias.FirstOrDefaultAsync(c => c.IdCategoria == dto.IdCategoria, cancellationToken);
             if (categoria == null)
-                throw new InvalidOperationException("La categoria indicada no existe.");
+                throw new ValidationException("La categoria indicada no existe.");
 
             var duplicate = await _db.Platos.AnyAsync(
                 p => p.IdPlato != id && p.Nombre.ToLower() == dto.Nombre.Trim().ToLower(),
@@ -114,6 +149,12 @@ namespace Gestaurante.Models.Services
             return (await GetByIdAsync(plato.IdPlato, cancellationToken))!;
         }
 
+        /// <summary>
+        /// Elimina físicamente un plato solo cuando no tiene histórico de pedidos.
+        /// </summary>
+        /// <param name="id">Identificador del plato a eliminar.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns><see langword="true"/> si el plato se elimina; en otro caso, <see langword="false"/>.</returns>
         public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken = default)
         {
             var plato = await _db.Platos
@@ -133,6 +174,31 @@ namespace Gestaurante.Models.Services
             return true;
         }
 
+        /// <summary>
+        /// Activa o desactiva la disponibilidad operativa de un plato sin borrar su histórico.
+        /// </summary>
+        /// <param name="id">Identificador del plato.</param>
+        /// <param name="disponible">Nuevo estado de disponibilidad pública del plato.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Plato actualizado o <see langword="null"/> si no existe.</returns>
+        public async Task<PlatoDTO?> SetDisponibilidadAsync(Guid id, bool disponible, CancellationToken cancellationToken = default)
+        {
+            var plato = await _db.Platos
+                .FirstOrDefaultAsync(p => p.IdPlato == id, cancellationToken);
+
+            if (plato == null)
+                return null;
+
+            plato.Disponible = disponible;
+            plato.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(cancellationToken);
+            return await GetByIdAsync(id, cancellationToken);
+        }
+
+        /// <summary>
+        /// Carga y valida la lista de ingredientes asociados al plato.
+        /// </summary>
         private async Task<List<Ingrediente>> LoadIngredientesAsync(List<Guid> ingredienteIds, CancellationToken cancellationToken)
         {
             if (ingredienteIds.Count == 0)
@@ -143,11 +209,14 @@ namespace Gestaurante.Models.Services
                 .ToListAsync(cancellationToken);
 
             if (ingredientes.Count != ingredienteIds.Count)
-                throw new InvalidOperationException("Uno o varios ingredientes indicados no existen.");
+                throw new ValidationException("Uno o varios ingredientes indicados no existen.");
 
             return ingredientes;
         }
 
+        /// <summary>
+        /// Normaliza la lista de ingredientes recibida para evitar duplicados o identificadores vacíos.
+        /// </summary>
         private static List<Guid> NormalizeIngredienteIds(List<PlatoIngredienteDTO>? ingredientes)
         {
             return (ingredientes ?? new List<PlatoIngredienteDTO>())
@@ -157,42 +226,22 @@ namespace Gestaurante.Models.Services
                 .ToList();
         }
 
+        /// <summary>
+        /// Valida las reglas mínimas de negocio necesarias para crear o editar un plato.
+        /// </summary>
         private static void ValidatePlatoInput(PlatoDTO dto)
         {
             if (string.IsNullOrWhiteSpace(dto.Nombre))
-                throw new InvalidOperationException("El nombre del plato es obligatorio.");
+                throw new ValidationException("El nombre del plato es obligatorio.");
 
             if (string.IsNullOrWhiteSpace(dto.Descripcion))
-                throw new InvalidOperationException("La descripcion del plato es obligatoria.");
+                throw new ValidationException("La descripcion del plato es obligatoria.");
 
             if (dto.IdCategoria == Guid.Empty)
-                throw new InvalidOperationException("Debes indicar una categoria valida.");
+                throw new ValidationException("Debes indicar una categoria valida.");
 
             if (dto.Precio < 0)
-                throw new InvalidOperationException("El precio del plato no puede ser negativo.");
-        }
-
-        private static PlatoDTO MapPlato(Plato plato)
-        {
-            return new PlatoDTO
-            {
-                IdPlato = plato.IdPlato,
-                Nombre = plato.Nombre,
-                Descripcion = plato.Descripcion,
-                Imagen = plato.Imagen,
-                Disponible = plato.Disponible,
-                Precio = plato.Precio,
-                IdCategoria = plato.IdCategoria,
-                CategoriaDescripcion = plato.Categoria?.Descripcion ?? string.Empty,
-                Ingredientes = plato.PlatoIngredientes
-                    .Select(pi => new PlatoIngredienteDTO
-                    {
-                        IdIngrediente = pi.IdIngrediente,
-                        Nombre = pi.Ingrediente?.Nombre ?? string.Empty
-                    })
-                    .OrderBy(i => i.Nombre)
-                    .ToList()
-            };
+                throw new ValidationException("El precio del plato no puede ser negativo.");
         }
     }
 }

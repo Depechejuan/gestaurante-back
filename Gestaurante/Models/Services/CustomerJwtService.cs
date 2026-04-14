@@ -1,8 +1,10 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Gestaurante.Configuration;
 using Gestaurante.Models.DTO;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.Extensions.Options;
 
 namespace Gestaurante.Models.Services
 {
@@ -14,16 +16,16 @@ namespace Gestaurante.Models.Services
 
     public class CustomerJwtService : ICustomerJwtService
     {
+        private readonly CustomerJwtOptions _options;
+
+        public CustomerJwtService(IOptions<CustomerJwtOptions> options)
+        {
+            _options = options.Value;
+        }
+
         public string GenerarToken(ClienteProfileDTO cliente)
         {
-            var key = Environment.GetEnvironmentVariable("CUSTOMER_JWT_KEY")
-                ?? throw new InvalidOperationException("CUSTOMER_JWT_KEY no configurada.");
-            var issuer = Environment.GetEnvironmentVariable("CUSTOMER_JWT_ISSUER")
-                ?? throw new InvalidOperationException("CUSTOMER_JWT_ISSUER no configurado.");
-            var audience = Environment.GetEnvironmentVariable("CUSTOMER_JWT_AUDIENCE")
-                ?? throw new InvalidOperationException("CUSTOMER_JWT_AUDIENCE no configurado.");
-
-            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(key));
+            var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.Key));
             var credentials = new SigningCredentials(signingKey, SecurityAlgorithms.HmacSha256);
 
             var claims = new[]
@@ -36,8 +38,8 @@ namespace Gestaurante.Models.Services
             };
 
             var token = new JwtSecurityToken(
-                issuer,
-                audience,
+                _options.Issuer,
+                _options.Audience,
                 claims,
                 expires: GetExpiracion(),
                 signingCredentials: credentials);
@@ -47,8 +49,7 @@ namespace Gestaurante.Models.Services
 
         public DateTime GetExpiracion()
         {
-            var days = Environment.GetEnvironmentVariable("CUSTOMER_JWT_EXPIRE_DAYS");
-            return DateTime.UtcNow.AddDays(int.TryParse(days, out var parsed) ? parsed : 30);
+            return DateTime.UtcNow.AddDays(_options.ExpireDays);
         }
     }
 }

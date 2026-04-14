@@ -13,7 +13,7 @@ namespace Gestaurante.Models.Entities
 
         [Required]
         [MaxLength(120)]
-        public string MockPaymentToken { get; set; } = string.Empty;
+        public string PaymentToken { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(40)]

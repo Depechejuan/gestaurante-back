@@ -5,6 +5,9 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Gestaurante.Models.Services
 {
+    /// <summary>
+    /// Gestiona el ciclo operativo completo de los pedidos y sus líneas.
+    /// </summary>
     public class PedidoService
     {
         private const string PedidoBloqueadoMessage = "El pedido ya fue enviado y no admite cambios estructurales.";
@@ -12,12 +15,22 @@ namespace Gestaurante.Models.Services
         private readonly AppDbContext _db;
         private readonly IEmailService _emailService;
 
+        /// <summary>
+        /// Inicializa el servicio de pedidos.
+        /// </summary>
+        /// <param name="db">Contexto EF del dominio.</param>
+        /// <param name="emailService">Servicio de envío de notificaciones al cliente.</param>
         public PedidoService(AppDbContext db, IEmailService emailService)
         {
             _db = db;
             _emailService = emailService;
         }
 
+        /// <summary>
+        /// Recupera todos los pedidos ordenados por fecha descendente.
+        /// </summary>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Listado completo de pedidos.</returns>
         public async Task<List<PedidoDTO>> GetAllAsync(CancellationToken cancellationToken = default)
         {
             var pedidos = await _db.Pedidos
@@ -28,6 +41,12 @@ namespace Gestaurante.Models.Services
             return await BuildPedidoListAsync(pedidos, cancellationToken);
         }
 
+        /// <summary>
+        /// Recupera el histórico de pedidos de un cliente concreto.
+        /// </summary>
+        /// <param name="clienteId">Identificador del cliente.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Pedidos asociados al cliente.</returns>
         public async Task<List<PedidoDTO>> GetByClienteAsync(Guid clienteId, CancellationToken cancellationToken = default)
         {
             var pedidos = await _db.Pedidos
@@ -39,6 +58,12 @@ namespace Gestaurante.Models.Services
             return await BuildPedidoListAsync(pedidos, cancellationToken);
         }
 
+        /// <summary>
+        /// Recupera un pedido por su identificador.
+        /// </summary>
+        /// <param name="pedidoId">Identificador del pedido.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Pedido solicitado o <see langword="null"/> si no existe.</returns>
         public async Task<PedidoDTO?> GetByIdAsync(Guid pedidoId, CancellationToken cancellationToken = default)
         {
             var pedido = await _db.Pedidos
@@ -48,6 +73,13 @@ namespace Gestaurante.Models.Services
             return pedido == null ? null : await BuildPedidoDtoAsync(pedido, cancellationToken);
         }
 
+        /// <summary>
+        /// Recupera un pedido solo si pertenece al cliente indicado.
+        /// </summary>
+        /// <param name="clienteId">Identificador del cliente.</param>
+        /// <param name="pedidoId">Identificador del pedido.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Pedido solicitado o <see langword="null"/> si no pertenece al cliente.</returns>
         public async Task<PedidoDTO?> GetByClienteAndIdAsync(Guid clienteId, Guid pedidoId, CancellationToken cancellationToken = default)
         {
             var pedido = await _db.Pedidos
@@ -57,11 +89,27 @@ namespace Gestaurante.Models.Services
             return pedido == null ? null : await BuildPedidoDtoAsync(pedido, cancellationToken);
         }
 
+        /// <summary>
+        /// Crea un pedido estándar sin sesión pública de mesa asociada.
+        /// </summary>
+        /// <param name="dto">Datos completos del pedido a crear.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Pedido creado.</returns>
         public async Task<PedidoDTO> CreateAsync(CrearPedidoDTO dto, CancellationToken cancellationToken = default)
         {
             return await CreateAsync(dto, null, cancellationToken);
         }
 
+        /// <summary>
+        /// Crea un pedido con sus líneas y, si aplica, lo vincula a una sesión pública de mesa.
+        /// </summary>
+        /// <param name="dto">Datos completos del pedido a crear.</param>
+        /// <param name="mesaPublicSessionId">Sesión pública de mesa asociada, si existe.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Pedido creado y reconstruido como DTO.</returns>
+        /// <remarks>
+        /// Este método copia los precios de plato en las líneas para preservar el histórico económico.
+        /// </remarks>
         public async Task<PedidoDTO> CreateAsync(CrearPedidoDTO dto, Guid? mesaPublicSessionId, CancellationToken cancellationToken = default)
         {
             if (dto.Detalles.Count == 0)
@@ -113,6 +161,13 @@ namespace Gestaurante.Models.Services
                 ?? throw new InvalidOperationException("No se pudo recuperar el pedido recién creado.");
         }
 
+        /// <summary>
+        /// Recupera los pedidos creados dentro de una sesión pública de mesa concreta.
+        /// </summary>
+        /// <param name="mesaId">Identificador de la mesa.</param>
+        /// <param name="mesaPublicSessionId">Identificador de la sesión pública vinculada al dispositivo.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Pedidos de esa sesión pública de mesa.</returns>
         public async Task<List<PedidoDTO>> GetByMesaPublicSessionAsync(Guid mesaId, Guid mesaPublicSessionId, CancellationToken cancellationToken = default)
         {
             var pedidos = await _db.Pedidos
@@ -124,6 +179,13 @@ namespace Gestaurante.Models.Services
             return await BuildPedidoListAsync(pedidos, cancellationToken);
         }
 
+        /// <summary>
+        /// Actualiza el estado operativo de un pedido y desencadena sus efectos colaterales.
+        /// </summary>
+        /// <param name="pedidoId">Identificador del pedido.</param>
+        /// <param name="dto">Cambios de estado solicitados.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Pedido actualizado o <see langword="null"/> si no existe.</returns>
         public async Task<PedidoDTO?> UpdateAsync(Guid pedidoId, EditarPedidoDTO dto, CancellationToken cancellationToken = default)
         {
             var pedido = await _db.Pedidos.FirstOrDefaultAsync(p => p.IdPedido == pedidoId, cancellationToken);
@@ -155,6 +217,12 @@ namespace Gestaurante.Models.Services
             return await GetByIdAsync(pedidoId, cancellationToken);
         }
 
+        /// <summary>
+        /// Elimina físicamente un pedido solo cuando no está facturado.
+        /// </summary>
+        /// <param name="pedidoId">Identificador del pedido.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns><see langword="true"/> si el pedido se elimina; en otro caso, <see langword="false"/>.</returns>
         public async Task<bool> DeleteAsync(Guid pedidoId, CancellationToken cancellationToken = default)
         {
             var pedido = await _db.Pedidos.FirstOrDefaultAsync(p => p.IdPedido == pedidoId, cancellationToken);
@@ -175,6 +243,13 @@ namespace Gestaurante.Models.Services
             return true;
         }
 
+        /// <summary>
+        /// Cancela un pedido completo y anula todas sus líneas activas.
+        /// </summary>
+        /// <param name="pedidoId">Identificador del pedido.</param>
+        /// <param name="dto">Motivo de cancelación si existe en el contrato.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Pedido cancelado o <see langword="null"/> si no existe.</returns>
         public async Task<PedidoDTO?> CancelAsync(Guid pedidoId, CancelarPedidoDTO? dto, CancellationToken cancellationToken = default)
         {
             var pedido = await _db.Pedidos
@@ -184,19 +259,35 @@ namespace Gestaurante.Models.Services
             if (pedido == null)
                 return null;
 
-            if (pedido.IdFactura.HasValue)
+            var motivoCancelacion = dto?.Motivo?.Trim() ?? string.Empty;
+            var canCancelFacturadoOnline = pedido.IdFactura.HasValue
+                && pedido.CanalPedido == CanalPedido.ONLINE
+                && pedido.TipoEntrega == TipoEntrega.DOMICILIO;
+
+            if (pedido.IdFactura.HasValue && !canCancelFacturadoOnline)
                 throw new InvalidOperationException("No se puede cancelar un pedido ya facturado.");
+
+            if (canCancelFacturadoOnline && string.IsNullOrWhiteSpace(motivoCancelacion))
+                throw new InvalidOperationException("Debes indicar un motivo de cancelación.");
 
             if (pedido.Estado != EstadoPedido.CANCELADO)
             {
                 pedido.Estado = EstadoPedido.CANCELADO;
-                foreach (var detalle in pedido.DetallesPedido.Where(d => d.Estado != EstadoDetallePedido.CANCELADA))
-                {
-                    detalle.Estado = EstadoDetallePedido.CANCELADA;
-                    detalle.FechaCancelacion = DateTime.UtcNow;
+                if (!pedido.IdFactura.HasValue) {
+                    foreach (var detalle in pedido.DetallesPedido.Where(d => d.Estado != EstadoDetallePedido.CANCELADA))
+                    {
+                        detalle.Estado = EstadoDetallePedido.CANCELADA;
+                        detalle.FechaCancelacion = DateTime.UtcNow;
+                    }
+
+                    SyncPedidoEstadoFromDetalles(pedido);
                 }
 
-                SyncPedidoEstadoFromDetalles(pedido);
+                pedido.Notas = AppendInternalPedidoNote(
+                    pedido.Notas,
+                    string.IsNullOrWhiteSpace(motivoCancelacion)
+                        ? "Cancelado desde panel interno."
+                        : $"Cancelado: {motivoCancelacion}");
                 SetFechaModificacion(pedido);
                 await _db.SaveChangesAsync(cancellationToken);
                 await UpdateMesaAvailabilityAsync(pedido.IdMesa, cancellationToken);
@@ -205,6 +296,13 @@ namespace Gestaurante.Models.Services
             return await GetByIdAsync(pedidoId, cancellationToken);
         }
 
+        /// <summary>
+        /// Recupera una línea concreta de pedido.
+        /// </summary>
+        /// <param name="pedidoId">Identificador del pedido.</param>
+        /// <param name="detalleId">Identificador de la línea.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Línea solicitada o <see langword="null"/> si no existe.</returns>
         public async Task<DetallePedidoDTO?> GetDetalleAsync(Guid pedidoId, Guid detalleId, CancellationToken cancellationToken = default)
         {
             var detalle = await _db.DetallesPedido
@@ -214,12 +312,27 @@ namespace Gestaurante.Models.Services
             return detalle == null ? null : await BuildDetalleDtoAsync(detalle, cancellationToken);
         }
 
+        /// <summary>
+        /// Impide añadir líneas nuevas a pedidos ya cerrados estructuralmente.
+        /// </summary>
+        /// <param name="pedidoId">Identificador del pedido.</param>
+        /// <param name="dto">Datos de la línea a añadir.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Nunca devuelve una línea nueva; lanza una excepción de negocio.</returns>
         public async Task<DetallePedidoDTO> AddDetalleAsync(Guid pedidoId, CrearDetallePedidoDTO dto, CancellationToken cancellationToken = default)
         {
             await EnsurePedidoExistsAsync(pedidoId, cancellationToken);
             throw new InvalidOperationException(PedidoBloqueadoMessage);
         }
 
+        /// <summary>
+        /// Actualiza el estado operativo de una línea de pedido existente.
+        /// </summary>
+        /// <param name="pedidoId">Identificador del pedido.</param>
+        /// <param name="detalleId">Identificador de la línea.</param>
+        /// <param name="dto">Cambios permitidos sobre la línea.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Línea actualizada o <see langword="null"/> si no existe.</returns>
         public async Task<DetallePedidoDTO?> UpdateDetalleAsync(Guid pedidoId, Guid detalleId, EditarDetallePedidoDTO dto, CancellationToken cancellationToken = default)
         {
             var pedido = await _db.Pedidos
@@ -232,14 +345,14 @@ namespace Gestaurante.Models.Services
             if (detalle == null)
                 return null;
 
-            if (pedido.IdFactura.HasValue)
-                throw new InvalidOperationException("No se puede cambiar una línea de un pedido ya facturado.");
-
             if (dto.IdPlato.HasValue || dto.Cantidad.HasValue)
                 throw new InvalidOperationException(PedidoBloqueadoMessage);
 
             if (!dto.Estado.HasValue || dto.Estado.Value == detalle.Estado)
                 return await BuildDetalleDtoAsync(detalle, cancellationToken);
+
+            if (pedido.IdFactura.HasValue && dto.Estado.Value == EstadoDetallePedido.CANCELADA)
+                throw new InvalidOperationException("No se puede cancelar una línea de un pedido ya facturado.");
 
             ValidateDetalleTransition(detalle.Estado, dto.Estado.Value);
 
@@ -255,6 +368,13 @@ namespace Gestaurante.Models.Services
             return await BuildDetalleDtoAsync(detalle, cancellationToken);
         }
 
+        /// <summary>
+        /// Impide el borrado físico de líneas en pedidos ya consolidados.
+        /// </summary>
+        /// <param name="pedidoId">Identificador del pedido.</param>
+        /// <param name="detalleId">Identificador de la línea.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Nunca devuelve un borrado exitoso si la línea existe; lanza una excepción de negocio.</returns>
         public async Task<bool> DeleteDetalleAsync(Guid pedidoId, Guid detalleId, CancellationToken cancellationToken = default)
         {
             var detalle = await _db.DetallesPedido
@@ -268,6 +388,14 @@ namespace Gestaurante.Models.Services
             throw new InvalidOperationException(PedidoBloqueadoMessage);
         }
 
+        /// <summary>
+        /// Cancela una línea concreta del pedido y recalcula el estado global del pedido.
+        /// </summary>
+        /// <param name="pedidoId">Identificador del pedido.</param>
+        /// <param name="detalleId">Identificador de la línea a cancelar.</param>
+        /// <param name="dto">Motivo de cancelación si existe en el contrato.</param>
+        /// <param name="cancellationToken">Token de cancelación de la operación.</param>
+        /// <returns>Línea cancelada o <see langword="null"/> si no existe.</returns>
         public async Task<DetallePedidoDTO?> CancelDetalleAsync(Guid pedidoId, Guid detalleId, CancelarDetallePedidoDTO? dto, CancellationToken cancellationToken = default)
         {
             var pedido = await _db.Pedidos
@@ -298,6 +426,9 @@ namespace Gestaurante.Models.Services
             return await BuildDetalleDtoAsync(detalle, cancellationToken);
         }
 
+        /// <summary>
+        /// Comprueba que el pedido exista antes de ejecutar operaciones bloqueadas.
+        /// </summary>
         private async Task EnsurePedidoExistsAsync(Guid pedidoId, CancellationToken cancellationToken)
         {
             var exists = await _db.Pedidos.AnyAsync(p => p.IdPedido == pedidoId, cancellationToken);
@@ -305,6 +436,9 @@ namespace Gestaurante.Models.Services
                 throw new KeyNotFoundException("Pedido no encontrado.");
         }
 
+        /// <summary>
+        /// Crea una línea interna copiando el precio vigente del plato en el momento del pedido.
+        /// </summary>
         private async Task<DetallePedido> CreateDetalleInternalAsync(Guid pedidoId, CrearDetallePedidoDTO dto, CancellationToken cancellationToken)
         {
             var plato = await _db.Platos.FirstOrDefaultAsync(p => p.IdPlato == dto.IdPlato, cancellationToken);
@@ -317,6 +451,9 @@ namespace Gestaurante.Models.Services
             return new DetallePedido(Guid.NewGuid(), plato.IdPlato, pedidoId, dto.Cantidad, Convert.ToDouble(plato.Precio));
         }
 
+        /// <summary>
+        /// Construye una lista de pedidos completa resolviendo sus líneas y nombres de plato.
+        /// </summary>
         private async Task<List<PedidoDTO>> BuildPedidoListAsync(List<Pedido> pedidos, CancellationToken cancellationToken)
         {
             var pedidoIds = pedidos.Select(p => p.IdPedido).ToList();
@@ -325,19 +462,22 @@ namespace Gestaurante.Models.Services
                 .Where(d => pedidoIds.Contains(d.IdPedido))
                 .ToListAsync(cancellationToken);
 
-            var platos = await ResolvePlatoNamesAsync(detalles, cancellationToken);
+            var platos = await ResolvePlatoMetadataAsync(detalles, cancellationToken);
 
             return pedidos.Select(pedido =>
             {
                 var detallesPedido = detalles
                     .Where(d => d.IdPedido == pedido.IdPedido)
-                    .Select(detalle => MapDetalle(detalle, platos.GetValueOrDefault(detalle.IdPlato, "Plato desconocido")))
+                    .Select(detalle => MapDetalle(detalle, platos.GetValueOrDefault(detalle.IdPlato)))
                     .ToList();
 
                 return MapPedido(pedido, detallesPedido);
             }).ToList();
         }
 
+        /// <summary>
+        /// Construye el DTO completo de un pedido individual.
+        /// </summary>
         private async Task<PedidoDTO> BuildPedidoDtoAsync(Pedido pedido, CancellationToken cancellationToken)
         {
             var detalles = await _db.DetallesPedido
@@ -345,37 +485,51 @@ namespace Gestaurante.Models.Services
                 .Where(d => d.IdPedido == pedido.IdPedido)
                 .ToListAsync(cancellationToken);
 
-            var platos = await ResolvePlatoNamesAsync(detalles, cancellationToken);
+            var platos = await ResolvePlatoMetadataAsync(detalles, cancellationToken);
             var detallesDto = detalles
-                .Select(detalle => MapDetalle(detalle, platos.GetValueOrDefault(detalle.IdPlato, "Plato desconocido")))
+                .Select(detalle => MapDetalle(detalle, platos.GetValueOrDefault(detalle.IdPlato)))
                 .ToList();
 
             return MapPedido(pedido, detallesDto);
         }
 
-        private async Task<Dictionary<Guid, string>> ResolvePlatoNamesAsync(List<DetallePedido> detalles, CancellationToken cancellationToken)
+        /// <summary>
+        /// Resuelve el nombre y la categoría de plato necesarios para pintar y ordenar las líneas de pedido.
+        /// </summary>
+        private async Task<Dictionary<Guid, PlatoDetalleMetadata>> ResolvePlatoMetadataAsync(List<DetallePedido> detalles, CancellationToken cancellationToken)
         {
             var platoIds = detalles.Select(d => d.IdPlato).Distinct().ToList();
             if (platoIds.Count == 0)
-                return new Dictionary<Guid, string>();
+                return new Dictionary<Guid, PlatoDetalleMetadata>();
 
             return await _db.Platos
                 .AsNoTracking()
+                .Include(plato => plato.Categoria)
                 .Where(p => platoIds.Contains(p.IdPlato))
-                .ToDictionaryAsync(p => p.IdPlato, p => p.Nombre, cancellationToken);
+                .ToDictionaryAsync(
+                    p => p.IdPlato,
+                    p => new PlatoDetalleMetadata(p.Nombre, p.Categoria != null ? p.Categoria.Descripcion : string.Empty),
+                    cancellationToken);
         }
 
+        /// <summary>
+        /// Construye el DTO de una línea concreta resolviendo el nombre del plato.
+        /// </summary>
         private async Task<DetallePedidoDTO> BuildDetalleDtoAsync(DetallePedido detalle, CancellationToken cancellationToken)
         {
-            var platoNombre = await _db.Platos
+            var metadata = await _db.Platos
                 .AsNoTracking()
+                .Include(p => p.Categoria)
                 .Where(p => p.IdPlato == detalle.IdPlato)
-                .Select(p => p.Nombre)
-                .FirstOrDefaultAsync(cancellationToken) ?? "Plato desconocido";
+                .Select(p => new PlatoDetalleMetadata(p.Nombre, p.Categoria != null ? p.Categoria.Descripcion : string.Empty))
+                .FirstOrDefaultAsync(cancellationToken) ?? new PlatoDetalleMetadata("Plato desconocido", string.Empty);
 
-            return MapDetalle(detalle, platoNombre);
+            return MapDetalle(detalle, metadata);
         }
 
+        /// <summary>
+        /// Mapea un pedido de dominio al DTO consumido por las pantallas operativas.
+        /// </summary>
         private static PedidoDTO MapPedido(Pedido pedido, List<DetallePedidoDTO> detallesDto)
         {
             var subtotalProductos = detallesDto
@@ -409,7 +563,10 @@ namespace Gestaurante.Models.Services
             };
         }
 
-        private static DetallePedidoDTO MapDetalle(DetallePedido detalle, string platoNombre)
+        /// <summary>
+        /// Mapea una línea de pedido al DTO público e interno.
+        /// </summary>
+        private static DetallePedidoDTO MapDetalle(DetallePedido detalle, PlatoDetalleMetadata? metadata)
         {
             var subtotal = detalle.Estado != EstadoDetallePedido.CANCELADA
                 ? detalle.Cantidad * detalle.PrecioUnitario
@@ -420,7 +577,8 @@ namespace Gestaurante.Models.Services
                 IdDetallePedido = detalle.IdDetallePedido,
                 IdPedido = detalle.IdPedido,
                 IdPlato = detalle.IdPlato,
-                PlatoNombre = platoNombre,
+                PlatoNombre = metadata?.Nombre ?? "Plato desconocido",
+                CategoriaDescripcion = metadata?.CategoriaDescripcion ?? string.Empty,
                 Cantidad = detalle.Cantidad,
                 PrecioUnitario = detalle.PrecioUnitario,
                 Subtotal = subtotal,
@@ -430,6 +588,11 @@ namespace Gestaurante.Models.Services
             };
         }
 
+        private sealed record PlatoDetalleMetadata(string Nombre, string CategoriaDescripcion);
+
+        /// <summary>
+        /// Valida que la transición de estado del pedido sea coherente con el flujo operativo.
+        /// </summary>
         private static void ValidateEstadoTransition(EstadoPedido current, EstadoPedido next)
         {
             if (current == EstadoPedido.CANCELADO || current == EstadoPedido.ENTREGADO)
@@ -448,6 +611,9 @@ namespace Gestaurante.Models.Services
                 throw new InvalidOperationException($"Transición de estado no válida: {current} -> {next}.");
         }
 
+        /// <summary>
+        /// Valida que la transición de estado de una línea sea coherente con cocina y entrega.
+        /// </summary>
         private static void ValidateDetalleTransition(EstadoDetallePedido current, EstadoDetallePedido next)
         {
             if (current == EstadoDetallePedido.CANCELADA || current == EstadoDetallePedido.ENTREGADA)
@@ -464,6 +630,9 @@ namespace Gestaurante.Models.Services
                 throw new InvalidOperationException($"Transición de línea no válida: {current} -> {next}.");
         }
 
+        /// <summary>
+        /// Sincroniza el estado global del pedido a partir del estado de sus líneas.
+        /// </summary>
         private static void SyncPedidoEstadoFromDetalles(Pedido pedido)
         {
             var detallesVivos = pedido.DetallesPedido
@@ -502,6 +671,9 @@ namespace Gestaurante.Models.Services
                 : EstadoPedido.PENDIENTE;
         }
 
+        /// <summary>
+        /// Actualiza el estado de ocupación de la mesa según los pedidos pendientes y sus líneas activas.
+        /// </summary>
         private async Task UpdateMesaAvailabilityAsync(Guid? mesaId, CancellationToken cancellationToken)
         {
             if (!mesaId.HasValue)
@@ -525,6 +697,9 @@ namespace Gestaurante.Models.Services
             await _db.SaveChangesAsync(cancellationToken);
         }
 
+        /// <summary>
+        /// Genera automáticamente la factura de recogida cobrada en local al entregar un pedido online.
+        /// </summary>
         private async Task CreateLocalPickupFacturaAsync(Pedido pedido, CancellationToken cancellationToken)
         {
             var total = await _db.DetallesPedido
@@ -550,6 +725,9 @@ namespace Gestaurante.Models.Services
             pedido.EstadoPago = EstadoPago.PAGADO_LOCAL;
         }
 
+        /// <summary>
+        /// Envía correos de estado al cliente cuando el pedido online alcanza hitos relevantes.
+        /// </summary>
         private async Task SendPedidoStatusEmailsAsync(Pedido pedido, CancellationToken cancellationToken)
         {
             if (pedido.CanalPedido != CanalPedido.ONLINE || string.IsNullOrWhiteSpace(pedido.ClienteEmail))
@@ -570,10 +748,31 @@ namespace Gestaurante.Models.Services
                     cancellationToken: cancellationToken);
         }
 
+        /// <summary>
+        /// Registra la última fecha de modificación del pedido sin exponer setters públicos adicionales.
+        /// </summary>
         private static void SetFechaModificacion(Pedido pedido)
         {
             var property = typeof(Pedido).GetProperty(nameof(Pedido.FechaModificacion));
             property?.SetValue(pedido, DateTime.UtcNow);
+        }
+
+        /// <summary>
+        /// Añade una nota interna al pedido preservando el contenido previo y respetando la longitud máxima del campo.
+        /// </summary>
+        private static string AppendInternalPedidoNote(string currentNotes, string note)
+        {
+            var cleanNote = note.Trim();
+            if (string.IsNullOrWhiteSpace(cleanNote))
+                return currentNotes;
+
+            var mergedNotes = string.IsNullOrWhiteSpace(currentNotes)
+                ? cleanNote
+                : $"{currentNotes.Trim()}\n{cleanNote}";
+
+            return mergedNotes.Length <= 500
+                ? mergedNotes
+                : mergedNotes[^500..];
         }
     }
 }
