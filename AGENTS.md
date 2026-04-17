@@ -92,7 +92,7 @@ JWT_AUDIENCE=
 CUSTOMER_JWT_KEY=
 CUSTOMER_JWT_ISSUER=
 CUSTOMER_JWT_AUDIENCE=
-PORT=3003
+PORT=3000
 ```
 
 Importantes:
@@ -126,8 +126,8 @@ Ese modo:
 - siembra datos por defecto
 
 ### Endpoints útiles
-- [openapi/v1.json](http://localhost:3003/openapi/v1.json)
-- [health](http://localhost:3003/health)
+- [openapi/v1.json](http://localhost:3000/openapi/v1.json)
+- [health](http://localhost:3000/health)
 
 ## Reglas útiles
 - Los enums de dominio viven en [Models/Enums](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/Models/Enums).

@@ -9,7 +9,7 @@ namespace Gestaurante.Models.Entities
         [MaxLength(100)]
         public Guid IdIngrediente { get; private set; }
         [Required]
-        [MaxLength(100)]
+        [MaxLength(255)]
         public string Nombre { get; set; } = string.Empty; 
 
         [Required]

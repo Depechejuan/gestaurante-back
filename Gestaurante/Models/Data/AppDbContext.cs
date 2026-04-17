@@ -343,7 +343,7 @@ namespace Gestaurante.Models.Data
 
                 entity.Property(i => i.Nombre)
                     .IsRequired()
-                    .HasMaxLength(100); 
+                    .HasMaxLength(255); 
 
                 entity.Property(i => i.Alergenico)
                     .IsRequired()

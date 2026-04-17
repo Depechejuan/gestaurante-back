@@ -21,7 +21,6 @@ var databaseOptions = builder.Configuration.BuildDatabaseOptions();
 var employeeJwtOptions = builder.Configuration.BuildEmployeeJwtOptions();
 var customerJwtOptions = builder.Configuration.BuildCustomerJwtOptions();
 var bootstrapOptions = builder.Configuration.BuildBootstrapOptions(args);
-var corsPolicyOptions = builder.Configuration.BuildCorsPolicyOptions();
 var appPort = builder.Configuration.GetTrimmedValue("PORT") ?? "3000";
 
 builder.WebHost.UseUrls($"http://localhost:{appPort}");
@@ -30,30 +29,9 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
-        if (builder.Environment.IsDevelopment())
-        {
-            policy.SetIsOriginAllowed(origin =>
-                {
-                    if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
-                        return false;
-
-                    var isLocalHost = uri.Host.Equals("localhost", StringComparison.OrdinalIgnoreCase)
-                        || uri.Host.Equals("127.0.0.1");
-
-                    return isLocalHost && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
-                })
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-
-            return;
-        }
-
-        if (corsPolicyOptions.AllowedOrigins.Count > 0)
-        {
-            policy.WithOrigins(corsPolicyOptions.AllowedOrigins.ToArray())
-                .AllowAnyHeader()
-                .AllowAnyMethod();
-        }
+        policy.AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
     });
 });
 
@@ -135,6 +113,7 @@ builder.Services
 builder.Services.AddAuthorization();
 builder.Services.AddDbContext<AppDbContext>(options => options.UseNpgsql(databaseOptions.BuildConnectionString()));
 builder.Services.AddScoped<IAppBootstrapService, AppBootstrapService>();
+builder.Services.AddScoped<ICatalogBootstrapService, CatalogBootstrapService>();
 builder.Services.AddScoped<LoginService>();
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<RegisterService>();

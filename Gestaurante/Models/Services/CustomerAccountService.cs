@@ -132,8 +132,12 @@ namespace Gestaurante.Models.Services
         /// <returns>Token de cliente junto a sus datos mínimos de sesión.</returns>
         public async Task<ClienteTokenDTO> LoginAsync(ClienteLoginDTO dto, CancellationToken cancellationToken = default)
         {
-            var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.Email.ToLower() == dto.Email.ToLower(), cancellationToken);
-            if (user == null || !user.Activo || !user.EmailVerificado || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
+            var email = dto.Email?.Trim();
+            if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(dto.Password))
+                throw new UnauthorizedAccessException("Credenciales de cliente invÃ¡lidas.");
+
+            var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower(), cancellationToken);
+            if (user == null || !user.Activo || !user.EmailVerificado || !VerifyPassword(dto.Password, user.PasswordHash))
                 throw new UnauthorizedAccessException("Credenciales de cliente inválidas.");
 
             var profile = MapProfile(user);
@@ -514,6 +518,24 @@ namespace Gestaurante.Models.Services
             using var sha = SHA256.Create();
             var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(code));
             return Convert.ToHexString(bytes);
+        }
+
+        /// <summary>
+        /// Verifica la contraseÃ±a evitando que un hash corrupto rompa el login.
+        /// </summary>
+        private static bool VerifyPassword(string password, string? passwordHash)
+        {
+            if (string.IsNullOrWhiteSpace(passwordHash) || string.IsNullOrWhiteSpace(password))
+                return false;
+
+            try
+            {
+                return BCrypt.Net.BCrypt.Verify(password, passwordHash);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         /// <summary>

@@ -104,13 +104,25 @@ namespace Gestaurante.Configuration
 
         public static BootstrapOptions BuildBootstrapOptions(this IConfiguration configuration, string[] args)
         {
+            var importCatalog = args.Contains("--import-catalog", StringComparer.OrdinalIgnoreCase)
+                || bool.TryParse(configuration.GetTrimmedValue("BOOTSTRAP_IMPORT_CATALOG"), out var importCatalogEnabled) && importCatalogEnabled;
+
+            var catalogImportPath = args
+                .FirstOrDefault(arg => arg.StartsWith("--catalog-import-path=", StringComparison.OrdinalIgnoreCase))
+                ?.Split('=', 2)[1]
+                .Trim('"')
+                ?? configuration.GetTrimmedValue("BOOTSTRAP_CATALOG_PATH");
+
             return new BootstrapOptions
             {
                 RunOnStart = args.Contains("--bootstrap", StringComparer.OrdinalIgnoreCase)
+                    || importCatalog
                     || bool.TryParse(configuration.GetTrimmedValue("BOOTSTRAP_ON_START"), out var runOnStart) && runOnStart,
                 ApplyMigrations = !bool.TryParse(configuration.GetTrimmedValue("BOOTSTRAP_APPLY_MIGRATIONS"), out var applyMigrations) || applyMigrations,
                 SeedDefaults = !bool.TryParse(configuration.GetTrimmedValue("BOOTSTRAP_SEED_DEFAULTS"), out var seedDefaults) || seedDefaults,
-                RepairData = !bool.TryParse(configuration.GetTrimmedValue("BOOTSTRAP_REPAIR_DATA"), out var repairData) || repairData
+                RepairData = !bool.TryParse(configuration.GetTrimmedValue("BOOTSTRAP_REPAIR_DATA"), out var repairData) || repairData,
+                ImportCatalog = importCatalog,
+                CatalogImportPath = catalogImportPath
             };
         }
 
@@ -145,7 +157,7 @@ namespace Gestaurante.Configuration
 
         private static string GetRequiredValue(IConfiguration configuration, string key)
         {
-            return configuration.GetTrimmedValue(key)
+                return configuration.GetTrimmedValue(key)
                 ?? throw new InvalidOperationException($"{key} no definido.");
         }
     }

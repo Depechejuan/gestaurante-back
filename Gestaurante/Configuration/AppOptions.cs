@@ -104,6 +104,8 @@ namespace Gestaurante.Configuration
         public bool ApplyMigrations { get; set; } = true;
         public bool SeedDefaults { get; set; } = true;
         public bool RepairData { get; set; } = true;
+        public bool ImportCatalog { get; set; }
+        public string? CatalogImportPath { get; set; }
     }
 
     public class CorsPolicyOptions
