@@ -2,6 +2,7 @@ namespace Gestaurante.Configuration
 {
     public class DatabaseOptions
     {
+        public string? ConnectionString { get; set; }
         public string Host { get; set; } = string.Empty;
         public int Port { get; set; } = 5432;
         public string Name { get; set; } = string.Empty;
@@ -12,6 +13,9 @@ namespace Gestaurante.Configuration
 
         public string BuildConnectionString()
         {
+            if (!string.IsNullOrWhiteSpace(ConnectionString))
+                return ConnectionString;
+
             var sslMode = RequireSsl ? "Require" : "Disable";
             var trustServerCertificate = TrustServerCertificate ? "true" : "false";
             return $"Server={Host};Port={Port};Database={Name};User Id={User};Password={Password};SSL Mode={sslMode};Trust Server Certificate={trustServerCertificate};";

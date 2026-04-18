@@ -7,19 +7,40 @@ namespace Gestaurante.Configuration
     {
         public static void LoadDotEnv()
         {
-            var envCandidates = new[]
-            {
-                Path.Combine(Directory.GetCurrentDirectory(), ".env"),
-                Path.Combine(Directory.GetCurrentDirectory(), "Gestaurante", ".env"),
-                Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../.env"))
-            };
+            var envCandidates = EnumerateEnvCandidates()
+                .Distinct(StringComparer.OrdinalIgnoreCase);
 
-            foreach (var envPath in envCandidates.Distinct())
+            foreach (var envPath in envCandidates)
             {
                 if (!File.Exists(envPath))
                     continue;
 
                 Env.Load(envPath);
+            }
+        }
+
+        private static IEnumerable<string> EnumerateEnvCandidates()
+        {
+            var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            var roots = new[]
+            {
+                Directory.GetCurrentDirectory(),
+                AppContext.BaseDirectory
+            };
+
+            foreach (var root in roots)
+            {
+                var directory = new DirectoryInfo(root);
+                while (directory is not null)
+                {
+                    if (visited.Add(directory.FullName))
+                    {
+                        yield return Path.Combine(directory.FullName, ".env");
+                        yield return Path.Combine(directory.FullName, "Gestaurante", ".env");
+                    }
+
+                    directory = directory.Parent;
+                }
             }
         }
 
@@ -34,13 +55,32 @@ namespace Gestaurante.Configuration
 
         public static DatabaseOptions BuildDatabaseOptions(this IConfiguration configuration)
         {
+            var explicitConnectionString = configuration.GetTrimmedValue("DB_CONNECTION_STRING");
+            var sslMode = configuration.GetTrimmedValue("PGSSLMODE");
+            var requireSsl = !string.Equals(sslMode, "disable", StringComparison.OrdinalIgnoreCase)
+                && !string.Equals(sslMode, "allow", StringComparison.OrdinalIgnoreCase);
+            var trustServerCertificate = !bool.TryParse(configuration.GetTrimmedValue("DB_TRUST_SERVER_CERTIFICATE"), out var parsedTrustServerCertificate)
+                || parsedTrustServerCertificate;
+
+            if (!string.IsNullOrWhiteSpace(explicitConnectionString))
+            {
+                return new DatabaseOptions
+                {
+                    ConnectionString = explicitConnectionString,
+                    RequireSsl = requireSsl,
+                    TrustServerCertificate = trustServerCertificate
+                };
+            }
+
             return new DatabaseOptions
             {
                 Host = GetRequiredValue(configuration, "DB_HOST"),
                 Port = int.TryParse(configuration.GetTrimmedValue("DB_PORT"), out var parsedPort) ? parsedPort : 5432,
                 Name = GetRequiredValue(configuration, "DB_NAME"),
                 User = GetRequiredValue(configuration, "DB_USER"),
-                Password = GetRequiredValue(configuration, "DB_PASSWORD")
+                Password = GetRequiredValue(configuration, "DB_PASSWORD"),
+                RequireSsl = requireSsl,
+                TrustServerCertificate = trustServerCertificate
             };
         }
 

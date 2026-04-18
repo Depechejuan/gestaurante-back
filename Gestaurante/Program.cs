@@ -21,6 +21,7 @@ var databaseOptions = builder.Configuration.BuildDatabaseOptions();
 var employeeJwtOptions = builder.Configuration.BuildEmployeeJwtOptions();
 var customerJwtOptions = builder.Configuration.BuildCustomerJwtOptions();
 var bootstrapOptions = builder.Configuration.BuildBootstrapOptions(args);
+var corsPolicyOptions = builder.Configuration.BuildCorsPolicyOptions();
 var appPort = builder.Configuration.GetTrimmedValue("PORT") ?? "3000";
 
 builder.WebHost.UseUrls($"http://localhost:{appPort}");
@@ -29,6 +30,14 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
+        if (corsPolicyOptions.AllowedOrigins.Count > 0)
+        {
+            policy.WithOrigins(corsPolicyOptions.AllowedOrigins.ToArray())
+                .AllowAnyHeader()
+                .AllowAnyMethod();
+            return;
+        }
+
         policy.AllowAnyOrigin()
             .AllowAnyHeader()
             .AllowAnyMethod();
@@ -175,3 +184,5 @@ app.MapGet("/health", async (AppDbContext db, IWebHostEnvironment environment, C
 });
 
 app.Run();
+
+public partial class Program;

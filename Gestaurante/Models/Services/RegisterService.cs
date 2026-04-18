@@ -104,58 +104,49 @@ namespace Gestaurante.Models.Services
 
         public async Task<Empleado?> EditarEmpleado(Guid id, EditarEmpleadoDTO dto, CancellationToken cancellationToken = default)
         {
-            var oldEmpleado = await _db.Empleados.AsNoTracking().FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
-            if (oldEmpleado == null)
+            var empleado = await _db.Empleados.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
+            if (empleado == null)
                 return null;
 
-            if (oldEmpleado.FirstName != dto.Nombre && dto.Nombre != null)
-                oldEmpleado.FirstName = dto.Nombre;
-            if (oldEmpleado.FirstLastName != dto.Apellido1 && dto.Apellido1 != null)
-                oldEmpleado.FirstLastName = dto.Apellido1;
-            if (oldEmpleado.SecondLastName != dto.Apellido2 && dto.Apellido2 != null)
-                oldEmpleado.SecondLastName = dto.Apellido2;
-
-            if (oldEmpleado.Activo != dto.Activo)
-                oldEmpleado.Activo = dto.Activo;
-
-            oldEmpleado.UpdatedAt = DateTime.UtcNow;
-            var updatedAt = DateTime.UtcNow;
-            var currentRole = ResolveEmployeeType(oldEmpleado);
+            var currentRole = ResolveEmployeeType(empleado);
             var nextRole = dto.Tipo ?? currentRole;
-            var nextFirstName = KeepExistingIfBlank(dto.Nombre, oldEmpleado.FirstName);
-            var nextFirstLastName = KeepExistingIfBlank(dto.Apellido1, oldEmpleado.FirstLastName);
-            var nextSecondLastName = KeepExistingIfBlank(dto.Apellido2, oldEmpleado.SecondLastName);
-            var nextEmail = KeepExistingIfBlank(dto.Email, oldEmpleado.Email);
-            var nextDni = KeepExistingIfBlank(dto.DNI, oldEmpleado.DNI);
-            var nextNuss = KeepExistingIfBlank(dto.NUSS, oldEmpleado.NUSS);
-            var nextImageUrl = oldEmpleado.ImageURL;
-            var nextPasswordHash = oldEmpleado.Password;
+            var nextFirstName = KeepExistingIfBlank(dto.Nombre, empleado.FirstName);
+            var nextFirstLastName = KeepExistingIfBlank(dto.Apellido1, empleado.FirstLastName);
+            var nextSecondLastName = KeepExistingIfBlank(dto.Apellido2, empleado.SecondLastName);
+            var nextEmail = NormalizeEmail(KeepExistingIfBlank(dto.Email, empleado.Email));
+            var nextDni = NormalizeDocument(KeepExistingIfBlank(dto.DNI, empleado.DNI));
+            var nextNuss = NormalizeDocument(KeepExistingIfBlank(dto.NUSS, empleado.NUSS));
+
+            await EnsureEmployeeIdentityIsUniqueAsync(id, nextEmail, nextDni, nextNuss, cancellationToken);
+
+            empleado.UpdateNames(nextFirstName, nextFirstLastName, nextSecondLastName);
+            empleado.UpdateIdentity(nextEmail, nextDni, nextNuss);
+            empleado.Activo = dto.Activo;
+            empleado.UpdatedAt = DateTime.UtcNow;
 
             if (!string.IsNullOrWhiteSpace(dto.Password))
-                nextPasswordHash = BCrypt.Net.BCrypt.HashPassword(
+            {
+                empleado.Password = BCrypt.Net.BCrypt.HashPassword(
                     dto.Password,
                     BCrypt.Net.BCrypt.GenerateSalt(12)
                 );
+            }
 
             if (dto.Photo is { Length: > 0 })
-                nextImageUrl = await _employeeImageService.UploadOrReplaceEmployeeImageAsync(id, dto.Photo, cancellationToken);
+                empleado.ImageURL = await _employeeImageService.UploadOrReplaceEmployeeImageAsync(id, dto.Photo, cancellationToken);
 
-            await _db.Database.ExecuteSqlInterpolatedAsync($@"
-                UPDATE ""Empleados""
-                SET
-                    ""Email"" = {nextEmail},
-                    ""Password"" = {nextPasswordHash},
-                    ""FirstName"" = {nextFirstName},
-                    ""FirstLastName"" = {nextFirstLastName},
-                    ""SecondLastName"" = {nextSecondLastName},
-                    ""DNI"" = {nextDni},
-                    ""NUSS"" = {nextNuss},
-                    ""Activo"" = {dto.Activo},
-                    ""ImageURL"" = {nextImageUrl},
-                    ""UpdatedAt"" = {updatedAt},
-                    ""Tipo"" = {(int)nextRole}
-                WHERE ""Id"" = {id};
-            ", cancellationToken);
+            await _db.SaveChangesAsync(cancellationToken);
+
+            if (nextRole != currentRole)
+            {
+                await _db.Database.ExecuteSqlInterpolatedAsync($@"
+                    UPDATE ""Empleados""
+                    SET ""Tipo"" = {(int)nextRole}
+                    WHERE ""Id"" = {id};
+                ", cancellationToken);
+
+                _db.ChangeTracker.Clear();
+            }
 
             return await _db.Empleados.FirstOrDefaultAsync(e => e.Id == id, cancellationToken);
         }
@@ -163,6 +154,34 @@ namespace Gestaurante.Models.Services
         private static string KeepExistingIfBlank(string? incomingValue, string currentValue)
         {
             return string.IsNullOrWhiteSpace(incomingValue) ? currentValue : incomingValue.Trim();
+        }
+
+        private async Task EnsureEmployeeIdentityIsUniqueAsync(Guid employeeId, string email, string dni, string nuss, CancellationToken cancellationToken)
+        {
+            if (await _db.Empleados.AnyAsync(
+                empleado => empleado.Id != employeeId && empleado.Email.ToLower() == email.ToLower(),
+                cancellationToken))
+                throw new InvalidOperationException("Ya existe otro empleado con ese email.");
+
+            if (await _db.Empleados.AnyAsync(
+                empleado => empleado.Id != employeeId && empleado.DNI.ToUpper() == dni.ToUpper(),
+                cancellationToken))
+                throw new InvalidOperationException("Ya existe otro empleado con ese DNI.");
+
+            if (await _db.Empleados.AnyAsync(
+                empleado => empleado.Id != employeeId && empleado.NUSS.ToUpper() == nuss.ToUpper(),
+                cancellationToken))
+                throw new InvalidOperationException("Ya existe otro empleado con ese NUSS.");
+        }
+
+        private static string NormalizeEmail(string value)
+        {
+            return value.Trim();
+        }
+
+        private static string NormalizeDocument(string value)
+        {
+            return value.Trim().ToUpperInvariant();
         }
 
         private static TipoEmpleado ResolveEmployeeType(Empleado empleado)

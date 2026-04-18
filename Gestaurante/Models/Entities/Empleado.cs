@@ -56,5 +56,19 @@ namespace Gestaurante.Models.Entities
             DNI = dni;
             NUSS = nuss;
         }
+
+        public void UpdateIdentity(string email, string dni, string nuss)
+        {
+            Email = email;
+            DNI = dni;
+            NUSS = nuss;
+        }
+
+        public void UpdateNames(string firstName, string firstLastName, string secondLastName)
+        {
+            FirstName = firstName;
+            FirstLastName = firstLastName;
+            SecondLastName = secondLastName;
+        }
     }
 }

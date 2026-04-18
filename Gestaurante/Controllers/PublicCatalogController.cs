@@ -38,7 +38,7 @@ namespace Gestaurante.Controllers
         {
             var plato = await _publicCheckoutService.GetCatalogoItemAsync(id, cancellationToken);
             if (plato == null)
-                return NotFound(new { error = "Plato no encontrado." });
+                return ResponseHelper.NotFound("Plato no encontrado.");
 
             return ResponseHelper.SendResponse(plato);
         }
