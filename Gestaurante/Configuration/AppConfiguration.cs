@@ -126,7 +126,10 @@ namespace Gestaurante.Configuration
                 CloudName = configuration.GetTrimmedValue("CLOUDINARY_CLOUD_NAME") ?? configuration.GetTrimmedValue("CLOUDINARY_CLOUDNAME"),
                 ApiKey = configuration.GetTrimmedValue("CLOUDINARY_API_KEY") ?? configuration.GetTrimmedValue("CLOUDINARY_APIKEY"),
                 ApiSecret = configuration.GetTrimmedValue("CLOUDINARY_API_SECRET") ?? configuration.GetTrimmedValue("CLOUDINARY_APISECRET"),
-                EmployeeFolder = configuration.GetTrimmedValue("CLOUDINARY_EMPLOYEE_FOLDER") ?? "gestaurante/empleados"
+                EmployeeFolder = configuration.GetTrimmedValue("CLOUDINARY_EMPLOYEE_FOLDER") ?? "gestaurante/empleados",
+                DishFolder = configuration.GetTrimmedValue("CLOUDINARY_DISH_FOLDER")
+                    ?? configuration.GetTrimmedValue("CLOUDINARY_PLATO_FOLDER")
+                    ?? "gestaurante/platos"
             };
         }
 
@@ -146,23 +149,33 @@ namespace Gestaurante.Configuration
         {
             var importCatalog = args.Contains("--import-catalog", StringComparer.OrdinalIgnoreCase)
                 || bool.TryParse(configuration.GetTrimmedValue("BOOTSTRAP_IMPORT_CATALOG"), out var importCatalogEnabled) && importCatalogEnabled;
+            var migrateDishImages = args.Contains("--migrate-dish-images", StringComparer.OrdinalIgnoreCase)
+                || bool.TryParse(configuration.GetTrimmedValue("BOOTSTRAP_MIGRATE_DISH_IMAGES"), out var migrateDishImagesEnabled) && migrateDishImagesEnabled;
 
             var catalogImportPath = args
                 .FirstOrDefault(arg => arg.StartsWith("--catalog-import-path=", StringComparison.OrdinalIgnoreCase))
                 ?.Split('=', 2)[1]
                 .Trim('"')
                 ?? configuration.GetTrimmedValue("BOOTSTRAP_CATALOG_PATH");
+            var dishImageReportPath = args
+                .FirstOrDefault(arg => arg.StartsWith("--dish-image-report-path=", StringComparison.OrdinalIgnoreCase))
+                ?.Split('=', 2)[1]
+                .Trim('"')
+                ?? configuration.GetTrimmedValue("BOOTSTRAP_DISH_IMAGE_REPORT_PATH");
 
             return new BootstrapOptions
             {
                 RunOnStart = args.Contains("--bootstrap", StringComparer.OrdinalIgnoreCase)
                     || importCatalog
+                    || migrateDishImages
                     || bool.TryParse(configuration.GetTrimmedValue("BOOTSTRAP_ON_START"), out var runOnStart) && runOnStart,
                 ApplyMigrations = !bool.TryParse(configuration.GetTrimmedValue("BOOTSTRAP_APPLY_MIGRATIONS"), out var applyMigrations) || applyMigrations,
                 SeedDefaults = !bool.TryParse(configuration.GetTrimmedValue("BOOTSTRAP_SEED_DEFAULTS"), out var seedDefaults) || seedDefaults,
                 RepairData = !bool.TryParse(configuration.GetTrimmedValue("BOOTSTRAP_REPAIR_DATA"), out var repairData) || repairData,
                 ImportCatalog = importCatalog,
-                CatalogImportPath = catalogImportPath
+                CatalogImportPath = catalogImportPath,
+                MigrateDishImages = migrateDishImages,
+                DishImageReportPath = dishImageReportPath
             };
         }
 

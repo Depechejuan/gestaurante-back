@@ -1,7 +1,10 @@
 using System.Text.Json;
+using Gestaurante.Configuration;
 using Gestaurante.Models.Data;
 using Gestaurante.Models.Entities;
+using Gestaurante.Models.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 
 namespace Gestaurante.Infrastructure
 {
@@ -25,11 +28,19 @@ namespace Gestaurante.Infrastructure
         };
 
         private readonly AppDbContext _db;
+        private readonly IPlatoImageService _platoImageService;
+        private readonly CloudinaryOptions _cloudinaryOptions;
         private readonly ILogger<CatalogBootstrapService> _logger;
 
-        public CatalogBootstrapService(AppDbContext db, ILogger<CatalogBootstrapService> logger)
+        public CatalogBootstrapService(
+            AppDbContext db,
+            IPlatoImageService platoImageService,
+            IOptions<CloudinaryOptions> cloudinaryOptions,
+            ILogger<CatalogBootstrapService> logger)
         {
             _db = db;
+            _platoImageService = platoImageService;
+            _cloudinaryOptions = cloudinaryOptions.Value;
             _logger = logger;
         }
 
@@ -182,11 +193,12 @@ namespace Gestaurante.Infrastructure
                 var lookupKey = NormalizeLookupKey(nombre);
                 if (!platosPorId.TryGetValue(platoId, out var plato) && !platosPorNombre.TryGetValue(lookupKey, out plato))
                 {
+                    var imageUrl = await ResolveDishImageAsync(platoId, platoPayload.Imagen, currentImageUrl: string.Empty, cancellationToken);
                     plato = new Plato(
                         platoId,
                         nombre,
                         ResolveDescripcion(platoPayload),
-                        platoPayload.Imagen?.Trim() ?? string.Empty,
+                        imageUrl,
                         platoPayload.Disponible,
                         Convert.ToDecimal(platoPayload.Precio),
                         categoriaId);
@@ -197,9 +209,10 @@ namespace Gestaurante.Infrastructure
                 }
                 else
                 {
+                    var imageUrl = await ResolveDishImageAsync(platoId, platoPayload.Imagen, plato.Imagen, cancellationToken);
                     plato.Nombre = nombre;
                     plato.Descripcion = ResolveDescripcion(platoPayload);
-                    plato.Imagen = platoPayload.Imagen?.Trim() ?? string.Empty;
+                    plato.Imagen = imageUrl;
                     plato.Disponible = platoPayload.Disponible;
                     plato.Precio = Convert.ToDecimal(platoPayload.Precio);
                     plato.IdCategoria = categoriaId;
@@ -215,6 +228,28 @@ namespace Gestaurante.Infrastructure
                 platoExistente.Disponible = false;
                 platoExistente.UpdatedAt = DateTime.UtcNow;
             }
+        }
+
+        private async Task<string> ResolveDishImageAsync(
+            Guid dishId,
+            string? incomingImageUrl,
+            string? currentImageUrl,
+            CancellationToken cancellationToken)
+        {
+            var normalizedIncomingImageUrl = incomingImageUrl?.Trim() ?? string.Empty;
+            if (string.IsNullOrWhiteSpace(normalizedIncomingImageUrl))
+                return string.Empty;
+
+            if (_cloudinaryOptions.IsCloudinaryUrl(normalizedIncomingImageUrl))
+                return normalizedIncomingImageUrl;
+
+            if (_cloudinaryOptions.IsCloudinaryUrl(currentImageUrl) && _cloudinaryOptions.IsRemoteHttpUrl(normalizedIncomingImageUrl))
+                return currentImageUrl?.Trim() ?? string.Empty;
+
+            if (_cloudinaryOptions.IsRemoteHttpUrl(normalizedIncomingImageUrl))
+                return await _platoImageService.UploadOrReplaceDishImageFromUrlAsync(dishId, normalizedIncomingImageUrl, cancellationToken);
+
+            return normalizedIncomingImageUrl;
         }
 
         private void SyncIngredientes(Plato plato, HashSet<Guid> ingredientIds)

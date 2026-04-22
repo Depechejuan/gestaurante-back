@@ -22,7 +22,8 @@ public sealed class TestApiFactory : WebApplicationFactory<Program>
                 ["DB_NAME"] = TestDatabaseName,
                 ["PORT"] = "0",
                 ["BOOTSTRAP_ON_START"] = "false",
-                ["CORS_ALLOWED_ORIGINS"] = "http://localhost:4173"
+                ["CORS_ALLOWED_ORIGINS"] = "http://localhost:4173",
+                ["CLOUDINARY_CLOUDNAME"] = FakePlatoImageService.CloudName
             });
         });
 
@@ -30,10 +31,13 @@ public sealed class TestApiFactory : WebApplicationFactory<Program>
         {
             services.RemoveAll<IEmailService>();
             services.RemoveAll<IEmployeeImageService>();
+            services.RemoveAll<IPlatoImageService>();
 
             services.AddSingleton<FakeEmailService>();
+            services.AddSingleton<FakePlatoImageService>();
             services.AddSingleton<IEmailService>(provider => provider.GetRequiredService<FakeEmailService>());
             services.AddSingleton<IEmployeeImageService, FakeEmployeeImageService>();
+            services.AddSingleton<IPlatoImageService>(provider => provider.GetRequiredService<FakePlatoImageService>());
         });
     }
 }

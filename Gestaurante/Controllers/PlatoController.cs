@@ -54,9 +54,13 @@ namespace Gestaurante.Controllers
         /// </summary>
         [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] PlatoDTO dto, CancellationToken cancellationToken)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Create([FromForm] UpsertPlatoDTO dto, CancellationToken cancellationToken)
         {
-            var plato = await _service.CreateAsync(dto, cancellationToken);
+            var plato = await _service.CreateAsync(dto.ToPlatoDto(), cancellationToken);
+            if (dto.Photo is { Length: > 0 })
+                plato = (await _service.SetImageAsync(plato.IdPlato, dto.Photo, cancellationToken))!;
+
             return ResponseHelper.SendResponse(plato, 201);
         }
 
@@ -65,11 +69,15 @@ namespace Gestaurante.Controllers
         /// </summary>
         [Authorize(Roles = nameof(TipoEmpleado.Administrador))]
         [HttpPut("{id:guid}")]
-        public async Task<IActionResult> Update(Guid id, [FromBody] PlatoDTO dto, CancellationToken cancellationToken)
+        [Consumes("multipart/form-data")]
+        public async Task<IActionResult> Update(Guid id, [FromForm] UpsertPlatoDTO dto, CancellationToken cancellationToken)
         {
-            var plato = await _service.UpdateAsync(id, dto, cancellationToken);
+            var plato = await _service.UpdateAsync(id, dto.ToPlatoDto(), cancellationToken);
             if (plato == null)
                 return ResponseHelper.NotFound("Plato no encontrado.");
+
+            if (dto.Photo is { Length: > 0 })
+                plato = (await _service.SetImageAsync(id, dto.Photo, cancellationToken))!;
 
             return ResponseHelper.SendResponse(plato);
         }

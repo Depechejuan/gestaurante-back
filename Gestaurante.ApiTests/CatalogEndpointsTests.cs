@@ -1,4 +1,6 @@
+using System.Globalization;
 using System.Net;
+using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Gestaurante.ApiTests.Infrastructure;
@@ -103,55 +105,58 @@ public sealed class CatalogEndpointsTests(ApiTestFixture fixture) : ApiTestBase(
         var tomateId = Fixture.State.IngredienteTomateId;
 
         var createRequest = Fixture.CreateRequest(HttpMethod.Post, "/Plato", token);
-        createRequest.Content = JsonContent.Create(new
-        {
-            nombre = "Croquetas test",
-            descripcion = "Croquetas cremosas de jamon.",
-            imagen = string.Empty,
-            disponible = true,
-            precio = 7.80m,
-            idCategoria = categoriaId,
-            categoriaDescripcion = "Entrantes",
-            ingredientes = new[]
-            {
+        createRequest.Content = BuildPlatoMultipartContent(
+            idPlato: null,
+            nombre: "Croquetas test",
+            descripcion: "Croquetas cremosas de jamon.",
+            imagen: string.Empty,
+            disponible: true,
+            precio: 7.80m,
+            idCategoria: categoriaId,
+            categoriaDescripcion: "Entrantes",
+            ingredientes:
+            [
                 new
                 {
                     idIngrediente = tomateId,
                     nombre = "Tomate"
                 }
-            }
-        });
+            ],
+            photoFileName: "croquetas-create.png");
         var createResponse = await Fixture.Client.SendAsync(createRequest);
 
         createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         var createEnvelope = await Fixture.ReadEnvelopeAsync<JsonElement>(createResponse);
         var platoId = createEnvelope.Data.GetProperty("idPlato").GetGuid();
+        createEnvelope.Data.GetProperty("imagen").GetString().Should().Contain("res.cloudinary.com/test-cloud");
+        Fixture.PlatoImageService.FileUploadCalls.Should().HaveCount(1);
 
         var updateRequest = Fixture.CreateRequest(HttpMethod.Put, $"/Plato/{platoId}", token);
-        updateRequest.Content = JsonContent.Create(new
-        {
-            idPlato = platoId,
-            nombre = "Croquetas test editadas",
-            descripcion = "Croquetas actualizadas.",
-            imagen = string.Empty,
-            disponible = true,
-            precio = 8.40m,
-            idCategoria = categoriaId,
-            categoriaDescripcion = "Entrantes",
-            ingredientes = new[]
-            {
+        updateRequest.Content = BuildPlatoMultipartContent(
+            idPlato: platoId,
+            nombre: "Croquetas test editadas",
+            descripcion: "Croquetas actualizadas.",
+            imagen: string.Empty,
+            disponible: true,
+            precio: 8.40m,
+            idCategoria: categoriaId,
+            categoriaDescripcion: "Entrantes",
+            ingredientes:
+            [
                 new
                 {
                     idIngrediente = tomateId,
                     nombre = "Tomate"
                 }
-            }
-        });
+            ],
+            photoFileName: "croquetas-update.png");
         var updateResponse = await Fixture.Client.SendAsync(updateRequest);
 
         updateResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var updateEnvelope = await Fixture.ReadEnvelopeAsync<JsonElement>(updateResponse);
         updateEnvelope.Data.GetProperty("nombre").GetString().Should().Be("Croquetas test editadas");
+        updateEnvelope.Data.GetProperty("imagen").GetString().Should().Contain("croquetas-update");
+        Fixture.PlatoImageService.FileUploadCalls.Should().HaveCount(2);
 
         var toggleRequest = Fixture.CreateRequest(HttpMethod.Patch, $"/Plato/{platoId}/disponibilidad", token);
         toggleRequest.Content = JsonContent.Create(new { disponible = false });
@@ -167,5 +172,42 @@ public sealed class CatalogEndpointsTests(ApiTestFixture fixture) : ApiTestBase(
         deleteResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var deleteEnvelope = await Fixture.ReadEnvelopeAsync<JsonElement>(deleteResponse);
         deleteEnvelope.Data.GetProperty("deleted").GetBoolean().Should().BeTrue();
+    }
+
+    private static MultipartFormDataContent BuildPlatoMultipartContent(
+        Guid? idPlato,
+        string nombre,
+        string descripcion,
+        string imagen,
+        bool disponible,
+        decimal precio,
+        Guid idCategoria,
+        string categoriaDescripcion,
+        object[] ingredientes,
+        string? photoFileName = null)
+    {
+        var multipart = new MultipartFormDataContent
+        {
+            { new StringContent(nombre), "Nombre" },
+            { new StringContent(descripcion), "Descripcion" },
+            { new StringContent(imagen), "Imagen" },
+            { new StringContent(disponible.ToString().ToLowerInvariant()), "Disponible" },
+            { new StringContent(precio.ToString(CultureInfo.CurrentCulture)), "Precio" },
+            { new StringContent(idCategoria.ToString()), "IdCategoria" },
+            { new StringContent(categoriaDescripcion), "CategoriaDescripcion" },
+            { new StringContent(JsonSerializer.Serialize(ingredientes)), "IngredientesJson" }
+        };
+
+        if (idPlato.HasValue)
+            multipart.Add(new StringContent(idPlato.Value.ToString()), "IdPlato");
+
+        if (!string.IsNullOrWhiteSpace(photoFileName))
+        {
+            var photoContent = new ByteArrayContent([137, 80, 78, 71]);
+            photoContent.Headers.ContentType = MediaTypeHeaderValue.Parse("image/png");
+            multipart.Add(photoContent, "Photo", photoFileName);
+        }
+
+        return multipart;
     }
 }

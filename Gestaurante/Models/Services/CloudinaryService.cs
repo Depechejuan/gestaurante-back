@@ -31,23 +31,51 @@ namespace Gestaurante.Models.Services
             if (file == null || file.Length == 0)
                 return string.Empty;
 
+            var publicId = id.ToString();
             await using var stream = file.OpenReadStream();
-            string fileName = id.ToString();
-
-            var uploadParams = new ImageUploadParams()
-            {
-                File = new FileDescription(fileName, stream),
-                Folder = location
-            };
+            var uploadParams = BuildUploadParams(publicId, location, new FileDescription(publicId, stream));
 
             var result = await _cloudinary.UploadAsync(uploadParams);
+            return ResolveUploadedImageUrl(result, publicId);
+        }
 
-            return result.SecureUrl.ToString();
+        public async Task<string> UploadImageAsync(Guid id, string remoteImageUrl, string location)
+        {
+            if (string.IsNullOrWhiteSpace(remoteImageUrl))
+                return string.Empty;
+
+            var publicId = id.ToString();
+            var uploadParams = BuildUploadParams(publicId, location, new FileDescription(publicId, remoteImageUrl.Trim()));
+
+            var result = await _cloudinary.UploadAsync(uploadParams);
+            return ResolveUploadedImageUrl(result, publicId);
         }
 
         public string ResolveImageUrl(string imagePath)
         {
             return _options.ResolveImageUrl(imagePath);
+        }
+
+        private static ImageUploadParams BuildUploadParams(string publicId, string location, FileDescription file)
+        {
+            return new ImageUploadParams
+            {
+                File = file,
+                Folder = location,
+                PublicId = publicId,
+                Overwrite = true
+            };
+        }
+
+        private static string ResolveUploadedImageUrl(ImageUploadResult result, string publicId)
+        {
+            if (result.Error is not null)
+                throw new InvalidOperationException($"Cloudinary devolvió un error al subir la imagen '{publicId}': {result.Error.Message}");
+
+            if (result.SecureUrl is null)
+                throw new InvalidOperationException($"Cloudinary no devolvió SecureUrl para la imagen '{publicId}'.");
+
+            return result.SecureUrl.ToString();
         }
     }
 

@@ -56,19 +56,40 @@ namespace Gestaurante.Configuration
         public string? ApiKey { get; set; }
         public string? ApiSecret { get; set; }
         public string EmployeeFolder { get; set; } = "gestaurante/empleados";
+        public string DishFolder { get; set; } = "gestaurante/platos";
 
         public bool IsConfigured =>
             !string.IsNullOrWhiteSpace(CloudName)
             && !string.IsNullOrWhiteSpace(ApiKey)
             && !string.IsNullOrWhiteSpace(ApiSecret);
 
+        public bool IsRemoteHttpUrl(string? imagePath)
+        {
+            return Uri.TryCreate(imagePath, UriKind.Absolute, out var uri)
+                && (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+        }
+
+        public bool IsCloudinaryUrl(string? imagePath)
+        {
+            return Uri.TryCreate(imagePath, UriKind.Absolute, out var uri)
+                && string.Equals(uri.Host, "res.cloudinary.com", StringComparison.OrdinalIgnoreCase);
+        }
+
+        public bool IsOwnCloudinaryUrl(string? imagePath)
+        {
+            if (!IsCloudinaryUrl(imagePath) || string.IsNullOrWhiteSpace(CloudName))
+                return false;
+
+            var absolutePath = new Uri(imagePath!, UriKind.Absolute).AbsolutePath.Trim('/');
+            return absolutePath.StartsWith($"{CloudName.Trim()}/", StringComparison.OrdinalIgnoreCase);
+        }
+
         public string ResolveImageUrl(string imagePath)
         {
             if (string.IsNullOrWhiteSpace(imagePath))
                 return string.Empty;
 
-            if (Uri.TryCreate(imagePath, UriKind.Absolute, out var uri) &&
-                (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+            if (IsRemoteHttpUrl(imagePath))
                 return imagePath;
 
             if (string.IsNullOrWhiteSpace(CloudName))
@@ -110,6 +131,8 @@ namespace Gestaurante.Configuration
         public bool RepairData { get; set; } = true;
         public bool ImportCatalog { get; set; }
         public string? CatalogImportPath { get; set; }
+        public bool MigrateDishImages { get; set; }
+        public string? DishImageReportPath { get; set; }
     }
 
     public class CorsPolicyOptions

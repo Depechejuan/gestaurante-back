@@ -13,16 +13,18 @@ namespace Gestaurante.Models.Services
     {
         private readonly AppDbContext _db;
         private readonly CatalogProjectionService _catalogProjectionService;
+        private readonly IPlatoImageService _platoImageService;
 
         /// <summary>
         /// Inicializa el servicio de platos con acceso a persistencia y proyección de catálogo.
         /// </summary>
         /// <param name="db">Contexto de base de datos del dominio.</param>
         /// <param name="catalogProjectionService">Servicio de proyección de platos a DTOs.</param>
-        public PlatoService(AppDbContext db, CatalogProjectionService catalogProjectionService)
+        public PlatoService(AppDbContext db, CatalogProjectionService catalogProjectionService, IPlatoImageService platoImageService)
         {
             _db = db;
             _catalogProjectionService = catalogProjectionService;
+            _platoImageService = platoImageService;
         }
 
         /// <summary>
@@ -190,6 +192,24 @@ namespace Gestaurante.Models.Services
                 return null;
 
             plato.Disponible = disponible;
+            plato.UpdatedAt = DateTime.UtcNow;
+
+            await _db.SaveChangesAsync(cancellationToken);
+            return await GetByIdAsync(id, cancellationToken);
+        }
+
+        /// <summary>
+        /// Sube o reemplaza la imagen de un plato usando Cloudinary y persiste la URL final en base de datos.
+        /// </summary>
+        public async Task<PlatoDTO?> SetImageAsync(Guid id, IFormFile photo, CancellationToken cancellationToken = default)
+        {
+            var plato = await _db.Platos
+                .FirstOrDefaultAsync(p => p.IdPlato == id, cancellationToken);
+
+            if (plato == null)
+                return null;
+
+            plato.Imagen = await _platoImageService.UploadOrReplaceDishImageAsync(id, photo, cancellationToken);
             plato.UpdatedAt = DateTime.UtcNow;
 
             await _db.SaveChangesAsync(cancellationToken);

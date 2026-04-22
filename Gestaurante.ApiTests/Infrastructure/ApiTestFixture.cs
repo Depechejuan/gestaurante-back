@@ -23,6 +23,7 @@ public sealed class ApiTestFixture : IAsyncLifetime
     public HttpClient Client { get; private set; } = null!;
     public TestSeedState State { get; private set; } = new();
     public FakeEmailService EmailService => Factory.Services.GetRequiredService<FakeEmailService>();
+    public FakePlatoImageService PlatoImageService => Factory.Services.GetRequiredService<FakePlatoImageService>();
 
     public async Task InitializeAsync()
     {
@@ -72,6 +73,7 @@ public sealed class ApiTestFixture : IAsyncLifetime
         await DbInitializer.SeedDefaultCustomersAsync(db);
         State = await SeedCustomDataAsync(db);
         EmailService.Clear();
+        PlatoImageService.Clear();
     }
 
     public async Task<string> LoginEmployeeAsync(string email, string password)
