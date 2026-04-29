@@ -21,10 +21,6 @@ var databaseOptions = builder.Configuration.BuildDatabaseOptions();
 var employeeJwtOptions = builder.Configuration.BuildEmployeeJwtOptions();
 var customerJwtOptions = builder.Configuration.BuildCustomerJwtOptions();
 var bootstrapOptions = builder.Configuration.BuildBootstrapOptions(args);
-var corsPolicyOptions = builder.Configuration.BuildCorsPolicyOptions();
-var allowedOrigins = corsPolicyOptions.AllowedOrigins
-    .Select(NormalizeOrigin)
-    .ToHashSet(StringComparer.OrdinalIgnoreCase);
 var appPort = builder.Configuration.GetTrimmedValue("PORT") ?? "3000";
 
 builder.WebHost.UseUrls($"http://localhost:{appPort}");
@@ -33,12 +29,10 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
-        policy.SetIsOriginAllowed(origin =>
-            allowedOrigins.Count == 0
-            || allowedOrigins.Contains(NormalizeOrigin(origin))
-            || IsLoopbackOrigin(origin))
+        policy.SetIsOriginAllowed(_ => true)
             .AllowAnyHeader()
-            .AllowAnyMethod();
+            .AllowAnyMethod()
+            .AllowCredentials();
     });
 });
 
@@ -184,30 +178,5 @@ app.MapGet("/health", async (AppDbContext db, IWebHostEnvironment environment, C
 });
 
 app.Run();
-
-static string NormalizeOrigin(string origin)
-{
-    return string.IsNullOrWhiteSpace(origin)
-        ? string.Empty
-        : origin.Trim().TrimEnd('/');
-}
-
-static bool IsLoopbackOrigin(string origin)
-{
-    if (!Uri.TryCreate(origin, UriKind.Absolute, out var uri))
-        return false;
-
-    if (!string.Equals(uri.Scheme, Uri.UriSchemeHttp, StringComparison.OrdinalIgnoreCase)
-        && !string.Equals(uri.Scheme, Uri.UriSchemeHttps, StringComparison.OrdinalIgnoreCase))
-        return false;
-
-    var host = uri.Host.Trim();
-    if (string.Equals(host, "localhost", StringComparison.OrdinalIgnoreCase)
-        || host.EndsWith(".localhost", StringComparison.OrdinalIgnoreCase))
-        return true;
-
-    return System.Net.IPAddress.TryParse(host, out var ipAddress)
-        && System.Net.IPAddress.IsLoopback(ipAddress);
-}
 
 public partial class Program;

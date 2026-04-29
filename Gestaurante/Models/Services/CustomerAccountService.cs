@@ -130,15 +130,15 @@ namespace Gestaurante.Models.Services
         /// <param name="dto">Credenciales de acceso del cliente.</param>
         /// <param name="cancellationToken">Token de cancelación de la operación.</param>
         /// <returns>Token de cliente junto a sus datos mínimos de sesión.</returns>
-        public async Task<ClienteTokenDTO> LoginAsync(ClienteLoginDTO dto, CancellationToken cancellationToken = default)
+        public async Task<ClienteTokenDTO?> LoginAsync(ClienteLoginDTO dto, CancellationToken cancellationToken = default)
         {
             var email = dto.Email?.Trim();
             if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(dto.Password))
-                throw new UnauthorizedAccessException("Credenciales de cliente invÃ¡lidas.");
+                return null;
 
             var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.Email.ToLower() == email.ToLower(), cancellationToken);
             if (user == null || !user.Activo || !user.EmailVerificado || !VerifyPassword(dto.Password, user.PasswordHash))
-                throw new UnauthorizedAccessException("Credenciales de cliente inválidas.");
+                return null;
 
             var profile = MapProfile(user);
             var token = _customerJwtService.GenerarToken(profile);

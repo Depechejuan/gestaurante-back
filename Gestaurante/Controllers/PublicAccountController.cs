@@ -61,6 +61,9 @@ namespace Gestaurante.Controllers
         public async Task<IActionResult> Login([FromBody] ClienteLoginDTO dto, CancellationToken cancellationToken)
         {
             var token = await _customerAccountService.LoginAsync(dto, cancellationToken);
+            if (token == null)
+                return ResponseHelper.NotAuthorized("Credenciales de cliente invalidas.");
+
             return ResponseHelper.SendResponse(token, 201);
         }
 
