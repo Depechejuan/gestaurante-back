@@ -52,6 +52,7 @@ public sealed class ApiTestFixture : IAsyncLifetime
         await db.Database.MigrateAsync();
         await db.Database.ExecuteSqlRawAsync("""
             TRUNCATE TABLE
+                "AccountActionTokens",
                 "ClienteEmailVerifications",
                 "ClienteMetodosPago",
                 "ClienteDirecciones",
@@ -144,12 +145,13 @@ public sealed class ApiTestFixture : IAsyncLifetime
             ?? throw new InvalidOperationException("No se pudo deserializar la respuesta JSON.");
     }
 
-    public static string ExtractVerificationCode(FakeEmailService.SentEmail email)
+    public static string ExtractLinkToken(FakeEmailService.SentEmail email, string path)
     {
-        var match = Regex.Match(email.Body, @"\b(\d{6})\b");
+        var escapedPath = Regex.Escape(path);
+        var match = Regex.Match(email.Body, $@"{escapedPath}\?token=([A-Za-z0-9_\-]+)");
         return match.Success
             ? match.Groups[1].Value
-            : throw new InvalidOperationException("No se encontró el código OTP en el correo de pruebas.");
+            : throw new InvalidOperationException("No se encontró el token en el correo de pruebas.");
     }
 
     private static async Task EnsureTestDatabaseExistsAsync()

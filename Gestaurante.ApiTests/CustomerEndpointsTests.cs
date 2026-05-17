@@ -2,6 +2,10 @@ using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
 using Gestaurante.ApiTests.Infrastructure;
+using Gestaurante.Models.Data;
+using Gestaurante.Models.Enums;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Gestaurante.ApiTests;
 
@@ -56,7 +60,7 @@ public sealed class CustomerEndpointsTests(ApiTestFixture fixture) : ApiTestBase
     }
 
     [Fact]
-    public async Task PublicAccountSupportsRegisterResendVerifyLoginAndProfileRead()
+    public async Task PublicAccountSupportsRegisterResendConfirmLoginAndProfileRead()
     {
         var email = $"cliente.test.{Guid.NewGuid():N}@gestaurante.local";
 
@@ -69,19 +73,28 @@ public sealed class CustomerEndpointsTests(ApiTestFixture fixture) : ApiTestBase
         registerResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         Fixture.EmailService.Messages.Should().ContainSingle(message => message.ToEmail == email);
 
-        var resendResponse = await Fixture.Client.PostAsJsonAsync("/public/account/resend-code", new
+        var blockedLoginResponse = await Fixture.Client.PostAsJsonAsync("/public/account/login", new
+        {
+            email,
+            password = "Client3."
+        });
+
+        blockedLoginResponse.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+
+        var resendResponse = await Fixture.Client.PostAsJsonAsync("/public/account/resend-confirmation-email", new
         {
             email
         });
 
         resendResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         Fixture.EmailService.Messages.Count(message => message.ToEmail == email).Should().Be(2);
-        var verificationCode = ApiTestFixture.ExtractVerificationCode(Fixture.EmailService.Messages.Last(message => message.ToEmail == email));
+        var confirmationToken = ApiTestFixture.ExtractLinkToken(
+            Fixture.EmailService.Messages.Last(message => message.ToEmail == email),
+            "/cuenta/confirmar-email");
 
-        var verifyResponse = await Fixture.Client.PostAsJsonAsync("/public/account/verify-email", new
+        var verifyResponse = await Fixture.Client.PostAsJsonAsync("/public/account/confirm-email", new
         {
-            email,
-            code = verificationCode
+            token = confirmationToken
         });
 
         verifyResponse.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -101,6 +114,126 @@ public sealed class CustomerEndpointsTests(ApiTestFixture fixture) : ApiTestBase
         meResponse.StatusCode.Should().Be(HttpStatusCode.OK);
         var meEnvelope = await Fixture.ReadEnvelopeAsync<JsonElement>(meResponse);
         meEnvelope.Data.GetProperty("email").GetString().Should().Be(email);
+    }
+
+    [Fact]
+    public async Task CustomerEmailConfirmationLinkExpiresAndIsSingleUse()
+    {
+        var email = $"cliente.confirm.{Guid.NewGuid():N}@gestaurante.local";
+
+        var registerResponse = await Fixture.Client.PostAsJsonAsync("/public/account/register", new
+        {
+            email,
+            password = "Client3."
+        });
+        registerResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var expiredToken = ApiTestFixture.ExtractLinkToken(
+            Fixture.EmailService.Messages.Last(message => message.ToEmail == email),
+            "/cuenta/confirmar-email");
+
+        using (var scope = Fixture.Factory.Services.CreateScope())
+        {
+            var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+            var token = await db.AccountActionTokens.SingleAsync(actionToken =>
+                actionToken.Email == email
+                && actionToken.Purpose == AccountActionTokenPurpose.EmailConfirmation
+                && actionToken.ConsumedAt == null);
+            token.ExpiresAt = DateTime.UtcNow.AddMinutes(-1);
+            await db.SaveChangesAsync();
+        }
+
+        var expiredResponse = await Fixture.Client.PostAsJsonAsync("/public/account/confirm-email", new
+        {
+            token = expiredToken
+        });
+        expiredResponse.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+
+        var resendResponse = await Fixture.Client.PostAsJsonAsync("/public/account/resend-confirmation-email", new
+        {
+            email
+        });
+        resendResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var validToken = ApiTestFixture.ExtractLinkToken(
+            Fixture.EmailService.Messages.Last(message => message.ToEmail == email),
+            "/cuenta/confirmar-email");
+
+        var confirmResponse = await Fixture.Client.PostAsJsonAsync("/public/account/confirm-email", new
+        {
+            token = validToken
+        });
+        confirmResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var reusedResponse = await Fixture.Client.PostAsJsonAsync("/public/account/confirm-email", new
+        {
+            token = validToken
+        });
+        reusedResponse.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
+    }
+
+    [Fact]
+    public async Task PasswordResetSupportsEmployeesAndCustomersWithoutRevealingMissingEmails()
+    {
+        var missingEmail = $"missing.{Guid.NewGuid():N}@gestaurante.local";
+        var missingResponse = await Fixture.Client.PostAsJsonAsync("/auth/forgot-password", new
+        {
+            email = missingEmail
+        });
+
+        missingResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        Fixture.EmailService.Messages.Should().NotContain(message => message.ToEmail == missingEmail);
+
+        var adminEmail = "admin@gestaurante.com";
+        var adminResetResponse = await Fixture.Client.PostAsJsonAsync("/auth/forgot-password", new
+        {
+            email = adminEmail
+        });
+        adminResetResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var adminResetToken = ApiTestFixture.ExtractLinkToken(
+            Fixture.EmailService.Messages.Last(message => message.ToEmail == adminEmail),
+            "/restablecer-password");
+
+        var updateAdminPasswordResponse = await Fixture.Client.PostAsJsonAsync("/auth/reset-password", new
+        {
+            token = adminResetToken,
+            password = "AdminNew1.",
+            confirmPassword = "AdminNew1."
+        });
+        updateAdminPasswordResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var adminToken = await Fixture.LoginEmployeeAsync(adminEmail, "AdminNew1.");
+        adminToken.Should().NotBeNullOrWhiteSpace();
+
+        var customerEmail = "ana.morales@cliente.gestaurante.com";
+        var customerResetResponse = await Fixture.Client.PostAsJsonAsync("/auth/forgot-password", new
+        {
+            email = customerEmail
+        });
+        customerResetResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var customerResetToken = ApiTestFixture.ExtractLinkToken(
+            Fixture.EmailService.Messages.Last(message => message.ToEmail == customerEmail),
+            "/restablecer-password");
+
+        var updateCustomerPasswordResponse = await Fixture.Client.PostAsJsonAsync("/auth/reset-password", new
+        {
+            token = customerResetToken,
+            password = "ClientNew1.",
+            confirmPassword = "ClientNew1."
+        });
+        updateCustomerPasswordResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        var customerLoginResponse = await Fixture.Client.PostAsJsonAsync("/public/account/login", new
+        {
+            email = customerEmail,
+            password = "ClientNew1."
+        });
+        customerLoginResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+
+        var reusedResetResponse = await Fixture.Client.PostAsJsonAsync("/auth/reset-password", new
+        {
+            token = customerResetToken,
+            password = "ClientNew2.",
+            confirmPassword = "ClientNew2."
+        });
+        reusedResetResponse.StatusCode.Should().Be(HttpStatusCode.UnprocessableEntity);
     }
 
     [Fact]

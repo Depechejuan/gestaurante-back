@@ -50,6 +50,11 @@ namespace Gestaurante.Configuration
         public bool IsConfigured => !string.IsNullOrWhiteSpace(Host) && Port.HasValue;
     }
 
+    public class FrontendOptions
+    {
+        public string PublicUrl { get; set; } = "http://localhost:5173";
+    }
+
     public class CloudinaryOptions
     {
         public string? CloudName { get; set; }

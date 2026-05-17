@@ -23,6 +23,7 @@ namespace Gestaurante.Models.Data
         public DbSet<Categoria> Categorias => Set<Categoria>();
         public DbSet<UsuarioCliente> UsuariosCliente => Set<UsuarioCliente>();
         public DbSet<ClienteEmailVerification> ClienteEmailVerifications => Set<ClienteEmailVerification>();
+        public DbSet<AccountActionToken> AccountActionTokens => Set<AccountActionToken>();
         public DbSet<ClienteDireccion> ClienteDirecciones => Set<ClienteDireccion>();
         public DbSet<ClienteMetodoPago> ClienteMetodosPago => Set<ClienteMetodoPago>();
 
@@ -181,6 +182,50 @@ namespace Gestaurante.Models.Data
                     .WithMany()
                     .HasForeignKey(v => v.IdUsuarioCliente)
                     .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<AccountActionToken>(entity =>
+            {
+                entity.HasKey(token => token.IdAccountActionToken)
+                    .HasName("PK_AccountActionTokens");
+
+                entity.Property(token => token.IdAccountActionToken)
+                    .IsRequired()
+                    .ValueGeneratedOnAdd();
+
+                entity.Property(token => token.UserType)
+                    .IsRequired();
+
+                entity.Property(token => token.Purpose)
+                    .IsRequired();
+
+                entity.Property(token => token.UserId)
+                    .IsRequired();
+
+                entity.Property(token => token.Email)
+                    .IsRequired()
+                    .HasMaxLength(100);
+
+                entity.Property(token => token.TokenHash)
+                    .IsRequired()
+                    .HasMaxLength(128);
+
+                entity.Property(token => token.ExpiresAt)
+                    .IsRequired();
+
+                entity.Property(token => token.ConsumedAt)
+                    .IsRequired(false);
+
+                entity.Property(token => token.CreatedAt)
+                    .IsRequired()
+                    .HasDefaultValueSql("NOW() AT TIME ZONE 'UTC'");
+
+                entity.HasIndex(token => token.TokenHash)
+                    .IsUnique();
+
+                entity.HasIndex(token => new { token.UserType, token.Purpose, token.UserId, token.ConsumedAt });
+
+                entity.HasIndex(token => new { token.Purpose, token.ExpiresAt });
             });
 
             modelBuilder.Entity<ClienteDireccion>(entity =>

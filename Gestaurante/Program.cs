@@ -129,6 +129,7 @@ builder.Services.AddScoped<MesaService>();
 builder.Services.AddScoped<FacturaService>();
 builder.Services.AddScoped<MesaPublicSessionService>();
 builder.Services.AddScoped<ICustomerJwtService, CustomerJwtService>();
+builder.Services.AddScoped<AccountActionTokenService>();
 builder.Services.AddScoped<CustomerAccountService>();
 builder.Services.AddScoped<SimulatedPaymentService>();
 builder.Services.AddScoped<PublicCheckoutService>();

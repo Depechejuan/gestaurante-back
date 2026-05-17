@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace Gestaurante.Models.DTO
 {
-    public class ClienteResendCodeDTO
+    public class ResendConfirmationEmailDTO
     {
         [Required]
         [EmailAddress]
