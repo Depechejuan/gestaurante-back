@@ -1,6 +1,7 @@
-using System.Net;
-using System.Net.Mail;
 using Gestaurante.Configuration;
+using MailKit.Net.Smtp;
+using MailKit.Security;
+using MimeKit;
 using Microsoft.Extensions.Options;
 
 namespace Gestaurante.Models.Services
@@ -24,25 +25,23 @@ namespace Gestaurante.Models.Services
                 return;
             }
 
-            using var client = new SmtpClient(_options.Host!, _options.Port!.Value)
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(_options.FromName, _options.FromEmail));
+            message.To.Add(MailboxAddress.Parse(toEmail));
+            message.Subject = subject;
+            message.Body = new TextPart(isHtml ? "html" : "plain")
             {
-                EnableSsl = true
+                Text = body
             };
+
+            using var client = new SmtpClient();
+            await client.ConnectAsync(_options.Host!, _options.Port!.Value, SecureSocketOptions.Auto, cancellationToken);
 
             if (!string.IsNullOrWhiteSpace(_options.User) && !string.IsNullOrWhiteSpace(_options.Password))
-                client.Credentials = new NetworkCredential(_options.User, _options.Password);
+                await client.AuthenticateAsync(_options.User, _options.Password, cancellationToken);
 
-            using var message = new MailMessage
-            {
-                From = new MailAddress(_options.FromEmail, _options.FromName),
-                Subject = subject,
-                Body = body,
-                IsBodyHtml = isHtml
-            };
-            message.To.Add(toEmail);
-
-            cancellationToken.ThrowIfCancellationRequested();
-            await client.SendMailAsync(message, cancellationToken);
+            await client.SendAsync(message, cancellationToken);
+            await client.DisconnectAsync(true, cancellationToken);
         }
     }
 }
