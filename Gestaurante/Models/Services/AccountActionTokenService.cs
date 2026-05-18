@@ -50,15 +50,11 @@ namespace Gestaurante.Models.Services
 
             foreach (var employee in employees)
             {
-                var link = await CreateLinkAsync(
+                await CreateAndSendPasswordResetLinkAsync(
                     AccountActionTokenUserType.Employee,
-                    AccountActionTokenPurpose.PasswordReset,
                     employee.Id,
                     employee.Email,
-                    "/restablecer-password",
                     cancellationToken);
-
-                await SendPasswordResetEmailAsync(employee.Email, link, cancellationToken);
             }
 
             var customers = await _db.UsuariosCliente
@@ -67,15 +63,11 @@ namespace Gestaurante.Models.Services
 
             foreach (var customer in customers)
             {
-                var link = await CreateLinkAsync(
+                await CreateAndSendPasswordResetLinkAsync(
                     AccountActionTokenUserType.Customer,
-                    AccountActionTokenPurpose.PasswordReset,
                     customer.IdUsuarioCliente,
                     customer.Email,
-                    "/restablecer-password",
                     cancellationToken);
-
-                await SendPasswordResetEmailAsync(customer.Email, link, cancellationToken);
             }
         }
 
@@ -142,6 +134,8 @@ namespace Gestaurante.Models.Services
             if (customer.EmailVerificado)
                 return;
 
+            await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
+
             var link = await CreateLinkAsync(
                 AccountActionTokenUserType.Customer,
                 AccountActionTokenPurpose.EmailConfirmation,
@@ -155,6 +149,8 @@ namespace Gestaurante.Models.Services
                 "Activa tu cuenta de Gestaurante",
                 $"Activa tu cuenta desde este enlace: {link}\n\nEl enlace caduca en 1 hora.",
                 cancellationToken: cancellationToken);
+
+            await transaction.CommitAsync(cancellationToken);
         }
 
         /// <summary>
@@ -245,6 +241,26 @@ namespace Gestaurante.Models.Services
 
             await _db.SaveChangesAsync(cancellationToken);
             return BuildFrontendLink(path, rawToken);
+        }
+
+        private async Task CreateAndSendPasswordResetLinkAsync(
+            AccountActionTokenUserType userType,
+            Guid userId,
+            string email,
+            CancellationToken cancellationToken)
+        {
+            await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
+
+            var link = await CreateLinkAsync(
+                userType,
+                AccountActionTokenPurpose.PasswordReset,
+                userId,
+                email,
+                "/restablecer-password",
+                cancellationToken);
+
+            await SendPasswordResetEmailAsync(email, link, cancellationToken);
+            await transaction.CommitAsync(cancellationToken);
         }
 
         private async Task<AccountActionToken?> GetOpenTokenAsync(
