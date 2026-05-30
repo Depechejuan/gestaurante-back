@@ -28,7 +28,7 @@ public sealed class ApiTestFixture : IAsyncLifetime
     public async Task InitializeAsync()
     {
         AppConfiguration.LoadDotEnv();
-        await EnsureTestDatabaseExistsAsync();
+        await RecreateTestDatabaseAsync();
 
         Factory = new TestApiFactory();
         Client = Factory.CreateClient(new WebApplicationFactoryClientOptions
@@ -50,8 +50,10 @@ public sealed class ApiTestFixture : IAsyncLifetime
         var db = scope.ServiceProvider.GetRequiredService<AppDbContext>();
 
         await db.Database.MigrateAsync();
+        await EnsureUsingTestDatabaseAsync(db);
         await db.Database.ExecuteSqlRawAsync("""
             TRUNCATE TABLE
+                "AccountActionTokens",
                 "ClienteEmailVerifications",
                 "ClienteMetodosPago",
                 "ClienteDirecciones",
@@ -144,21 +146,28 @@ public sealed class ApiTestFixture : IAsyncLifetime
             ?? throw new InvalidOperationException("No se pudo deserializar la respuesta JSON.");
     }
 
-    public static string ExtractVerificationCode(FakeEmailService.SentEmail email)
+    public static string ExtractLinkToken(FakeEmailService.SentEmail email, string path)
     {
-        var match = Regex.Match(email.Body, @"\b(\d{6})\b");
+        var escapedPath = Regex.Escape(path);
+        var match = Regex.Match(email.Body, $@"{escapedPath}\?token=([A-Za-z0-9_\-]+)");
         return match.Success
             ? match.Groups[1].Value
-            : throw new InvalidOperationException("No se encontró el código OTP en el correo de pruebas.");
+            : throw new InvalidOperationException("No se encontró el token en el correo de pruebas.");
     }
 
-    private static async Task EnsureTestDatabaseExistsAsync()
+    private static async Task RecreateTestDatabaseAsync()
     {
         var host = GetRequiredEnv("DB_HOST");
         var user = GetRequiredEnv("DB_USER");
         var password = GetRequiredEnv("DB_PASSWORD");
         var adminDatabase = GetRequiredEnv("DB_NAME");
         var port = int.TryParse(Environment.GetEnvironmentVariable("DB_PORT"), out var parsedPort) ? parsedPort : 5432;
+
+        if (!TestApiFactory.TestDatabaseName.EndsWith("_test", StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException($"Nombre de base de pruebas no permitido: {TestApiFactory.TestDatabaseName}.");
+
+        if (string.Equals(adminDatabase, TestApiFactory.TestDatabaseName, StringComparison.OrdinalIgnoreCase))
+            throw new InvalidOperationException("DB_NAME no puede apuntar a la base de pruebas al recrearla.");
 
         var adminConnection = new NpgsqlConnectionStringBuilder
         {
@@ -173,11 +182,9 @@ public sealed class ApiTestFixture : IAsyncLifetime
         await using var connection = new NpgsqlConnection(adminConnection.ConnectionString);
         await connection.OpenAsync();
 
-        await using var existsCommand = new NpgsqlCommand("select 1 from pg_database where datname = @name", connection);
-        existsCommand.Parameters.AddWithValue("name", TestApiFactory.TestDatabaseName);
-        var exists = await existsCommand.ExecuteScalarAsync();
-        if (exists is not null)
-            return;
+        NpgsqlConnection.ClearAllPools();
+        await using var dropCommand = new NpgsqlCommand($"""drop database if exists "{TestApiFactory.TestDatabaseName}" with (force)""", connection);
+        await dropCommand.ExecuteNonQueryAsync();
 
         await using var createCommand = new NpgsqlCommand($"""create database "{TestApiFactory.TestDatabaseName}" """, connection);
         await createCommand.ExecuteNonQueryAsync();
@@ -328,6 +335,20 @@ public sealed class ApiTestFixture : IAsyncLifetime
             FacturaManualId = facturaManual.NumeroFactura,
             AnonymousCustomerId = anonymousCustomer.IdUsuarioCliente
         };
+    }
+
+    private static async Task EnsureUsingTestDatabaseAsync(AppDbContext db)
+    {
+        await db.Database.OpenConnectionAsync();
+        await using var command = db.Database.GetDbConnection().CreateCommand();
+        command.CommandText = "select current_database()";
+
+        var currentDatabase = (await command.ExecuteScalarAsync())?.ToString();
+        if (!string.Equals(currentDatabase, TestApiFactory.TestDatabaseName, StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                $"Las pruebas intentan limpiar la base '{currentDatabase}'. Se esperaba '{TestApiFactory.TestDatabaseName}'.");
+        }
     }
 
     private static Factura BuildAnonymousFactura(Guid id, Guid? mesaId, Guid? pedidoId, Guid anonymousCustomerId, double total, CanalPedido canalPedido)

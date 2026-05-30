@@ -21,15 +21,16 @@ var databaseOptions = builder.Configuration.BuildDatabaseOptions();
 var employeeJwtOptions = builder.Configuration.BuildEmployeeJwtOptions();
 var customerJwtOptions = builder.Configuration.BuildCustomerJwtOptions();
 var bootstrapOptions = builder.Configuration.BuildBootstrapOptions(args);
+var corsPolicyOptions = builder.Configuration.BuildCorsPolicyOptions();
 var appPort = builder.Configuration.GetTrimmedValue("PORT") ?? "3000";
 
-builder.WebHost.UseUrls($"http://localhost:{appPort}");
+builder.WebHost.UseUrls($"http://0.0.0.0:{appPort}");
 
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("FrontendPolicy", policy =>
     {
-        policy.SetIsOriginAllowed(_ => true)
+        policy.WithOrigins(corsPolicyOptions.AllowedOrigins.ToArray())
             .AllowAnyHeader()
             .AllowAnyMethod()
             .AllowCredentials();
@@ -129,6 +130,7 @@ builder.Services.AddScoped<MesaService>();
 builder.Services.AddScoped<FacturaService>();
 builder.Services.AddScoped<MesaPublicSessionService>();
 builder.Services.AddScoped<ICustomerJwtService, CustomerJwtService>();
+builder.Services.AddScoped<AccountActionTokenService>();
 builder.Services.AddScoped<CustomerAccountService>();
 builder.Services.AddScoped<SimulatedPaymentService>();
 builder.Services.AddScoped<PublicCheckoutService>();
@@ -146,7 +148,7 @@ builder.Services.AddControllers()
 var app = builder.Build();
 var logger = app.Services.GetRequiredService<ILoggerFactory>().CreateLogger("Gestaurante.Startup");
 
-logger.LogInformation("Gestaurante API iniciando en localhost:{Port}", appPort);
+logger.LogInformation("Gestaurante API iniciando en 0.0.0.0:{Port}", appPort);
 
 if (bootstrapOptions.RunOnStart)
 {

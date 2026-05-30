@@ -119,6 +119,23 @@ namespace Gestaurante.Configuration
             };
         }
 
+        public static FrontendOptions BuildFrontendOptions(this IConfiguration configuration)
+        {
+            var explicitPublicUrl = configuration.GetTrimmedValue("FRONTEND_PUBLIC_URL")
+                ?? configuration.GetTrimmedValue("PUBLIC_URL");
+            var corsOrigins = configuration.GetTrimmedValue("CORS_ALLOWED_ORIGINS");
+            var firstCorsOrigin = string.IsNullOrWhiteSpace(corsOrigins)
+                ? null
+                : corsOrigins
+                    .Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+                    .FirstOrDefault();
+
+            return new FrontendOptions
+            {
+                PublicUrl = NormalizePublicUrl(explicitPublicUrl ?? firstCorsOrigin ?? "http://localhost:5173")
+            };
+        }
+
         public static CloudinaryOptions BuildCloudinaryOptions(this IConfiguration configuration)
         {
             return new CloudinaryOptions
@@ -202,10 +219,17 @@ namespace Gestaurante.Configuration
             services.AddSingleton(Options.Create(configuration.BuildEmployeeJwtOptions()));
             services.AddSingleton(Options.Create(configuration.BuildCustomerJwtOptions()));
             services.AddSingleton(Options.Create(configuration.BuildSmtpOptions()));
+            services.AddSingleton(Options.Create(configuration.BuildFrontendOptions()));
             services.AddSingleton(Options.Create(configuration.BuildCloudinaryOptions()));
             services.AddSingleton(Options.Create(configuration.BuildSeedOptions()));
             services.AddSingleton(Options.Create(configuration.BuildBootstrapOptions(args)));
             services.AddSingleton(Options.Create(configuration.BuildCorsPolicyOptions()));
+        }
+
+        private static string NormalizePublicUrl(string value)
+        {
+            var normalized = value.Trim().TrimEnd('/');
+            return string.IsNullOrWhiteSpace(normalized) ? "http://localhost:5173" : normalized;
         }
 
         private static string GetRequiredValue(IConfiguration configuration, string key)

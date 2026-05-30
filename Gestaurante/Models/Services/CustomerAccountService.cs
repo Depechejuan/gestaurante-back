@@ -1,5 +1,3 @@
-using System.Security.Cryptography;
-using System.Text;
 using System.ComponentModel.DataAnnotations;
 using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
@@ -14,31 +12,31 @@ namespace Gestaurante.Models.Services
     public class CustomerAccountService
     {
         private readonly AppDbContext _db;
-        private readonly IEmailService _emailService;
         private readonly ICustomerJwtService _customerJwtService;
         private readonly SimulatedPaymentService _simulatedPaymentService;
+        private readonly AccountActionTokenService _accountActionTokenService;
 
         /// <summary>
         /// Inicializa el servicio de cuentas de cliente.
         /// </summary>
         /// <param name="db">Contexto EF del dominio.</param>
-        /// <param name="emailService">Servicio de envío de correos.</param>
         /// <param name="customerJwtService">Servicio emisor del JWT de cliente.</param>
         /// <param name="simulatedPaymentService">Servicio de métodos de pago simulados.</param>
+        /// <param name="accountActionTokenService">Servicio de enlaces de activación y recuperación.</param>
         public CustomerAccountService(
             AppDbContext db,
-            IEmailService emailService,
             ICustomerJwtService customerJwtService,
-            SimulatedPaymentService simulatedPaymentService)
+            SimulatedPaymentService simulatedPaymentService,
+            AccountActionTokenService accountActionTokenService)
         {
             _db = db;
-            _emailService = emailService;
             _customerJwtService = customerJwtService;
             _simulatedPaymentService = simulatedPaymentService;
+            _accountActionTokenService = accountActionTokenService;
         }
 
         /// <summary>
-        /// Registra una nueva cuenta de cliente y envía el código de verificación por correo.
+        /// Registra una nueva cuenta de cliente y envía un enlace de verificación por correo.
         /// </summary>
         /// <param name="dto">Datos mínimos de alta del cliente.</param>
         /// <param name="cancellationToken">Token de cancelación de la operación.</param>
@@ -64,64 +62,35 @@ namespace Gestaurante.Models.Services
             await _db.UsuariosCliente.AddAsync(user, cancellationToken);
             await _db.SaveChangesAsync(cancellationToken);
 
-            await GenerateAndSendVerificationCodeAsync(user, cancellationToken);
+            await _accountActionTokenService.SendCustomerConfirmationEmailAsync(user, cancellationToken);
 
             return new ClienteRegisterResponseDTO
             {
                 IdUsuarioCliente = user.IdUsuarioCliente,
                 Email = user.Email,
                 EmailVerificado = user.EmailVerificado,
-                Message = "Cuenta creada. Revisa tu correo para validar el email."
+                Message = "Cuenta creada. Revisa tu correo para activar la cuenta."
             };
         }
 
         /// <summary>
-        /// Verifica el correo electrónico de una cuenta usando el código activo más reciente.
+        /// Verifica el correo electrónico de una cuenta usando un enlace de activación.
         /// </summary>
-        /// <param name="dto">Email y código OTP enviados por el cliente.</param>
+        /// <param name="dto">Token de activación recibido desde el email.</param>
         /// <param name="cancellationToken">Token de cancelación de la operación.</param>
-        public async Task VerifyEmailAsync(ClienteVerifyEmailDTO dto, CancellationToken cancellationToken = default)
+        public Task ConfirmEmailAsync(ConfirmEmailByTokenDTO dto, CancellationToken cancellationToken = default)
         {
-            var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.Email.ToLower() == dto.Email.ToLower(), cancellationToken)
-                ?? throw new KeyNotFoundException("Cuenta no encontrada.");
-
-            var verification = await _db.ClienteEmailVerifications
-                .Where(v => v.IdUsuarioCliente == user.IdUsuarioCliente && v.ConsumedAt == null)
-                .OrderByDescending(v => v.CreatedAt)
-                .FirstOrDefaultAsync(cancellationToken)
-                ?? throw new ValidationException("No hay un código de validación activo.");
-
-            if (verification.ExpiresAt <= DateTime.UtcNow)
-                throw new ValidationException("El código ha expirado.");
-
-            verification.AttemptCount += 1;
-            if (verification.CodeHash != HashCode(dto.Code))
-            {
-                await _db.SaveChangesAsync(cancellationToken);
-                throw new ValidationException("Código de validación incorrecto.");
-            }
-
-            verification.ConsumedAt = DateTime.UtcNow;
-            user.EmailVerificado = true;
-            user.UpdatedAt = DateTime.UtcNow;
-
-            await _db.SaveChangesAsync(cancellationToken);
+            return _accountActionTokenService.ConfirmCustomerEmailAsync(dto, cancellationToken);
         }
 
         /// <summary>
-        /// Regenera y reenvía un código de verificación para una cuenta todavía no validada.
+        /// Regenera y reenvía un enlace de verificación para una cuenta todavía no validada.
         /// </summary>
-        /// <param name="dto">Datos de la cuenta para la que se solicita un nuevo código.</param>
+        /// <param name="dto">Datos de la cuenta para la que se solicita un nuevo enlace.</param>
         /// <param name="cancellationToken">Token de cancelación de la operación.</param>
-        public async Task ResendVerificationCodeAsync(ClienteResendCodeDTO dto, CancellationToken cancellationToken = default)
+        public Task ResendConfirmationEmailAsync(ResendConfirmationEmailDTO dto, CancellationToken cancellationToken = default)
         {
-            var user = await _db.UsuariosCliente.FirstOrDefaultAsync(u => u.Email.ToLower() == dto.Email.ToLower(), cancellationToken)
-                ?? throw new KeyNotFoundException("Cuenta no encontrada.");
-
-            if (user.EmailVerificado)
-                throw new ValidationException("La cuenta ya tiene el email validado.");
-
-            await GenerateAndSendVerificationCodeAsync(user, cancellationToken);
+            return _accountActionTokenService.ResendCustomerConfirmationEmailAsync(dto, cancellationToken);
         }
 
         /// <summary>
@@ -474,30 +443,6 @@ namespace Gestaurante.Models.Services
         }
 
         /// <summary>
-        /// Genera un código OTP, lo persiste y lo envía al correo del cliente.
-        /// </summary>
-        private async Task GenerateAndSendVerificationCodeAsync(UsuarioCliente user, CancellationToken cancellationToken)
-        {
-            var code = RandomNumberGenerator.GetInt32(100000, 999999).ToString();
-            var verification = new ClienteEmailVerification
-            {
-                IdClienteEmailVerification = Guid.NewGuid(),
-                IdUsuarioCliente = user.IdUsuarioCliente,
-                CodeHash = HashCode(code),
-                ExpiresAt = DateTime.UtcNow.AddMinutes(15)
-            };
-
-            await _db.ClienteEmailVerifications.AddAsync(verification, cancellationToken);
-            await _db.SaveChangesAsync(cancellationToken);
-
-            await _emailService.SendAsync(
-                user.Email,
-                "Código de validación de Gestaurante",
-                $"Tu código de validación es {code}. Caduca en 15 minutos.",
-                cancellationToken: cancellationToken);
-        }
-
-        /// <summary>
         /// Retira la marca de dirección por defecto al resto de direcciones del cliente.
         /// </summary>
         private async Task ClearDefaultAddressAsync(Guid clienteId, CancellationToken cancellationToken)
@@ -508,16 +453,6 @@ namespace Gestaurante.Models.Services
 
             foreach (var address in defaults)
                 address.IsDefault = false;
-        }
-
-        /// <summary>
-        /// Calcula el hash SHA256 del código de verificación.
-        /// </summary>
-        private static string HashCode(string code)
-        {
-            using var sha = SHA256.Create();
-            var bytes = sha.ComputeHash(Encoding.UTF8.GetBytes(code));
-            return Convert.ToHexString(bytes);
         }
 
         /// <summary>

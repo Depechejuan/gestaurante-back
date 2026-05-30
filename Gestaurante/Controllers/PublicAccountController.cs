@@ -35,22 +35,22 @@ namespace Gestaurante.Controllers
         }
 
         /// <summary>
-        /// Verifica el email del cliente mediante el código enviado.
+        /// Verifica el email del cliente mediante el enlace enviado.
         /// </summary>
-        [HttpPost("verify-email")]
-        public async Task<IActionResult> VerifyEmail([FromBody] ClienteVerifyEmailDTO dto, CancellationToken cancellationToken)
+        [HttpPost("confirm-email")]
+        public async Task<IActionResult> ConfirmEmail([FromBody] ConfirmEmailByTokenDTO dto, CancellationToken cancellationToken)
         {
-            await _customerAccountService.VerifyEmailAsync(dto, cancellationToken);
+            await _customerAccountService.ConfirmEmailAsync(dto, cancellationToken);
             return ResponseHelper.SendResponse(new { verified = true });
         }
 
         /// <summary>
-        /// Reenvía un nuevo código de validación al correo del cliente.
+        /// Reenvía un nuevo enlace de validación al correo del cliente.
         /// </summary>
-        [HttpPost("resend-code")]
-        public async Task<IActionResult> ResendCode([FromBody] ClienteResendCodeDTO dto, CancellationToken cancellationToken)
+        [HttpPost("resend-confirmation-email")]
+        public async Task<IActionResult> ResendConfirmationEmail([FromBody] ResendConfirmationEmailDTO dto, CancellationToken cancellationToken)
         {
-            await _customerAccountService.ResendVerificationCodeAsync(dto, cancellationToken);
+            await _customerAccountService.ResendConfirmationEmailAsync(dto, cancellationToken);
             return ResponseHelper.SendResponse(new { sent = true });
         }
 
