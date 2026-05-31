@@ -17,7 +17,14 @@ namespace Gestaurante.Models.Services
             _options = options.Value;
         }
 
-        public async Task SendAsync(string toEmail, string subject, string body, bool isHtml = false, CancellationToken cancellationToken = default)
+        public async Task SendAsync(
+            string toEmail,
+            string subject,
+            string body,
+            bool isHtml = false,
+            CancellationToken cancellationToken = default,
+            string? replyToEmail = null,
+            string? replyToName = null)
         {
             if (!_options.IsConfigured)
             {
@@ -28,6 +35,15 @@ namespace Gestaurante.Models.Services
             var message = new MimeMessage();
             message.From.Add(new MailboxAddress(_options.FromName, _options.FromEmail));
             message.To.Add(MailboxAddress.Parse(toEmail));
+            if (!string.IsNullOrWhiteSpace(replyToEmail))
+            {
+                var replyTo = MailboxAddress.Parse(replyToEmail);
+                if (!string.IsNullOrWhiteSpace(replyToName))
+                    replyTo.Name = replyToName.Trim();
+
+                message.ReplyTo.Add(replyTo);
+            }
+
             message.Subject = subject;
             message.Body = new TextPart(isHtml ? "html" : "plain")
             {

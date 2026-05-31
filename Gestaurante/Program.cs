@@ -134,6 +134,7 @@ builder.Services.AddScoped<AccountActionTokenService>();
 builder.Services.AddScoped<CustomerAccountService>();
 builder.Services.AddScoped<SimulatedPaymentService>();
 builder.Services.AddScoped<PublicCheckoutService>();
+builder.Services.AddScoped<ContactService>();
 builder.Services.AddScoped<IEmailService, SmtpEmailService>();
 builder.Services.AddScoped<CloudinaryService>();
 builder.Services.AddScoped<IEmployeeImageService, CloudinaryEmployeeImageService>();

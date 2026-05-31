@@ -8,9 +8,16 @@ public sealed class FakeEmailService : IEmailService
 
     public IReadOnlyList<SentEmail> Messages => _messages;
 
-    public Task SendAsync(string toEmail, string subject, string body, bool isHtml = false, CancellationToken cancellationToken = default)
+    public Task SendAsync(
+        string toEmail,
+        string subject,
+        string body,
+        bool isHtml = false,
+        CancellationToken cancellationToken = default,
+        string? replyToEmail = null,
+        string? replyToName = null)
     {
-        _messages.Add(new SentEmail(toEmail, subject, body, isHtml));
+        _messages.Add(new SentEmail(toEmail, subject, body, isHtml, replyToEmail, replyToName));
         return Task.CompletedTask;
     }
 
@@ -19,5 +26,11 @@ public sealed class FakeEmailService : IEmailService
         _messages.Clear();
     }
 
-    public sealed record SentEmail(string ToEmail, string Subject, string Body, bool IsHtml);
+    public sealed record SentEmail(
+        string ToEmail,
+        string Subject,
+        string Body,
+        bool IsHtml,
+        string? ReplyToEmail,
+        string? ReplyToName);
 }

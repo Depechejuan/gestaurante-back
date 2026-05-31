@@ -26,6 +26,7 @@ public sealed class TestApiFactory : WebApplicationFactory<Program>
                 ["PORT"] = "0",
                 ["BOOTSTRAP_ON_START"] = "false",
                 ["CORS_ALLOWED_ORIGINS"] = "http://localhost:4173",
+                ["CONTACT_TO_EMAIL"] = "contact@gestaurante.local",
                 ["CLOUDINARY_CLOUDNAME"] = FakePlatoImageService.CloudName
             });
         });

@@ -50,6 +50,11 @@ namespace Gestaurante.Configuration
         public bool IsConfigured => !string.IsNullOrWhiteSpace(Host) && Port.HasValue;
     }
 
+    public class ContactOptions
+    {
+        public string ToEmail { get; set; } = "admin@gestaurante.com";
+    }
+
     public class FrontendOptions
     {
         public string PublicUrl { get; set; } = "http://localhost:5173";

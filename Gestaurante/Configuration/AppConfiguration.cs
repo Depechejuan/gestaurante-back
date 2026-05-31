@@ -119,6 +119,20 @@ namespace Gestaurante.Configuration
             };
         }
 
+        public static ContactOptions BuildContactOptions(this IConfiguration configuration)
+        {
+            var toEmail = configuration.GetTrimmedValue("CONTACT_TO_EMAIL");
+            if (string.IsNullOrWhiteSpace(toEmail))
+                toEmail = configuration.GetTrimmedValue("SMTP_FROM_EMAIL");
+            if (string.IsNullOrWhiteSpace(toEmail))
+                toEmail = "admin@gestaurante.com";
+
+            return new ContactOptions
+            {
+                ToEmail = toEmail
+            };
+        }
+
         public static FrontendOptions BuildFrontendOptions(this IConfiguration configuration)
         {
             var explicitPublicUrl = configuration.GetTrimmedValue("FRONTEND_PUBLIC_URL")
@@ -219,6 +233,7 @@ namespace Gestaurante.Configuration
             services.AddSingleton(Options.Create(configuration.BuildEmployeeJwtOptions()));
             services.AddSingleton(Options.Create(configuration.BuildCustomerJwtOptions()));
             services.AddSingleton(Options.Create(configuration.BuildSmtpOptions()));
+            services.AddSingleton(Options.Create(configuration.BuildContactOptions()));
             services.AddSingleton(Options.Create(configuration.BuildFrontendOptions()));
             services.AddSingleton(Options.Create(configuration.BuildCloudinaryOptions()));
             services.AddSingleton(Options.Create(configuration.BuildSeedOptions()));
