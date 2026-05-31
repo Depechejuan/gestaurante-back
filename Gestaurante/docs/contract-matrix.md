@@ -73,7 +73,7 @@ Legacy wrappers such as `src/services/get-basic-user.js`, `get-empleado.js`, `ge
 | `/staff/mesas/:id` | `Pages/MesaDetail.jsx` | `services/mesas.js` | `GET /Mesa/{id}`, `POST /Mesa/{id}/cerrar` | employee JWT |
 | `/staff/pedidos` | `Pages/Pedidos.jsx` | `services/pedidos.js` | `GET /Pedido` | employee JWT |
 | `/staff/pedidos/:id` | `Pages/UniquePedido.jsx` | `services/pedidos.js`, `services/facturas.js` | `GET /Pedido/{id}`, `PUT /Pedido/{id}`, `POST /Pedido/{id}/cancelar`, `PUT /Pedido/{pedidoId}/linea/{detalleId}`, `POST /Pedido/{pedidoId}/linea/{detalleId}/cancelar`, `POST /Factura` | employee JWT |
-| `/staff/online` | `Pages/PedidosOnline.jsx` | `services/pedidos.js` | `GET /Pedido` filtered to online | employee JWT |
+| `/staff/online` | `Pages/PedidosOnline.jsx` | `services/pedidos.js` | `GET /Pedido` filtered to online; reparto shows `PENDIENTE_ENTREGA`/`EN_CAMINO` only | employee JWT |
 | `/staff/entregas`, `/staff/reparto` | redirects to `/staff/online?view=...` | same as `/staff/online` | same as `/staff/online` | employee JWT |
 | `/staff/facturas` | `Pages/Facturas.jsx` | `services/facturas.js` | `GET /Factura` | employee JWT |
 | `/staff/facturas/:id` | `Pages/UniqueFactura.jsx` | `services/facturas.js` | `GET /Factura/{id}`, `GET /Factura/clientes/search`, `PUT /Factura/{id}`, `PUT /Factura/{id}/cliente`, `POST /Factura/{id}/cobrar`, `POST /Factura/{id}/send-email` | employee JWT |

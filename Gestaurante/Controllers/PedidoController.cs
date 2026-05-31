@@ -239,6 +239,8 @@ namespace Gestaurante.Controllers
                 EstadoPedido.CONFIRMADO => User.IsInRole("Camarero"),
                 EstadoPedido.PREPARACION => User.IsInRole("Cocinero"),
                 EstadoPedido.LISTO => User.IsInRole("Cocinero"),
+                EstadoPedido.PENDIENTE_ENTREGA => User.IsInRole("Camarero"),
+                EstadoPedido.EN_ESPERA => User.IsInRole("Camarero"),
                 EstadoPedido.EN_CAMINO => User.IsInRole("Repartidor"),
                 EstadoPedido.ENTREGADO => User.IsInRole("Camarero") || User.IsInRole("Repartidor"),
                 _ => false
@@ -250,7 +252,9 @@ namespace Gestaurante.Controllers
         /// </summary>
         private static bool CanAccessRepartidorPedido(PedidoDTO pedido)
         {
-            return pedido.CanalPedido == CanalPedido.ONLINE && pedido.TipoEntrega == TipoEntrega.DOMICILIO;
+            return pedido.CanalPedido == CanalPedido.ONLINE
+                && pedido.TipoEntrega == TipoEntrega.DOMICILIO
+                && (pedido.Estado == EstadoPedido.PENDIENTE_ENTREGA || pedido.Estado == EstadoPedido.EN_CAMINO);
         }
     }
 }

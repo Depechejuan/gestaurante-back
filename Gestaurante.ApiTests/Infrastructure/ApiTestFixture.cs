@@ -105,6 +105,13 @@ public sealed class ApiTestFixture : IAsyncLifetime
             Environment.GetEnvironmentVariable("DEFAULT_CAMARERO_PASSWORD") ?? "Cmarer0.");
     }
 
+    public Task<string> LoginCocineroAsync()
+    {
+        return LoginEmployeeAsync(
+            "lucas.romero@gestaurante.com",
+            Environment.GetEnvironmentVariable("DEFAULT_COCINERO_PASSWORD") ?? "Cociner0.");
+    }
+
     public Task<string> LoginRepartidorAsync()
     {
         return LoginEmployeeAsync(
@@ -274,7 +281,7 @@ public sealed class ApiTestFixture : IAsyncLifetime
             Guid.NewGuid(),
             null,
             DateTime.UtcNow.AddMinutes(-20),
-            EstadoPedido.CONFIRMADO,
+            EstadoPedido.PENDIENTE_ENTREGA,
             idUsuarioCliente: verifiedCustomer.IdUsuarioCliente,
             canalPedido: CanalPedido.ONLINE,
             tipoEntrega: TipoEntrega.DOMICILIO,
@@ -288,7 +295,10 @@ public sealed class ApiTestFixture : IAsyncLifetime
             Notas = "Pedido online de prueba."
         };
 
-        onlinePedido.DetallesPedido.Add(new DetallePedido(Guid.NewGuid(), platoPizzaId, onlinePedido.IdPedido, 1, 12.50));
+        onlinePedido.DetallesPedido.Add(new DetallePedido(Guid.NewGuid(), platoPizzaId, onlinePedido.IdPedido, 1, 12.50)
+        {
+            Estado = EstadoDetallePedido.ENTREGADA
+        });
 
         var facturaSala = BuildAnonymousFactura(
             Guid.NewGuid(),

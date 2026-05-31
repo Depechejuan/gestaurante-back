@@ -9,6 +9,14 @@ Back-end de la Aplicación de Gestaurante
 - El plan técnico preparado para `mesas -> pedidos -> factura` está detallado en [Gestaurante/docs/operaciones-sala-plan.md](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/docs/operaciones-sala-plan.md).
 - Este documento describe el alcance implementado sin tocar la lógica de `platos/ingredientes`, que se mantiene fuera de esta rama para no pisar el trabajo paralelo en curso.
 
+## Flujo operativo de pedido online
+- Los pedidos online comparten cocina y sala con los pedidos internos.
+- Cuando cocina prepara las lineas y sala marca todo ok, el pedido cambia segun entrega:
+  - `DOMICILIO` -> `PENDIENTE_ENTREGA`, visible para repartidor.
+  - `RECOGIDA` -> `EN_ESPERA`, visible para camarero hasta que el cliente pasa.
+- El repartidor solo trabaja pedidos a domicilio en `PENDIENTE_ENTREGA` o `EN_CAMINO`.
+- Los cambios de datos existentes se aplican con migraciones incrementales de EF. No se debe borrar, recrear ni resetear la base de datos para desplegar este flujo.
+
 ## Estilo de documentación C#
 - Los controladores y servicios públicos deben documentarse con XML comments.
 - `summary` describe intención y responsabilidad.
@@ -17,6 +25,8 @@ Back-end de la Aplicación de Gestaurante
 - La referencia completa está en [Gestaurante/docs/backend-documentation.md](/Users/juanleon/Documents/gestaurante/gestaurante-back/Gestaurante/docs/backend-documentation.md).
 
 ## Roadmap futuro: catálogo, operación y pedido online
+
+Nota: el flujo base de pedido online con recogida, domicilio, pago online simulado y reparto ya esta operativo. Este roadmap queda como referencia historica y para mejoras comerciales o de endurecimiento.
 
 Este bloque resume cómo debería evolucionar el backend una vez quede cerrada la parte de `platos/ingredientes`.
 La idea no es implementarlo todo a la vez, sino avanzar por fases y con contratos públicos separados de la API interna.

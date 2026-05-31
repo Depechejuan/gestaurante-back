@@ -114,3 +114,4 @@ Cuando se cambie una función pública o una regla de negocio importante:
 1. Actualizar el XML del método afectado.
 2. Si cambia una regla transversal, actualizar también este documento.
 3. Si el cambio afecta al uso del proyecto, revisar [README.md](/Users/juanleon/Documents/gestaurante/gestaurante-back/README.md) y [AGENTS.md](/Users/juanleon/Documents/gestaurante/gestaurante-back/AGENTS.md).
+4. Si el cambio requiere corregir datos existentes, hacerlo mediante una migracion incremental; no usar reset, drop, truncate ni recreacion de base de datos.

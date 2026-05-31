@@ -142,6 +142,73 @@ public sealed class OperationsEndpointsTests(ApiTestFixture fixture) : ApiTestBa
     }
 
     [Fact]
+    public async Task OnlineDeliveryBecomesPendingDeliveryAndCanBeCompletedByRepartidor()
+    {
+        var camareroToken = await Fixture.LoginCamareroAsync();
+        var cocineroToken = await Fixture.LoginCocineroAsync();
+        var repartidorToken = await Fixture.LoginRepartidorAsync();
+        var (pedidoId, detalleId) = await CreateOnlineOrderAsync(tipoEntrega: 2, pagarOnline: true);
+
+        var initialListRequest = Fixture.CreateRequest(HttpMethod.Get, "/Pedido", repartidorToken);
+        var initialListResponse = await Fixture.Client.SendAsync(initialListRequest);
+        initialListResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var initialListEnvelope = await Fixture.ReadEnvelopeAsync<JsonElement>(initialListResponse);
+        initialListEnvelope.Data.EnumerateArray()
+            .Select(pedido => pedido.GetProperty("idPedido").GetGuid())
+            .Should().NotContain(pedidoId);
+
+        await UpdateDetalleEstadoAsync(camareroToken, pedidoId, detalleId, estado: 2);
+        await UpdateDetalleEstadoAsync(cocineroToken, pedidoId, detalleId, estado: 3);
+        await UpdateDetalleEstadoAsync(camareroToken, pedidoId, detalleId, estado: 4);
+
+        var pendingDelivery = await GetPedidoAsync(camareroToken, pedidoId);
+        pendingDelivery.GetProperty("estado").GetString().Should().Be("PENDIENTE_ENTREGA");
+
+        var readyListRequest = Fixture.CreateRequest(HttpMethod.Get, "/Pedido", repartidorToken);
+        var readyListResponse = await Fixture.Client.SendAsync(readyListRequest);
+        readyListResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var readyListEnvelope = await Fixture.ReadEnvelopeAsync<JsonElement>(readyListResponse);
+        readyListEnvelope.Data.EnumerateArray()
+            .Select(pedido => pedido.GetProperty("idPedido").GetGuid())
+            .Should().Contain(pedidoId);
+
+        var enCamino = await UpdatePedidoEstadoAsync(repartidorToken, pedidoId, estado: 6);
+        enCamino.GetProperty("estado").GetString().Should().Be("EN_CAMINO");
+
+        var entregado = await UpdatePedidoEstadoAsync(repartidorToken, pedidoId, estado: 4);
+        entregado.GetProperty("estado").GetString().Should().Be("ENTREGADO");
+
+        var finalListRequest = Fixture.CreateRequest(HttpMethod.Get, "/Pedido", repartidorToken);
+        var finalListResponse = await Fixture.Client.SendAsync(finalListRequest);
+        finalListResponse.StatusCode.Should().Be(HttpStatusCode.OK);
+        var finalListEnvelope = await Fixture.ReadEnvelopeAsync<JsonElement>(finalListResponse);
+        finalListEnvelope.Data.EnumerateArray()
+            .Select(pedido => pedido.GetProperty("idPedido").GetGuid())
+            .Should().NotContain(pedidoId);
+    }
+
+    [Fact]
+    public async Task OnlinePickupWaitsForCustomerAndCamareroDeliveryCreatesLocalFactura()
+    {
+        var camareroToken = await Fixture.LoginCamareroAsync();
+        var cocineroToken = await Fixture.LoginCocineroAsync();
+        var (pedidoId, detalleId) = await CreateOnlineOrderAsync(tipoEntrega: 1, pagarOnline: false);
+
+        await UpdateDetalleEstadoAsync(camareroToken, pedidoId, detalleId, estado: 2);
+        await UpdateDetalleEstadoAsync(cocineroToken, pedidoId, detalleId, estado: 3);
+        await UpdateDetalleEstadoAsync(camareroToken, pedidoId, detalleId, estado: 4);
+
+        var waitingPickup = await GetPedidoAsync(camareroToken, pedidoId);
+        waitingPickup.GetProperty("estado").GetString().Should().Be("EN_ESPERA");
+        waitingPickup.GetProperty("estadoPago").GetString().Should().Be("PENDIENTE_LOCAL");
+
+        var entregado = await UpdatePedidoEstadoAsync(camareroToken, pedidoId, estado: 4);
+        entregado.GetProperty("estado").GetString().Should().Be("ENTREGADO");
+        entregado.GetProperty("estadoPago").GetString().Should().Be("PAGADO_LOCAL");
+        entregado.GetProperty("estaFacturado").GetBoolean().Should().BeTrue();
+    }
+
+    [Fact]
     public async Task CamareroCanCloseMesaWithPendingOrdersAndGenerateFactura()
     {
         var token = await Fixture.LoginCamareroAsync();
@@ -181,5 +248,87 @@ public sealed class OperationsEndpointsTests(ApiTestFixture fixture) : ApiTestBa
         closeEnvelope.Data.GetProperty("idMesa").GetGuid().Should().Be(Fixture.State.PublicMesaId);
         closeEnvelope.Data.GetProperty("pedidoIds").EnumerateArray().Select(item => item.GetGuid()).Should().Contain(pedidoId);
         closeEnvelope.Data.GetProperty("lineas").GetArrayLength().Should().BeGreaterThan(0);
+    }
+
+    private async Task<(Guid PedidoId, Guid DetalleId)> CreateOnlineOrderAsync(int tipoEntrega, bool pagarOnline)
+    {
+        var token = await Fixture.LoginCustomerAsync();
+        var createRequest = Fixture.CreateRequest(HttpMethod.Post, "/public/checkout/order", token);
+        createRequest.Content = tipoEntrega == 2
+            ? JsonContent.Create(new
+            {
+                tipoEntrega,
+                pagarOnline,
+                idClienteDireccion = Fixture.State.VerifiedCustomerAddressId,
+                detalles = new[]
+                {
+                    new
+                    {
+                        idPlato = Fixture.State.PlatoPizzaId,
+                        cantidad = 1
+                    }
+                },
+                paymentMethod = new
+                {
+                    idClienteMetodoPago = Fixture.State.VerifiedCustomerPaymentMethodId
+                }
+            })
+            : JsonContent.Create(new
+            {
+                tipoEntrega,
+                pagarOnline,
+                detalles = new[]
+                {
+                    new
+                    {
+                        idPlato = Fixture.State.PlatoCapreseId,
+                        cantidad = 1
+                    }
+                }
+            });
+
+        var createResponse = await Fixture.Client.SendAsync(createRequest);
+        createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
+        var createEnvelope = await Fixture.ReadEnvelopeAsync<JsonElement>(createResponse);
+
+        return (
+            createEnvelope.Data.GetProperty("idPedido").GetGuid(),
+            createEnvelope.Data.GetProperty("detalles")[0].GetProperty("idDetallePedido").GetGuid());
+    }
+
+    private async Task<JsonElement> GetPedidoAsync(string token, Guid pedidoId)
+    {
+        using var request = Fixture.CreateRequest(HttpMethod.Get, $"/Pedido/{pedidoId}", token);
+        var response = await Fixture.Client.SendAsync(request);
+
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var envelope = await Fixture.ReadEnvelopeAsync<JsonElement>(response);
+        return envelope.Data;
+    }
+
+    private async Task UpdateDetalleEstadoAsync(string token, Guid pedidoId, Guid detalleId, int estado)
+    {
+        var request = Fixture.CreateRequest(HttpMethod.Put, $"/Pedido/{pedidoId}/linea/{detalleId}", token);
+        request.Content = JsonContent.Create(new
+        {
+            estado
+        });
+
+        var response = await Fixture.Client.SendAsync(request);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+    }
+
+    private async Task<JsonElement> UpdatePedidoEstadoAsync(string token, Guid pedidoId, int estado)
+    {
+        var request = Fixture.CreateRequest(HttpMethod.Put, $"/Pedido/{pedidoId}", token);
+        request.Content = JsonContent.Create(new
+        {
+            estado
+        });
+
+        var response = await Fixture.Client.SendAsync(request);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var envelope = await Fixture.ReadEnvelopeAsync<JsonElement>(response);
+        return envelope.Data;
     }
 }

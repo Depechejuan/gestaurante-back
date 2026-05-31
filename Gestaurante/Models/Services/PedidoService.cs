@@ -198,7 +198,7 @@ namespace Gestaurante.Models.Services
             if (!dto.Estado.HasValue || dto.Estado.Value == pedido.Estado)
                 return await GetByIdAsync(pedidoId, cancellationToken);
 
-            ValidateEstadoTransition(pedido.Estado, dto.Estado.Value);
+            ValidateEstadoTransition(pedido, dto.Estado.Value);
 
             pedido.Estado = dto.Estado.Value;
             SetFechaModificacion(pedido);
@@ -363,6 +363,7 @@ namespace Gestaurante.Models.Services
             SetFechaModificacion(pedido);
 
             await _db.SaveChangesAsync(cancellationToken);
+            await SendPedidoStatusEmailsAsync(pedido, cancellationToken);
             await UpdateMesaAvailabilityAsync(pedido.IdMesa, cancellationToken);
 
             return await BuildDetalleDtoAsync(detalle, cancellationToken);
@@ -593,8 +594,9 @@ namespace Gestaurante.Models.Services
         /// <summary>
         /// Valida que la transición de estado del pedido sea coherente con el flujo operativo.
         /// </summary>
-        private static void ValidateEstadoTransition(EstadoPedido current, EstadoPedido next)
+        private static void ValidateEstadoTransition(Pedido pedido, EstadoPedido next)
         {
+            var current = pedido.Estado;
             if (current == EstadoPedido.CANCELADO || current == EstadoPedido.ENTREGADO)
                 throw new InvalidOperationException("El pedido ya está cerrado y no admite nuevos cambios de estado.");
 
@@ -603,12 +605,29 @@ namespace Gestaurante.Models.Services
                 [EstadoPedido.PENDIENTE] = new[] { EstadoPedido.CONFIRMADO, EstadoPedido.CANCELADO },
                 [EstadoPedido.CONFIRMADO] = new[] { EstadoPedido.PREPARACION, EstadoPedido.CANCELADO },
                 [EstadoPedido.PREPARACION] = new[] { EstadoPedido.LISTO, EstadoPedido.CANCELADO },
-                [EstadoPedido.LISTO] = new[] { EstadoPedido.ENTREGADO, EstadoPedido.EN_CAMINO, EstadoPedido.CANCELADO },
-                [EstadoPedido.EN_CAMINO] = new[] { EstadoPedido.ENTREGADO }
+                [EstadoPedido.LISTO] = new[] { EstadoPedido.ENTREGADO, EstadoPedido.PENDIENTE_ENTREGA, EstadoPedido.EN_ESPERA, EstadoPedido.CANCELADO },
+                [EstadoPedido.PENDIENTE_ENTREGA] = new[] { EstadoPedido.EN_CAMINO, EstadoPedido.CANCELADO },
+                [EstadoPedido.EN_ESPERA] = new[] { EstadoPedido.ENTREGADO, EstadoPedido.CANCELADO },
+                [EstadoPedido.EN_CAMINO] = new[] { EstadoPedido.ENTREGADO, EstadoPedido.CANCELADO }
             };
 
             if (!allowedTransitions.TryGetValue(current, out var nextStates) || !nextStates.Contains(next))
                 throw new InvalidOperationException($"Transición de estado no válida: {current} -> {next}.");
+
+            if (next == EstadoPedido.PENDIENTE_ENTREGA
+                && (pedido.CanalPedido != CanalPedido.ONLINE || pedido.TipoEntrega != TipoEntrega.DOMICILIO))
+                throw new InvalidOperationException("Solo los pedidos online a domicilio pueden quedar pendientes de entrega.");
+
+            if (next == EstadoPedido.EN_ESPERA
+                && (pedido.CanalPedido != CanalPedido.ONLINE || pedido.TipoEntrega != TipoEntrega.RECOGIDA))
+                throw new InvalidOperationException("Solo los pedidos online para recoger pueden quedar en espera.");
+
+            if (next == EstadoPedido.EN_CAMINO
+                && (pedido.CanalPedido != CanalPedido.ONLINE || pedido.TipoEntrega != TipoEntrega.DOMICILIO))
+                throw new InvalidOperationException("Solo los pedidos online a domicilio pueden ponerse en camino.");
+
+            if (next == EstadoPedido.ENTREGADO && current == EstadoPedido.LISTO && pedido.CanalPedido == CanalPedido.ONLINE)
+                throw new InvalidOperationException("Los pedidos online deben pasar por espera o reparto antes de entregarse.");
         }
 
         /// <summary>
@@ -647,7 +666,14 @@ namespace Gestaurante.Models.Services
 
             if (detallesVivos.All(d => d.Estado == EstadoDetallePedido.ENTREGADA))
             {
-                pedido.Estado = EstadoPedido.ENTREGADO;
+                pedido.Estado = pedido.CanalPedido == CanalPedido.ONLINE
+                    ? pedido.TipoEntrega switch
+                    {
+                        TipoEntrega.DOMICILIO => EstadoPedido.PENDIENTE_ENTREGA,
+                        TipoEntrega.RECOGIDA => EstadoPedido.EN_ESPERA,
+                        _ => EstadoPedido.ENTREGADO
+                    }
+                    : EstadoPedido.ENTREGADO;
                 return;
             }
 
@@ -733,7 +759,7 @@ namespace Gestaurante.Models.Services
             if (pedido.CanalPedido != CanalPedido.ONLINE || string.IsNullOrWhiteSpace(pedido.ClienteEmail))
                 return;
 
-            if (pedido.TipoEntrega == TipoEntrega.RECOGIDA && pedido.Estado == EstadoPedido.LISTO)
+            if (pedido.TipoEntrega == TipoEntrega.RECOGIDA && pedido.Estado == EstadoPedido.EN_ESPERA)
                 await _emailService.SendAsync(
                     pedido.ClienteEmail,
                     "Tu pedido está listo para recoger",
