@@ -2,6 +2,7 @@ using Gestaurante.Models.Data;
 using Gestaurante.Models.DTO;
 using Gestaurante.Models.Entities;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace Gestaurante.Models.Services
 {
@@ -950,18 +951,18 @@ namespace Gestaurante.Models.Services
             var rows = factura.Lineas.Count == 0
                 ? "<tr><td colspan=\"5\" style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">No hay líneas disponibles en esta factura.</td></tr>"
                 : string.Join(string.Empty, factura.Lineas.Select(linea =>
-                    $"<tr><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.IdPedido.ToString()[..8]}</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.PlatoNombre}</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.Cantidad}</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.PrecioUnitario:0.00} EUR</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.TotalLinea:0.00} EUR</td></tr>"));
+                    $"<tr><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.IdPedido.ToString()[..8]}</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{Html(linea.PlatoNombre)}</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.Cantidad}</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.PrecioUnitario:0.00} EUR</td><td style=\"padding:12px;border-bottom:1px solid #d7e0dc;\">{linea.TotalLinea:0.00} EUR</td></tr>"));
 
             var customerBlock = factura.ClienteFactura.EsAnonima
-                ? $"<p style=\"margin:0;\">{factura.ClienteFactura.BillingName}</p>"
+                ? $"<p style=\"margin:0;\">{Html(factura.ClienteFactura.BillingName)}</p>"
                 : $"""
-                    <p style="margin:0;">{factura.ClienteFactura.BillingName}</p>
-                    <p style="margin:0;">{factura.ClienteFactura.BillingDocument}</p>
-                    <p style="margin:0;">{factura.ClienteFactura.BillingStreet}</p>
-                    <p style="margin:0;">{factura.ClienteFactura.BillingPostalCode} · {factura.ClienteFactura.BillingCity}</p>
-                    <p style="margin:0;">{factura.ClienteFactura.BillingProvince}</p>
-                    <p style="margin:0;">{factura.ClienteFactura.BillingEmail}</p>
-                    <p style="margin:0;">{factura.ClienteFactura.BillingPhone}</p>
+                    <p style="margin:0;">{Html(factura.ClienteFactura.BillingName)}</p>
+                    <p style="margin:0;">{Html(factura.ClienteFactura.BillingDocument)}</p>
+                    <p style="margin:0;">{Html(factura.ClienteFactura.BillingStreet)}</p>
+                    <p style="margin:0;">{Html(factura.ClienteFactura.BillingPostalCode)} &middot; {Html(factura.ClienteFactura.BillingCity)}</p>
+                    <p style="margin:0;">{Html(factura.ClienteFactura.BillingProvince)}</p>
+                    <p style="margin:0;">{Html(factura.ClienteFactura.BillingEmail)}</p>
+                    <p style="margin:0;">{Html(factura.ClienteFactura.BillingPhone)}</p>
                     """;
 
             return $"""
@@ -1008,8 +1009,16 @@ namespace Gestaurante.Models.Services
                     <p style="margin:0;">Descuento: <strong>{factura.Descuento:0.00} EUR</strong></p>
                     <p style="margin:0;">Total final: <strong>{factura.TotalConDescuento:0.00} EUR</strong></p>
                   </footer>
+                  <p style="margin:22px 0 0;padding-top:14px;border-top:1px solid #d7e0dc;color:#557268;font-size:14px;">
+                    Puedes imprimir este correo como justificante. Si necesitas la factura en PDF, contacta con nosotros desde el formulario y te enviamos la factura en PDF.
+                  </p>
                 </section>
                 """;
+        }
+
+        private static string Html(string? value)
+        {
+            return WebUtility.HtmlEncode(value ?? string.Empty);
         }
 
         /// <summary>

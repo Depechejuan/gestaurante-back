@@ -15,7 +15,6 @@ namespace Gestaurante.Models.Services
         private readonly PedidoService _pedidoService;
         private readonly FacturaService _facturaService;
         private readonly SimulatedPaymentService _simulatedPaymentService;
-        private readonly IEmailService _emailService;
         private readonly CatalogProjectionService _catalogProjectionService;
 
         /// <summary>
@@ -25,21 +24,18 @@ namespace Gestaurante.Models.Services
         /// <param name="pedidoService">Servicio de creación y consulta de pedidos.</param>
         /// <param name="facturaService">Servicio de creación de facturas.</param>
         /// <param name="simulatedPaymentService">Servicio de pago online simulado.</param>
-        /// <param name="emailService">Servicio de envío de correos transaccionales.</param>
         /// <param name="catalogProjectionService">Servicio de proyección del catálogo para consumo público.</param>
         public PublicCheckoutService(
             AppDbContext db,
             PedidoService pedidoService,
             FacturaService facturaService,
             SimulatedPaymentService simulatedPaymentService,
-            IEmailService emailService,
             CatalogProjectionService catalogProjectionService)
         {
             _db = db;
             _pedidoService = pedidoService;
             _facturaService = facturaService;
             _simulatedPaymentService = simulatedPaymentService;
-            _emailService = emailService;
             _catalogProjectionService = catalogProjectionService;
         }
 
@@ -155,11 +151,7 @@ namespace Gestaurante.Models.Services
                     CanalPedido = CanalPedido.ONLINE
                 }, cancellationToken);
 
-                await _emailService.SendAsync(
-                    cliente.Email,
-                    "Factura de tu pedido online",
-                    $"Tu pedido online {pedido.IdPedido} ha sido pagado correctamente. Factura: {factura.NumeroFactura}. Total: {factura.TotalConDescuento:0.00} EUR.",
-                    cancellationToken: cancellationToken);
+                await _facturaService.SendFacturaEmailAsync(factura.NumeroFactura, cliente.Email, cancellationToken);
 
                 return await _pedidoService.GetByIdAsync(pedido.IdPedido, cancellationToken)
                     ?? pedido;

@@ -78,8 +78,18 @@ public sealed class PublicOrderingEndpointsTests(ApiTestFixture fixture) : ApiTe
         createResponse.StatusCode.Should().Be(HttpStatusCode.Created);
         var createEnvelope = await Fixture.ReadEnvelopeAsync<JsonElement>(createResponse);
         var pedidoId = createEnvelope.Data.GetProperty("idPedido").GetGuid();
+        var facturaId = createEnvelope.Data.GetProperty("idFactura").GetGuid();
         createEnvelope.Data.GetProperty("canalPedido").GetString().Should().Be("ONLINE");
         createEnvelope.Data.GetProperty("tipoEntrega").GetString().Should().Be("DOMICILIO");
+        Fixture.EmailService.Messages.Should().ContainSingle();
+        var facturaEmail = Fixture.EmailService.Messages.Single();
+        facturaEmail.Subject.Should().Contain(facturaId.ToString());
+        facturaEmail.IsHtml.Should().BeTrue();
+        facturaEmail.Body.Should().Contain("Factura simplificada");
+        facturaEmail.Body.Should().Contain("Pizza Margarita");
+        facturaEmail.Body.Should().Contain("Puedes imprimir este correo");
+        facturaEmail.Body.Should().Contain("contacta con nosotros desde el formulario");
+        facturaEmail.Body.Should().NotContain($"Factura: {facturaId}. Total:");
 
         using var historyRequest = Fixture.CreateRequest(HttpMethod.Get, "/public/account/orders", token);
         var historyResponse = await Fixture.Client.SendAsync(historyRequest);
